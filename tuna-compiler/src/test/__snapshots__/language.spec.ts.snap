@@ -1,0 +1,935 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`language can declare temp variables: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "fff" => Object {
+      "computation": Array [
+        Object {
+          "index": 1,
+          "kind": "Save",
+          "value": Object {
+            "kind": "Bool",
+            "value": true,
+          },
+        },
+        Object {
+          "index": 2,
+          "kind": "Save",
+          "value": Object {
+            "kind": "Bool",
+            "value": false,
+          },
+        },
+        Object {
+          "index": 3,
+          "kind": "Save",
+          "value": Object {
+            "field_name": Array [
+              Object {
+                "index": 1,
+                "kind": "Saved",
+              },
+            ],
+            "kind": "GetField",
+            "target": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language can declare temp variables: ops representation 1`] = `
+Object {
+  "funcs": Map {
+    "fff" => Array [
+      Object {
+        "data": 1,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": Array [
+          0,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": true,
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "moveStackTopToHeap",
+      },
+      Object {
+        "data": false,
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "moveStackTopToHeap",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "getField",
+      },
+      Object {
+        "data": undefined,
+        "kind": "moveStackTopToHeap",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language can overwrite inputs: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "fff" => Object {
+      "computation": Array [
+        Object {
+          "kind": "Update",
+          "operation": Object {
+            "kind": "Bool",
+            "value": false,
+          },
+          "target": Object {
+            "index": 0,
+            "kind": "Saved",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language can overwrite inputs: ops representation 1`] = `
+Object {
+  "funcs": Map {
+    "fff" => Array [
+      Object {
+        "data": 1,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": Array [
+          0,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": false,
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 0,
+        "kind": "overwriteHeap",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language cannot have a variable with the same name as a function 1`] = `
+"In function fff: 
+	The symbol fff is already in use"
+`;
+
+exports[`language cannot have duplicate variables 1`] = `
+"In function fff: 
+	The symbol a is already in use"
+`;
+
+exports[`language does not allow overwriting constants 1`] = `
+"In function fff: 
+	Attempting to overwrite constant variable b"
+`;
+
+exports[`language globals must be empty objects 1`] = `"Global someVar must be initialized as empty object"`;
+
+exports[`language only allows global constants 1`] = `"Global variable someVar must be const"`;
+
+exports[`language should allow a fixed number of args in functions: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "argy" => Object {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language should allow a fixed number of args in functions: ops representation 1`] = `
+Object {
+  "funcs": Map {
+    "argy" => Array [
+      Object {
+        "data": 3,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": Array [
+          0,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": Array [
+          1,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": Array [
+          2,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language should allow a global object: intermediate representation 1`] = `
+Object {
+  "funcs": Map {},
+  "globals": Map {
+    "obj" => Object {
+      "kind": "glob",
+      "name": "obj",
+    },
+  },
+}
+`;
+
+exports[`language should allow a global object: ops representation 1`] = `
+Object {
+  "funcs": Map {},
+  "globals": Map {
+    "obj" => Object {
+      "kind": "glob",
+      "name": "obj",
+    },
+  },
+}
+`;
+
+exports[`language should allow bools, numbers, and strings: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "fff" => Object {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language should allow bools, numbers, and strings: ops representation 1`] = `
+Object {
+  "funcs": Map {
+    "fff" => Array [
+      Object {
+        "data": 1,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": Array [
+          0,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language should allow empty public functions: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "doSomething" => Object {
+      "computation": Array [],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language should allow empty public functions: ops representation 1`] = `
+Object {
+  "funcs": Map {
+    "doSomething" => Array [
+      Object {
+        "data": 0,
+        "kind": "assertHeapLen",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language should allow getting of nested keys: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "fff" => Object {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "field_name": Array [
+              Object {
+                "index": 0,
+                "kind": "Saved",
+              },
+              Object {
+                "kind": "String",
+                "value": "field",
+              },
+            ],
+            "kind": "GetField",
+            "target": Object {
+              "kind": "GlobalObject",
+              "name": "gg",
+            },
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {
+    "gg" => Object {
+      "kind": "glob",
+      "name": "gg",
+    },
+  },
+}
+`;
+
+exports[`language should allow getting of nested keys: ops representation 1`] = `
+Object {
+  "funcs": Map {
+    "fff" => Array [
+      Object {
+        "data": 1,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": Array [
+          0,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": Object {
+          "_key": Object {},
+        },
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "_key",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "setField",
+      },
+      Object {
+        "data": Array [
+          "gg",
+          Object {},
+        ],
+        "kind": "findOneInStore",
+      },
+      Object {
+        "data": undefined,
+        "kind": "isLastNone",
+      },
+      Object {
+        "data": 4,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "_val",
+        "kind": "tryGetField",
+      },
+      Object {
+        "data": "field",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 1,
+        "kind": "getField",
+      },
+      Object {
+        "data": 2,
+        "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": "Key does not exist on global",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": null,
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "returnStackTop",
+      },
+    ],
+  },
+  "globals": Map {
+    "gg" => Object {
+      "kind": "glob",
+      "name": "gg",
+    },
+  },
+}
+`;
+
+exports[`language should allow many global objects: intermediate representation 1`] = `
+Object {
+  "funcs": Map {},
+  "globals": Map {
+    "obj1" => Object {
+      "kind": "glob",
+      "name": "obj1",
+    },
+    "obj2" => Object {
+      "kind": "glob",
+      "name": "obj2",
+    },
+  },
+}
+`;
+
+exports[`language should allow many global objects: ops representation 1`] = `
+Object {
+  "funcs": Map {},
+  "globals": Map {
+    "obj1" => Object {
+      "kind": "glob",
+      "name": "obj1",
+    },
+    "obj2" => Object {
+      "kind": "glob",
+      "name": "obj2",
+    },
+  },
+}
+`;
+
+exports[`language should allow return statements within functions: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "returny" => Object {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": undefined,
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language should allow return statements within functions: ops representation 1`] = `
+Object {
+  "funcs": Map {
+    "returny" => Array [
+      Object {
+        "data": 0,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": null,
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "returnStackTop",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language should allow setting of keys on a global object: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "fff" => Object {
+      "computation": Array [
+        Object {
+          "kind": "Update",
+          "operation": Object {
+            "field_name": Array [
+              Object {
+                "kind": "String",
+                "value": "abc",
+              },
+            ],
+            "kind": "SetField",
+            "value": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+          },
+          "target": Object {
+            "kind": "GlobalObject",
+            "name": "gg",
+          },
+        },
+        Object {
+          "kind": "Update",
+          "operation": Object {
+            "field_name": Array [
+              Object {
+                "index": 0,
+                "kind": "Saved",
+              },
+            ],
+            "kind": "SetField",
+            "value": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+          },
+          "target": Object {
+            "kind": "GlobalObject",
+            "name": "gg",
+          },
+        },
+        Object {
+          "kind": "Update",
+          "operation": Object {
+            "field_name": Array [
+              Object {
+                "kind": "String",
+                "value": "abc",
+              },
+            ],
+            "kind": "SetField",
+            "value": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+          },
+          "target": Object {
+            "kind": "GlobalObject",
+            "name": "gg",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {
+    "gg" => Object {
+      "kind": "glob",
+      "name": "gg",
+    },
+  },
+}
+`;
+
+exports[`language should allow setting of keys on a global object: ops representation 1`] = `
+Object {
+  "funcs": Map {
+    "fff" => Array [
+      Object {
+        "data": 1,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": Array [
+          0,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": Object {
+          "$set": Object {
+            "_val": Object {},
+          },
+        },
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "$set",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "_val",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": 2,
+        "kind": "setField",
+      },
+      Object {
+        "data": Object {
+          "_key": Object {},
+        },
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "_key",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "abc",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 1,
+        "kind": "setField",
+      },
+      Object {
+        "data": Array [
+          "gg",
+          true,
+        ],
+        "kind": "updateOne",
+      },
+      Object {
+        "data": undefined,
+        "kind": "isLastNone",
+      },
+      Object {
+        "data": 2,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": undefined,
+        "kind": "popStack",
+      },
+      Object {
+        "data": 1,
+        "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": "Nested key does not exist",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": Object {
+          "$set": Object {
+            "_val": Object {},
+          },
+        },
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "$set",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "_val",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": 2,
+        "kind": "setField",
+      },
+      Object {
+        "data": Object {
+          "_key": Object {},
+        },
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "_key",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "setField",
+      },
+      Object {
+        "data": Array [
+          "gg",
+          true,
+        ],
+        "kind": "updateOne",
+      },
+      Object {
+        "data": undefined,
+        "kind": "isLastNone",
+      },
+      Object {
+        "data": 2,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": undefined,
+        "kind": "popStack",
+      },
+      Object {
+        "data": 1,
+        "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": "Nested key does not exist",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": Object {
+          "$set": Object {
+            "_val": Object {},
+          },
+        },
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "$set",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "_val",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": 2,
+        "kind": "setField",
+      },
+      Object {
+        "data": Object {
+          "_key": Object {},
+        },
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "_key",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "abc",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 1,
+        "kind": "setField",
+      },
+      Object {
+        "data": Array [
+          "gg",
+          true,
+        ],
+        "kind": "updateOne",
+      },
+      Object {
+        "data": undefined,
+        "kind": "isLastNone",
+      },
+      Object {
+        "data": 2,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": undefined,
+        "kind": "popStack",
+      },
+      Object {
+        "data": 1,
+        "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": "Nested key does not exist",
+        "kind": "raiseError",
+      },
+    ],
+  },
+  "globals": Map {
+    "gg" => Object {
+      "kind": "glob",
+      "name": "gg",
+    },
+  },
+}
+`;

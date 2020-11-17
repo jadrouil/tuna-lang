@@ -1,0 +1,29 @@
+globals := {value={varDecl | func} {ws+ | '$'}}*
+
+mutable := 'let'
+constant := 'const'
+varDecl := ws* mutability={ constant | mutable } ws+ name=name ws* equals ws* value=expression
+name := name='[a-zA-Z]+\w*'
+equals := '='
+ws := '\s'
+obj := '\{' ws* fields=fields ws* '\}'
+str := '\'' value='[\w \t]*' '\''
+bool := value={'true' | 'false'}
+num := value='-?\d+(\.\d+)?'
+literal := obj | str | bool | num
+newLineOrComma := '\n|,'
+field := name=name ws* ':' value=literal newLineOrComma?
+fields := value=field*
+space := ' '
+
+executable := ws* value={value={ret | varDecl | assignment | expression } ws+ }*
+expression := !ret root={literal | name   } methods={method}*
+method := method={parameterIndex | literalIndex}
+
+parameterIndex := '\[' space* value={expression} space* '\]'
+literalIndex := '\.' value={name}
+objectIndex := obj=expression index={parameterIndex | literalIndex}
+ret := 'return(?=\s)' space* value={'(?<= )' exp=expression}?
+func := ws* 'public' space+ 'function' space+ name=name space* args=args ws* '\{' body=executable '\}'
+args := '\(' ws* leadingArgs={name=name newLineOrComma ws*}* ws* lastArg={name}? ws* '\)'
+assignment := target=expression space* equals space* value=expression
