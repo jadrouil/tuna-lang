@@ -319,15 +319,23 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
 
             case ASTKinds.ifs:
                 scope.pushScope()
-                ret.push({
+                const this_if: PickNode<"If"> = {
                     kind: "If",
                     conditionally:  [{
                         kind: "Conditional",
                         do: to_computation(e.value.do.body, scope),
                         cond: to_value_node(expression_to_node(e.value.cond, scope))
                     }]
-                })
+                }
                 scope.popScope()
+                if (e.value.otherwise) {
+                    this_if.conditionally.push({
+                        kind: "Else",
+                        do: to_computation(e.value.otherwise.do.body, scope)
+                    })
+                }
+                ret.push(this_if)
+                
                 break
             default: 
                 const n: never = e.value
