@@ -152,4 +152,12 @@ describe("language", () => {
         return a.keys()[0]
     }
     `))
+
+    it("allows deleting of keys in objects", tunaTest("succeed",
+    `
+    public function f(a) {
+        delete(a.b)
+    }
+    `
+    ))
 })

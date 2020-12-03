@@ -16,15 +16,19 @@ field := name=name ws* ':' value=literal newLineOrComma?
 fields := value=field*
 space := ' '
 
-executable := ws* value={value={ret | varDecl | assignment | expression } ws+ }*
+executable := ws* value={value={ret | varDecl | assignment | functionCall | expression } ws+ }*
 expression := !ret root={literal | name   } methods={method}*
 method := method={parameterIndex | funcMethod | literalIndex}
 
+functionCall := name=name args=args
 parameterIndex := '\[' space* value={expression} space* '\]'
 literalIndex := '\.' value={name}
 funcMethod := '\.' name=name args=args
+
+
 objectIndex := obj=expression index={parameterIndex | literalIndex}
 ret := 'return(?=\s)' space* value={'(?<= )' exp=expression}?
-func := ws* 'public' space+ 'function' space+ name=name space* args=args ws* '\{' body=executable '\}'
-args := '\(' ws* leadingArgs={name=name newLineOrComma ws*}* ws* lastArg={name}? ws* '\)'
+func := ws* 'public' space+ 'function' space+ name=name space* params=params ws* '\{' body=executable '\}'
+params := '\(' ws* leadingParams={name=name newLineOrComma ws*}* ws* lastParam={name}? ws* '\)'
+args := '\(' ws* leadingArgs={value=expression newLineOrComma ws*}* ws* lastArg={expression}? ws* '\)'
 assignment := target=expression space* equals space* value=expression
