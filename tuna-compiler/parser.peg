@@ -18,7 +18,7 @@ space := ' '
 
 scopedExecution := ws* '\{' body=executable '\}'
 executable := ws* value={value={ret | varDecl | forLoop | ifs | assignment | functionCall | expression } ws+ }*
-expression := !ret root={literal | name   } methods={method}*
+expression := root={literal | name   } methods={method}*
 method := method={parameterIndex | funcMethod | literalIndex}
 
 functionCall := name=name args=args
