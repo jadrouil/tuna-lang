@@ -303,7 +303,7 @@ Object {
 }
 `;
 
-exports[`language should allow empty public functions: intermediate representation 1`] = `
+exports[`language should allow empty pub funcs: intermediate representation 1`] = `
 Object {
   "funcs": Map {
     "doSomething" => FunctionDescription {

@@ -25,7 +25,7 @@
 * funcMethod := '\.' name=name args=args
 * objectIndex := obj=expression index={parameterIndex | literalIndex}
 * ret := 'return(?=\s)' space* value={'(?<= )' exp=expression}?
-* func := ws* 'public' space+ 'function' space+ name=name space* params=params ws* '\{' body=executable '\}'
+* func := ws* 'pub' space+ 'func' space+ name=name space* params=params ws* '\{' body=executable '\}'
 * params := '\(' ws* leadingParams={name=name newLineOrComma ws*}* ws* lastParam={name}? ws* '\)'
 * args := '\(' ws* leadingArgs={value=expression newLineOrComma ws*}* ws* lastArg={expression}? ws* '\)'
 * assignment := target=expression space* equals space* value=expression
@@ -812,9 +812,9 @@ export class Parser {
                 let $$res: Nullable<func> = null;
                 if (true
                     && this.loop<ws>(() => this.matchws($$dpth + 1, $$cr), true) !== null
-                    && this.regexAccept(String.raw`(?:public)`, $$dpth + 1, $$cr) !== null
+                    && this.regexAccept(String.raw`(?:pub)`, $$dpth + 1, $$cr) !== null
                     && this.loop<space>(() => this.matchspace($$dpth + 1, $$cr), false) !== null
-                    && this.regexAccept(String.raw`(?:function)`, $$dpth + 1, $$cr) !== null
+                    && this.regexAccept(String.raw`(?:func)`, $$dpth + 1, $$cr) !== null
                     && this.loop<space>(() => this.matchspace($$dpth + 1, $$cr), false) !== null
                     && ($scope$name = this.matchname($$dpth + 1, $$cr)) !== null
                     && this.loop<space>(() => this.matchspace($$dpth + 1, $$cr), true) !== null
