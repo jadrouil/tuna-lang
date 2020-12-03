@@ -318,6 +318,7 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
                 break
 
             case ASTKinds.ifs:
+                scope.pushScope()
                 ret.push({
                     kind: "If",
                     conditionally:  [{
@@ -326,6 +327,7 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
                         cond: to_value_node(expression_to_node(e.value.cond, scope))
                     }]
                 })
+                scope.popScope()
                 break
             default: 
                 const n: never = e.value

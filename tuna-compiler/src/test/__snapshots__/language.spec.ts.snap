@@ -347,6 +347,59 @@ Object {
 
 exports[`language globals must be empty objects 1`] = `"Global someVar must be initialized as empty object"`;
 
+exports[`language ifs cleans up variables in ifs: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "maybe" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "conditionally": Array [
+            Object {
+              "cond": Object {
+                "index": 0,
+                "kind": "Saved",
+              },
+              "do": Array [
+                Object {
+                  "kind": "Save",
+                  "value": Object {
+                    "index": 0,
+                    "kind": "Saved",
+                  },
+                },
+              ],
+              "kind": "Conditional",
+            },
+          ],
+          "kind": "If",
+        },
+        Object {
+          "kind": "Save",
+          "value": Object {
+            "index": 0,
+            "kind": "Saved",
+          },
+        },
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "index": 1,
+            "kind": "Saved",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language ifs single simple if: intermediate representation 1`] = `
 Object {
   "funcs": Map {

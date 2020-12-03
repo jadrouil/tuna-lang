@@ -215,6 +215,19 @@ describe("language", () => {
             }
             `
         ))
+
+        it("cleans up variables in ifs", tunaTest(
+            "succeed",
+            `
+            pub func maybe(a) {
+                if a {
+                    let b = a
+                }
+                let b = a
+                return b
+            }
+            `
+        ))
     })
     
 })
