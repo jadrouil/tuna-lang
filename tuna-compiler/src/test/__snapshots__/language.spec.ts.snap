@@ -266,17 +266,83 @@ Object {
 
 exports[`language cannot have a variable with the same name as a function 1`] = `
 "In function fff: 
-	The symbol fff is already in use"
+	The name fff is initialized to multiple variables/functions."
 `;
 
 exports[`language cannot have duplicate variables 1`] = `
 "In function fff: 
-	The symbol a is already in use"
+	The name a is initialized to multiple variables/functions."
 `;
 
 exports[`language does not allow overwriting constants 1`] = `
 "In function fff: 
 	Attempting to overwrite constant variable b"
+`;
+
+exports[`language ensure variables declared in for loop are cleaned up: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "loop" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "do": Array [
+            Object {
+              "kind": "Save",
+              "value": Object {
+                "index": 0,
+                "kind": "Saved",
+              },
+            },
+          ],
+          "kind": "ArrayForEach",
+          "target": Object {
+            "kind": "Selection",
+            "level": Array [
+              Object {
+                "kind": "String",
+                "value": "array",
+              },
+            ],
+            "root": Object {
+              "kind": "GlobalObject",
+              "name": "g",
+            },
+          },
+        },
+        Object {
+          "kind": "Save",
+          "value": Object {
+            "kind": "Selection",
+            "level": Array [
+              Object {
+                "kind": "String",
+                "value": "array",
+              },
+            ],
+            "root": Object {
+              "kind": "GlobalObject",
+              "name": "g",
+            },
+          },
+        },
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "index": 0,
+            "kind": "Saved",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {
+    "g" => Object {
+      "kind": "glob",
+      "name": "g",
+    },
+  },
+}
 `;
 
 exports[`language globals must be empty objects 1`] = `"Global someVar must be initialized as empty object"`;

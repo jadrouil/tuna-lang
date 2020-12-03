@@ -189,4 +189,18 @@ describe("language", () => {
         }
         `    
     ))
+
+    it("ensure variables declared in for loop are cleaned up", tunaTest(
+        "succeed",
+        `
+        const g = {}
+        pub func loop() {
+            for row in g.array {
+                let some_scoped_var = row
+            }
+            const should_be_at_index_0 = g.array
+            return should_be_at_index_0 
+        }
+        `
+    ))
 })

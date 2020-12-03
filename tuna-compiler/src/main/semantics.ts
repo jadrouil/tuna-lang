@@ -4,7 +4,7 @@ import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest, ValueNod
 type ScopeMapEntry= "func" | "global" | {kind: "const" | "mut", index: number}
 class ScopeMap extends Map<string, ScopeMapEntry>  {
     private nextVar: number = 0
-    private scopes: string[][] = [[]]
+    private scopes: Set<string>[] = [new Set()]
     
     public get nextVariableIndex(): number {
         return this.nextVar
@@ -20,21 +20,20 @@ class ScopeMap extends Map<string, ScopeMapEntry>  {
         }
         super.set(k, v)
         const this_scope = this.scopes.pop()
-        this_scope.push(k)
+        this_scope.add(k)
         this.scopes.push(this_scope)
         return this
     }
     pushScope() {
-        this.scopes.push([])
+        this.scopes.push(new Set())
     }
 
     popScope() {
         const popped = this.scopes.pop()
         popped.forEach(v => {
             this.delete(v)
-            
         })
-        this.nextVar - popped.length
+        this.nextVar = this.nextVar - popped.size
     }
 
 }
@@ -275,9 +274,6 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
             case ASTKinds.varDecl: 
                 const value = to_value_node(expression_to_node(e.value.value, scope))
                 const index = scope.nextVariableIndex
-                if (scope.has(e.value.name.name)) {
-                    throw Error(`The symbol ${e.value.name.name} is already in use`)
-                }
                 scope.set(e.value.name.name, {kind: e.value.mutability === "const" ? "const" : "mut", index})
                 ret.push({
                     kind: "Save",
