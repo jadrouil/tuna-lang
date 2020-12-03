@@ -178,4 +178,15 @@ describe("language", () => {
     }
     `
     ))
+
+    it("allows for loops", tunaTest(
+        "succeed",
+        `
+        pub func loop(arr) {
+            for row in arr {
+                return row
+            }
+        }
+        `    
+    ))
 })

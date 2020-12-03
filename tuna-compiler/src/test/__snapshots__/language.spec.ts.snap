@@ -68,6 +68,40 @@ Object {
 }
 `;
 
+exports[`language allows for loops: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "loop" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "do": Array [
+            Object {
+              "kind": "Return",
+              "value": Object {
+                "index": 1,
+                "kind": "Saved",
+              },
+            },
+          ],
+          "kind": "ArrayForEach",
+          "target": Object {
+            "index": 0,
+            "kind": "Saved",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language allows keys on nested object: intermediate representation 1`] = `
 Object {
   "funcs": Map {
