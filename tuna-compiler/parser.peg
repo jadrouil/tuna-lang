@@ -19,12 +19,12 @@ space := ' '
 scopedExecution := ws* '\{' body=executable '\}'
 executable := ws* value={value={ret | varDecl | forLoop | ifs | assignment | functionCall | expression } ws+ }*
 expression := root={literal | name   } methods={method}*
-method := method={parameterIndex | funcMethod | literalIndex}
+method := method={parameterIndex | methodInvoke | literalIndex}
 
 functionCall := name=name args=args
 parameterIndex := '\[' space* value={expression} space* '\]'
 literalIndex := '\.' value={name}
-funcMethod := '\.' name=name args=args
+methodInvoke := '\.' name=name args=args
 
 forLoop := 'for' space+ rowVar=name space+ 'in' space+ value=expression do=scopedExecution
 

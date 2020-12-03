@@ -135,7 +135,7 @@ function method_to_node(target: PickNode<"Saved" | "GlobalObject">, methods: exp
                 current.level.push(only(e, "String", "Saved"))
                 break
 
-            case ASTKinds.funcMethod: {
+            case ASTKinds.methodInvoke: {
                 if (m.method.name.name !== "keys") {
                     throw Error(`Unrecognized method ${m.method.name}`)
                 }
@@ -194,7 +194,7 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
                     case ASTKinds.parameterIndex:
                         return to_value_node(expression_to_node(m.method.value, scope))
 
-                    case ASTKinds.funcMethod:
+                    case ASTKinds.methodInvoke:
                         throw Error(`Cannot update the temporary value returned from a function`)
 
                     default: 
