@@ -160,4 +160,12 @@ describe("language", () => {
     }
     `
     ))
+
+    it("shouldn't allow deleting of whole variables", tunaTest("fail",
+    `
+    public function f(b0) {
+        delete(b0)
+    }
+    `
+    ))
 })

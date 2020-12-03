@@ -274,7 +274,9 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
                     throw Error(`Delete expects one argument`)
                 }
                 const {root, level} = expression_to_update_target(e.value.args.lastArg, scope)
-                
+                if (level.length === 0) {
+                    throw Error(`Delete cannot be applied to whole variables`)
+                }
                 ret.push({
                     kind: "Update",
                     root,

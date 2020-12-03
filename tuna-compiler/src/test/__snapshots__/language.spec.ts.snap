@@ -430,3 +430,8 @@ Object {
   },
 }
 `;
+
+exports[`language shouldn't allow deleting of whole variables 1`] = `
+"In function f: 
+	Delete cannot be applied to whole variables"
+`;

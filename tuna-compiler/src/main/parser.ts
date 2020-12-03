@@ -16,7 +16,7 @@
 * field := name=name ws* ':' value=literal newLineOrComma?
 * fields := value=field*
 * space := ' '
-* executable := ws* value={value={ret | varDecl | assignment | functionCall|  expression  } ws+ }*
+* executable := ws* value={value={ret | varDecl | assignment | functionCall | expression } ws+ }*
 * expression := !ret root={literal | name   } methods={method}*
 * method := method={parameterIndex | funcMethod | literalIndex}
 * functionCall := name=name args=args
