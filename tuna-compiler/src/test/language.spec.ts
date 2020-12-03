@@ -144,4 +144,12 @@ describe("language", () => {
     }
     `
     ))
+
+    //Blocked by https://github.com/Conder-Systems/conder/issues/66
+    it.skip("allows indexing into keys results", tunaTest("succeed",
+    `
+    public function f(a) {
+        return a.keys()[0]
+    }
+    `))
 })
