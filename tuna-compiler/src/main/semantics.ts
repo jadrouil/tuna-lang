@@ -174,7 +174,7 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
                         }
                         
                     case ASTKinds.parameterIndex:
-                        return only(expression_to_node(m.method.value, scope), "String", "Saved")
+                        return to_value_node(expression_to_node(m.method.value, scope))
 
                     case ASTKinds.funcMethod:
                         throw Error(`Cannot update the temporary value returned from a function`)

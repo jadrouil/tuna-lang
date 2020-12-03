@@ -1,5 +1,39 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`language allows deleting of array fields even though it produces a runtime error: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Update",
+          "level": Array [
+            Object {
+              "kind": "Int",
+              "value": 0,
+            },
+          ],
+          "operation": Object {
+            "kind": "DeleteField",
+          },
+          "root": Object {
+            "index": 0,
+            "kind": "Saved",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language allows deleting of keys in objects: intermediate representation 1`] = `
 Object {
   "funcs": Map {
