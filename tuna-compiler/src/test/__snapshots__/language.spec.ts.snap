@@ -347,7 +347,7 @@ Object {
 
 exports[`language globals must be empty objects 1`] = `"Global someVar must be initialized as empty object"`;
 
-exports[`language ifs: intermediate representation 1`] = `
+exports[`language ifs single simple if: intermediate representation 1`] = `
 Object {
   "funcs": Map {
     "maybe" => FunctionDescription {
