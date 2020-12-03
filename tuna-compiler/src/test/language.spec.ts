@@ -11,8 +11,6 @@ describe("language", () => {
                     return i
                 })).then(OPSIFY_MANIFEST).run(code)
 
-                expect(ops).toMatchSnapshot("ops representation")
-
             } else {
                 expect(() => TUNA_TO_MANIFEST.run(code)).toThrowErrorMatchingSnapshot()
             }

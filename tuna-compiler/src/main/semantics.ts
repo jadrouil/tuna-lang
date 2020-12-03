@@ -1,5 +1,5 @@
 import { ParseResult, executable, ASTKinds, func, expression, literal } from "./parser";
-import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest} from "conder_core"
+import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest, ValueNode, FunctionData} from "conder_core"
 
 type ScopeMapEntry= "func" | "global" | {kind: "const" | "mut", index: number}
 class ScopeMap extends Map<string, ScopeMapEntry>  {
@@ -21,7 +21,7 @@ class ScopeMap extends Map<string, ScopeMapEntry>  {
 }
 
 
-function excluding<EX extends AnyNode["kind"]>(node: AnyNode, ...not: EX[]): Exclude<AnyNode, {kind: EX}> {
+function excluding<EX extends AnyNode["kind"], IN extends AnyNode["kind"]>(node: PickNode<IN>, ...not: EX[]): Exclude<PickNode<IN>, {kind: EX}> {
     //@ts-ignore
     if (not.includes(node.kind)) {
         throw Error(`Invalid expression ${node.kind}`)
@@ -47,8 +47,25 @@ function cbOnly<IN extends AnyNode["kind"]>(node: AnyNode, f: (i: PickNode<IN>) 
     }
 }
 
+function to_value_node(n: AnyNode): ValueNode {
+    return excluding(n,  
+        "ArrayForEach", 
+        "Update", 
+        "Return", 
+        "If", 
+        "Save", 
+        "DeleteField", 
+        "Field", 
+        "Finally", 
+        "Else", 
+        "Noop", 
+        "Push",
+        "Conditional"
+        )
+}
 
-function literal_to_node(lit: literal, scope: ScopeMap): AnyNode {
+
+function literal_to_node(lit: literal, scope: ScopeMap): ValueNode {
     switch (lit.kind) {
         case ASTKinds.bool:
             return {kind: "Bool", value: lit.value === "true"}
@@ -59,9 +76,9 @@ function literal_to_node(lit: literal, scope: ScopeMap): AnyNode {
                 fields: lit.fields.value.map(f => {
                 
                     return {
-                        kind: "SetField", 
-                        field_name: [{kind: "String", value: f.name.name}], 
-                        value: excluding(literal_to_node(f.value, scope),  "Return", "SetField", "If", "Save", "Update")
+                        kind: "Field", 
+                        key: {kind: "String", value: f.name.name}, 
+                        value: literal_to_node(f.value, scope)
                     }
                 })
             }
@@ -82,7 +99,7 @@ function method_to_node(target: PickNode<"Saved" | "GlobalObject">, methods: exp
     if (methods.length === 0) {
         return target
     }
-    const fields: PickNode<"GetField">["field_name"] = []
+    const fields: PickNode<"Selection">["level"] = []
     methods.forEach(m => {
         switch(m.method.kind) {
             case ASTKinds.literalIndex: 
@@ -100,13 +117,13 @@ function method_to_node(target: PickNode<"Saved" | "GlobalObject">, methods: exp
     })
     
     return {
-        kind: "GetField",
-        target,
-        field_name: fields
+        kind: "Selection",
+        root: target,
+        level: fields
     }
 }
 
-type Target = {root: PickNode<"Update">["target"], field: PickNode<"SetField">["field_name"]}
+type Target = {root: PickNode<"Update">["root"], level: PickNode<"Update">["level"]}
 function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
 
     switch (exp.root.kind) {
@@ -126,7 +143,7 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
                 {kind: "GlobalObject", name: exp.root.name} 
                 : {kind: "Saved", index: name.index}
             
-            const field: Target["field"] = exp.methods.map(m => {
+            const level: Target["level"] = exp.methods.map(m => {
                 switch (m.method.kind) {
                     case ASTKinds.literalIndex:
                         return {
@@ -140,7 +157,7 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
                         const n: never = m.method
               }
             })
-            return {root, field}
+            return {root, level}
 
 
         default: throw Error(`Invalid assignment to ${exp.root.kind}`)
@@ -177,7 +194,7 @@ function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
     
 }
 
-function to_computation(ex: executable, scope: ScopeMap): FunctionDescription["computation"] {
+function to_computation(ex: executable, scope: ScopeMap): FunctionData["computation"] {
     const ret: FunctionDescription["computation"] = []
     ex.value.forEach(e => {
         
@@ -185,7 +202,7 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionDescription["c
             case ASTKinds.ret:
                 ret.push({
                     kind: "Return", 
-                    value: e.value.value !== null ? excluding(expression_to_node(e.value.value.exp, scope), "Update", "SetField", "Return", "If", "Save") : undefined
+                    value: e.value.value !== null ? to_value_node(expression_to_node(e.value.value.exp, scope)) : undefined
                     }
                 )
                 break
@@ -193,12 +210,14 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionDescription["c
 
             case ASTKinds.assignment: {
                 const target: Target = expression_to_update_target(e.value.target, scope)
-                const value: PickNode<"Update">["operation"] = excluding(expression_to_node(e.value.value, scope), "Update", "Return", "If", "Save", "SetField")
+                // This needs to also accept mutations
+                const value: PickNode<"Update">["operation"] = to_value_node(expression_to_node(e.value.value, scope))
                 
                 ret.push({
                     kind: "Update",
-                    target: target.root,
-                    operation: target.field.length > 0 ? {kind: "SetField", field_name: target.field, value} : value
+                    root: target.root,
+                    level: target.level,
+                    operation: value
                 })
                 break
             }
@@ -209,7 +228,7 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionDescription["c
             }
 
             case ASTKinds.varDecl: 
-                const value = excluding(expression_to_node(e.value.value, scope), "Return", "If", "Update", "Save", "SetField")
+                const value = to_value_node(expression_to_node(e.value.value, scope))
                 const index = scope.nextVariableIndex
                 if (scope.has(e.value.name.name)) {
                     throw Error(`The symbol ${e.value.name.name} is already in use`)
@@ -218,7 +237,6 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionDescription["c
                 ret.push({
                     kind: "Save",
                     value,
-                    index
                 })
                 break
             default: 
@@ -246,10 +264,10 @@ function to_descr(f: func, scope: ScopeMap): FunctionDescription {
             input.push({kind: "Any", data: undefined})
         })
         
-        return {
+        return new FunctionDescription({
             input,
             computation: to_computation(f.body, scope)
-        }
+        })
     } catch(e) {
         throw Error(`In function ${f.name.name}: \n\t${e.message}`)
     }
