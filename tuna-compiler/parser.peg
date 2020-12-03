@@ -16,7 +16,8 @@ field := name=name ws* ':' value=literal newLineOrComma?
 fields := value=field*
 space := ' '
 
-executable := ws* value={value={ret | varDecl | assignment | functionCall | expression } ws+ }*
+scopedExecution := ws* '\{' body=executable '\}'
+executable := ws* value={value={ret | varDecl | forLoop | assignment | functionCall | expression } ws+ }*
 expression := !ret root={literal | name   } methods={method}*
 method := method={parameterIndex | funcMethod | literalIndex}
 
@@ -25,10 +26,11 @@ parameterIndex := '\[' space* value={expression} space* '\]'
 literalIndex := '\.' value={name}
 funcMethod := '\.' name=name args=args
 
+forLoop := 'for' space+ rowVar=name space+ 'in' space+ value=expression do=scopedExecution
 
 objectIndex := obj=expression index={parameterIndex | literalIndex}
 ret := 'return(?=\s)' space* value={'(?<= )' exp=expression}?
-func := ws* 'public' space+ 'function' space+ name=name space* params=params ws* '\{' body=executable '\}'
+func := ws* 'pub' space+ 'func' space+ name=name space* params=params body=scopedExecution
 params := '\(' ws* leadingParams={name=name newLineOrComma ws*}* ws* lastParam={name}? ws* '\)'
 args := '\(' ws* leadingArgs={value=expression newLineOrComma ws*}* ws* lastArg={expression}? ws* '\)'
 assignment := target=expression space* equals space* value=expression

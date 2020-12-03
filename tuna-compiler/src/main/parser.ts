@@ -16,16 +16,18 @@
 * field := name=name ws* ':' value=literal newLineOrComma?
 * fields := value=field*
 * space := ' '
-* executable := ws* value={value={ret | varDecl | assignment | functionCall | expression } ws+ }*
+* scopedExecution := ws* '\{' body=executable '\}'
+* executable := ws* value={value={ret | varDecl | forLoop | assignment | functionCall | expression } ws+ }*
 * expression := !ret root={literal | name   } methods={method}*
 * method := method={parameterIndex | funcMethod | literalIndex}
 * functionCall := name=name args=args
 * parameterIndex := '\[' space* value={expression} space* '\]'
 * literalIndex := '\.' value={name}
 * funcMethod := '\.' name=name args=args
+* forLoop := 'for' space+ rowVar=name space+ 'in' space+ value=expression do=scopedExecution
 * objectIndex := obj=expression index={parameterIndex | literalIndex}
 * ret := 'return(?=\s)' space* value={'(?<= )' exp=expression}?
-* func := ws* 'public' space+ 'function' space+ name=name space* params=params ws* '\{' body=executable '\}'
+* func := ws* 'pub' space+ 'func' space+ name=name space* params=params body=scopedExecution
 * params := '\(' ws* leadingParams={name=name newLineOrComma ws*}* ws* lastParam={name}? ws* '\)'
 * args := '\(' ws* leadingArgs={value=expression newLineOrComma ws*}* ws* lastArg={expression}? ws* '\)'
 * assignment := target=expression space* equals space* value=expression
@@ -67,6 +69,7 @@ export enum ASTKinds {
     field = "field",
     fields = "fields",
     space = "space",
+    scopedExecution = "scopedExecution",
     executable = "executable",
     executable_$0 = "executable_$0",
     executable_$0_$0_1 = "executable_$0_$0_1",
@@ -74,6 +77,7 @@ export enum ASTKinds {
     executable_$0_$0_3 = "executable_$0_$0_3",
     executable_$0_$0_4 = "executable_$0_$0_4",
     executable_$0_$0_5 = "executable_$0_$0_5",
+    executable_$0_$0_6 = "executable_$0_$0_6",
     expression = "expression",
     expression_$0_1 = "expression_$0_1",
     expression_$0_2 = "expression_$0_2",
@@ -88,6 +92,7 @@ export enum ASTKinds {
     literalIndex = "literalIndex",
     literalIndex_$0 = "literalIndex_$0",
     funcMethod = "funcMethod",
+    forLoop = "forLoop",
     objectIndex = "objectIndex",
     objectIndex_$0_1 = "objectIndex_$0_1",
     objectIndex_$0_2 = "objectIndex_$0_2",
@@ -165,6 +170,10 @@ export interface fields {
     value: field[];
 }
 export type space = string;
+export interface scopedExecution {
+    kind: ASTKinds.scopedExecution;
+    body: executable;
+}
 export interface executable {
     kind: ASTKinds.executable;
     value: executable_$0[];
@@ -173,12 +182,13 @@ export interface executable_$0 {
     kind: ASTKinds.executable_$0;
     value: executable_$0_$0;
 }
-export type executable_$0_$0 = executable_$0_$0_1 | executable_$0_$0_2 | executable_$0_$0_3 | executable_$0_$0_4 | executable_$0_$0_5;
+export type executable_$0_$0 = executable_$0_$0_1 | executable_$0_$0_2 | executable_$0_$0_3 | executable_$0_$0_4 | executable_$0_$0_5 | executable_$0_$0_6;
 export type executable_$0_$0_1 = ret;
 export type executable_$0_$0_2 = varDecl;
-export type executable_$0_$0_3 = assignment;
-export type executable_$0_$0_4 = functionCall;
-export type executable_$0_$0_5 = expression;
+export type executable_$0_$0_3 = forLoop;
+export type executable_$0_$0_4 = assignment;
+export type executable_$0_$0_5 = functionCall;
+export type executable_$0_$0_6 = expression;
 export interface expression {
     kind: ASTKinds.expression;
     root: expression_$0;
@@ -216,6 +226,12 @@ export interface funcMethod {
     name: name;
     args: args;
 }
+export interface forLoop {
+    kind: ASTKinds.forLoop;
+    rowVar: name;
+    value: expression;
+    do: scopedExecution;
+}
 export interface objectIndex {
     kind: ASTKinds.objectIndex;
     obj: expression;
@@ -236,7 +252,7 @@ export interface func {
     kind: ASTKinds.func;
     name: name;
     params: params;
-    body: executable;
+    body: scopedExecution;
 }
 export interface params {
     kind: ASTKinds.params;
@@ -531,6 +547,25 @@ export class Parser {
     public matchspace($$dpth: number, $$cr?: ContextRecorder): Nullable<space> {
         return this.regexAccept(String.raw`(?: )`, $$dpth + 1, $$cr);
     }
+    public matchscopedExecution($$dpth: number, $$cr?: ContextRecorder): Nullable<scopedExecution> {
+        return this.runner<scopedExecution>($$dpth,
+            (log) => {
+                if (log) {
+                    log("scopedExecution");
+                }
+                let $scope$body: Nullable<executable>;
+                let $$res: Nullable<scopedExecution> = null;
+                if (true
+                    && this.loop<ws>(() => this.matchws($$dpth + 1, $$cr), true) !== null
+                    && this.regexAccept(String.raw`(?:\{)`, $$dpth + 1, $$cr) !== null
+                    && ($scope$body = this.matchexecutable($$dpth + 1, $$cr)) !== null
+                    && this.regexAccept(String.raw`(?:\})`, $$dpth + 1, $$cr) !== null
+                ) {
+                    $$res = {kind: ASTKinds.scopedExecution, body: $scope$body};
+                }
+                return $$res;
+            }, $$cr)();
+    }
     public matchexecutable($$dpth: number, $$cr?: ContextRecorder): Nullable<executable> {
         return this.runner<executable>($$dpth,
             (log) => {
@@ -572,6 +607,7 @@ export class Parser {
             () => this.matchexecutable_$0_$0_3($$dpth + 1, $$cr),
             () => this.matchexecutable_$0_$0_4($$dpth + 1, $$cr),
             () => this.matchexecutable_$0_$0_5($$dpth + 1, $$cr),
+            () => this.matchexecutable_$0_$0_6($$dpth + 1, $$cr),
         ]);
     }
     public matchexecutable_$0_$0_1($$dpth: number, $$cr?: ContextRecorder): Nullable<executable_$0_$0_1> {
@@ -581,12 +617,15 @@ export class Parser {
         return this.matchvarDecl($$dpth + 1, $$cr);
     }
     public matchexecutable_$0_$0_3($$dpth: number, $$cr?: ContextRecorder): Nullable<executable_$0_$0_3> {
-        return this.matchassignment($$dpth + 1, $$cr);
+        return this.matchforLoop($$dpth + 1, $$cr);
     }
     public matchexecutable_$0_$0_4($$dpth: number, $$cr?: ContextRecorder): Nullable<executable_$0_$0_4> {
-        return this.matchfunctionCall($$dpth + 1, $$cr);
+        return this.matchassignment($$dpth + 1, $$cr);
     }
     public matchexecutable_$0_$0_5($$dpth: number, $$cr?: ContextRecorder): Nullable<executable_$0_$0_5> {
+        return this.matchfunctionCall($$dpth + 1, $$cr);
+    }
+    public matchexecutable_$0_$0_6($$dpth: number, $$cr?: ContextRecorder): Nullable<executable_$0_$0_6> {
         return this.matchexpression($$dpth + 1, $$cr);
     }
     public matchexpression($$dpth: number, $$cr?: ContextRecorder): Nullable<expression> {
@@ -735,6 +774,31 @@ export class Parser {
                 return $$res;
             }, $$cr)();
     }
+    public matchforLoop($$dpth: number, $$cr?: ContextRecorder): Nullable<forLoop> {
+        return this.runner<forLoop>($$dpth,
+            (log) => {
+                if (log) {
+                    log("forLoop");
+                }
+                let $scope$rowVar: Nullable<name>;
+                let $scope$value: Nullable<expression>;
+                let $scope$do: Nullable<scopedExecution>;
+                let $$res: Nullable<forLoop> = null;
+                if (true
+                    && this.regexAccept(String.raw`(?:for)`, $$dpth + 1, $$cr) !== null
+                    && this.loop<space>(() => this.matchspace($$dpth + 1, $$cr), false) !== null
+                    && ($scope$rowVar = this.matchname($$dpth + 1, $$cr)) !== null
+                    && this.loop<space>(() => this.matchspace($$dpth + 1, $$cr), false) !== null
+                    && this.regexAccept(String.raw`(?:in)`, $$dpth + 1, $$cr) !== null
+                    && this.loop<space>(() => this.matchspace($$dpth + 1, $$cr), false) !== null
+                    && ($scope$value = this.matchexpression($$dpth + 1, $$cr)) !== null
+                    && ($scope$do = this.matchscopedExecution($$dpth + 1, $$cr)) !== null
+                ) {
+                    $$res = {kind: ASTKinds.forLoop, rowVar: $scope$rowVar, value: $scope$value, do: $scope$do};
+                }
+                return $$res;
+            }, $$cr)();
+    }
     public matchobjectIndex($$dpth: number, $$cr?: ContextRecorder): Nullable<objectIndex> {
         return this.runner<objectIndex>($$dpth,
             (log) => {
@@ -808,21 +872,18 @@ export class Parser {
                 }
                 let $scope$name: Nullable<name>;
                 let $scope$params: Nullable<params>;
-                let $scope$body: Nullable<executable>;
+                let $scope$body: Nullable<scopedExecution>;
                 let $$res: Nullable<func> = null;
                 if (true
                     && this.loop<ws>(() => this.matchws($$dpth + 1, $$cr), true) !== null
-                    && this.regexAccept(String.raw`(?:public)`, $$dpth + 1, $$cr) !== null
+                    && this.regexAccept(String.raw`(?:pub)`, $$dpth + 1, $$cr) !== null
                     && this.loop<space>(() => this.matchspace($$dpth + 1, $$cr), false) !== null
-                    && this.regexAccept(String.raw`(?:function)`, $$dpth + 1, $$cr) !== null
+                    && this.regexAccept(String.raw`(?:func)`, $$dpth + 1, $$cr) !== null
                     && this.loop<space>(() => this.matchspace($$dpth + 1, $$cr), false) !== null
                     && ($scope$name = this.matchname($$dpth + 1, $$cr)) !== null
                     && this.loop<space>(() => this.matchspace($$dpth + 1, $$cr), true) !== null
                     && ($scope$params = this.matchparams($$dpth + 1, $$cr)) !== null
-                    && this.loop<ws>(() => this.matchws($$dpth + 1, $$cr), true) !== null
-                    && this.regexAccept(String.raw`(?:\{)`, $$dpth + 1, $$cr) !== null
-                    && ($scope$body = this.matchexecutable($$dpth + 1, $$cr)) !== null
-                    && this.regexAccept(String.raw`(?:\})`, $$dpth + 1, $$cr) !== null
+                    && ($scope$body = this.matchscopedExecution($$dpth + 1, $$cr)) !== null
                 ) {
                     $$res = {kind: ASTKinds.func, name: $scope$name, params: $scope$params, body: $scope$body};
                 }

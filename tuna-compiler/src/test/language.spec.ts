@@ -28,17 +28,17 @@ describe("language", () => {
         `)
     )
 
-    it("should allow empty public functions", 
-    tunaTest("succeed", `public function doSomething() {}`))
+    it("should allow empty pub funcs", 
+    tunaTest("succeed", `pub func doSomething() {}`))
 
     it("should allow a fixed number of args in functions",
-    tunaTest("succeed", `public function argy(a, b, c) {
+    tunaTest("succeed", `pub func argy(a, b, c) {
 
     }`)
     )
 
     it("should allow return statements within functions",
-    tunaTest("succeed", `public function returny() {
+    tunaTest("succeed", `pub func returny() {
         return
     }`))
 
@@ -47,7 +47,7 @@ describe("language", () => {
         tunaTest("succeed",
         `
         const gg = {}
-        public function fff(a) {
+        pub func fff(a) {
             gg.abc = a
             gg[a] = a
             gg['abc'] = a
@@ -61,7 +61,7 @@ describe("language", () => {
         tunaTest("succeed",
         `
         const gg = {}
-        public function fff(a) {
+        pub func fff(a) {
             return gg[a].field
         }
         `)
@@ -69,7 +69,7 @@ describe("language", () => {
 
     it('should allow bools, numbers, and strings', tunaTest("succeed", `
     
-    public function fff(a) {
+    pub func fff(a) {
         true
         false
         12
@@ -82,7 +82,7 @@ describe("language", () => {
     
     it('can declare temp variables', tunaTest("succeed", `
     
-    public function fff(a) {
+    pub func fff(a) {
         const b = true
         let c = false
         const d = a[b]
@@ -92,27 +92,27 @@ describe("language", () => {
 
     it('can overwrite inputs', tunaTest("succeed", `
     
-    public function fff(a) {
+    pub func fff(a) {
         a = false
     }
     `))
 
     it('cannot have duplicate variables', tunaTest("fail", `
     
-    public function fff(a) {
+    pub func fff(a) {
         const a = true
     }
     `))
 
     it('cannot have a variable with the same name as a function', tunaTest("fail", `
     
-    public function fff(a) {
+    pub func fff(a) {
         const fff = 12
     }
     `))
 
     it("does not allow overwriting constants", tunaTest("fail",`
-    public function fff(a) {
+    pub func fff(a) {
         const b = a
         b = 42
     }
@@ -130,7 +130,7 @@ describe("language", () => {
     it("allows users to call keys() on globals and locals", tunaTest("succeed",
     `
     const g = {}
-    public function f(a) {
+    pub func f(a) {
         const b = a.keys()
         const gk = g.keys()
     }
@@ -139,7 +139,7 @@ describe("language", () => {
 
     it("allows keys on nested object", tunaTest("succeed", 
     `
-    public function f(a) {
+    pub func f(a) {
         return a['b'].cdef.keys()
     }
     `
@@ -148,14 +148,14 @@ describe("language", () => {
     //Blocked by https://github.com/Conder-Systems/conder/issues/66
     it.skip("allows indexing into keys results", tunaTest("succeed",
     `
-    public function f(a) {
+    pub func f(a) {
         return a.keys()[0]
     }
     `))
 
     it("allows deleting of keys in objects", tunaTest("succeed",
     `
-    public function f(a) {
+    pub func f(a) {
         delete(a.b)
     }
     `
@@ -163,7 +163,7 @@ describe("language", () => {
 
     it("shouldn't allow deleting of whole variables", tunaTest("fail",
     `
-    public function f(b0) {
+    pub func f(b0) {
         delete(b0)
     }
     `
@@ -173,9 +173,34 @@ describe("language", () => {
     // delete should work on arrays like it does on objects
     it("allows deleting of array fields even though it produces a runtime error", tunaTest("succeed",
     `
-    public function f(b) {
+    pub func f(b) {
         delete(b[0])
     }
     `
+    ))
+
+    it("allows for loops", tunaTest(
+        "succeed",
+        `
+        pub func loop(arr) {
+            for row in arr {
+                return row
+            }
+        }
+        `    
+    ))
+
+    it("ensure variables declared in for loop are cleaned up", tunaTest(
+        "succeed",
+        `
+        const g = {}
+        pub func loop() {
+            for row in g.array {
+                let some_scoped_var = row
+            }
+            const should_be_at_index_0 = g.array
+            return should_be_at_index_0 
+        }
+        `
     ))
 })

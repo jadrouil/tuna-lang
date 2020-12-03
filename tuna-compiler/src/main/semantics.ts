@@ -3,20 +3,38 @@ import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest, ValueNod
 
 type ScopeMapEntry= "func" | "global" | {kind: "const" | "mut", index: number}
 class ScopeMap extends Map<string, ScopeMapEntry>  {
-    nextVar: number = 0
+    private nextVar: number = 0
+    private scopes: Set<string>[] = [new Set()]
     
     public get nextVariableIndex(): number {
         return this.nextVar
     }
 
+
     set(k: string, v: ScopeMapEntry): this {
         if (v !== "global" && v !== "func") {
             this.nextVar++
         }
+        if (this.has(k)) {
+            throw Error(`The name ${k} is initialized to multiple variables/functions.`)
+        }
         super.set(k, v)
+        const this_scope = this.scopes.pop()
+        this_scope.add(k)
+        this.scopes.push(this_scope)
         return this
     }
+    pushScope() {
+        this.scopes.push(new Set())
+    }
 
+    popScope() {
+        const popped = this.scopes.pop()
+        popped.forEach(v => {
+            this.delete(v)
+        })
+        this.nextVar = this.nextVar - popped.size
+    }
 
 }
 
@@ -256,9 +274,6 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
             case ASTKinds.varDecl: 
                 const value = to_value_node(expression_to_node(e.value.value, scope))
                 const index = scope.nextVariableIndex
-                if (scope.has(e.value.name.name)) {
-                    throw Error(`The symbol ${e.value.name.name} is already in use`)
-                }
                 scope.set(e.value.name.name, {kind: e.value.mutability === "const" ? "const" : "mut", index})
                 ret.push({
                     kind: "Save",
@@ -285,6 +300,21 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
                         kind: "DeleteField"
                     }
                 })
+                break
+
+            case ASTKinds.forLoop:
+                scope.pushScope()
+                const rowVar = scope.nextVariableIndex
+                scope.set(e.value.rowVar.name, {kind: "const", index: rowVar})
+                const loopDo = to_computation(e.value.do.body, scope)
+                const target = to_value_node(expression_to_node(e.value.value, scope))
+                ret.push({
+                    kind: 'ArrayForEach',
+                    do: loopDo,
+                    target
+                })
+                scope.popScope()
+                
                 break
             default: 
                 const n: never = e.value
@@ -313,7 +343,7 @@ function to_descr(f: func, scope: ScopeMap): FunctionDescription {
         
         return new FunctionDescription({
             input,
-            computation: to_computation(f.body, scope)
+            computation: to_computation(f.body.body, scope)
         })
     } catch(e) {
         throw Error(`In function ${f.name.name}: \n\t${e.message}`)
