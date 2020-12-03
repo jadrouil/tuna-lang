@@ -242,6 +242,20 @@ describe("language", () => {
             }
             `
         ))
+
+        it("else scope is cleaned up after each block", tunaTest(
+            "succeed",
+            `
+            pub func maybe(a) {
+                if a {
+                    let b = a
+                } else {
+                    let b = a
+                }
+                let b = a
+            }
+            `
+        ))
     })
     
 })

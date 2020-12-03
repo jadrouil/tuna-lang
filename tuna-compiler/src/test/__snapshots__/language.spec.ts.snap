@@ -443,6 +443,64 @@ Object {
 }
 `;
 
+exports[`language ifs else scope is cleaned up after each block: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "maybe" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "conditionally": Array [
+            Object {
+              "cond": Object {
+                "index": 0,
+                "kind": "Saved",
+              },
+              "do": Array [
+                Object {
+                  "kind": "Save",
+                  "value": Object {
+                    "index": 0,
+                    "kind": "Saved",
+                  },
+                },
+              ],
+              "kind": "Conditional",
+            },
+            Object {
+              "do": Array [
+                Object {
+                  "kind": "Save",
+                  "value": Object {
+                    "index": 0,
+                    "kind": "Saved",
+                  },
+                },
+              ],
+              "kind": "Else",
+            },
+          ],
+          "kind": "If",
+        },
+        Object {
+          "kind": "Save",
+          "value": Object {
+            "index": 0,
+            "kind": "Saved",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language ifs single simple if: intermediate representation 1`] = `
 Object {
   "funcs": Map {

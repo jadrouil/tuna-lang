@@ -328,12 +328,14 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
                     }]
                 }
                 scope.popScope()
+                scope.pushScope()
                 if (e.value.otherwise) {
                     this_if.conditionally.push({
                         kind: "Else",
                         do: to_computation(e.value.otherwise.do.body, scope)
                     })
                 }
+                scope.popScope()
                 ret.push(this_if)
                 
                 break
