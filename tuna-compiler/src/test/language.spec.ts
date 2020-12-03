@@ -203,4 +203,94 @@ describe("language", () => {
         }
         `
     ))
+
+    describe('ifs', () => {
+        it("single simple if", tunaTest(
+            "succeed",
+            `
+            pub func maybe(a) {
+                if a {
+                    return a
+                }
+            }
+            `
+        ))
+
+        it("cleans up variables in ifs", tunaTest(
+            "succeed",
+            `
+            pub func maybe(a) {
+                if a {
+                    let b = a
+                }
+                let b = a
+                return b
+            }
+            `
+        ))
+
+        it("allows elses", tunaTest(
+            "succeed",
+            `
+            pub func maybe(a) {
+                if a {
+
+                } 
+                else {
+                    return a
+                }
+            }
+            `
+        ))
+
+        it("else scope is cleaned up after each block", tunaTest(
+            "succeed",
+            `
+            pub func maybe(a) {
+                if a {
+                    let b = a
+                } else {
+                    let b = a
+                }
+                let b = a
+            }
+            `
+        ))
+
+        it("allows any number of else ifs", tunaTest(
+            "succeed",
+            `
+            pub func maybe(a) {
+                if a {
+                    return 'a'
+                } else if a.b {
+                    return 'b'
+                } else if a.c {
+                    return 'c'
+                } else {
+                    return 'd'
+                }
+            }
+            `
+        ))
+
+        it("cleans up variables across else ifs", tunaTest(
+            "succeed",
+            `
+            pub func maybe(a) {
+                if a {
+                    const b = a
+                } else if a.b {
+                    const b = a
+                } else if a.c {
+                    const b = a
+                } else {
+                    const b = a
+                }
+                const b = a
+            }
+            `
+        ))
+    })
+    
 })
