@@ -17,7 +17,7 @@ fields := value=field*
 space := ' '
 
 scopedExecution := ws* '\{' body=executable '\}'
-executable := ws* value={value={ret | varDecl | forLoop | assignment | functionCall | expression } ws+ }*
+executable := ws* value={value={ret | varDecl | forLoop | ifs | assignment | functionCall | expression } ws+ }*
 expression := !ret root={literal | name   } methods={method}*
 method := method={parameterIndex | funcMethod | literalIndex}
 
@@ -34,3 +34,5 @@ func := ws* 'pub' space+ 'func' space+ name=name space* params=params body=scope
 params := '\(' ws* leadingParams={name=name newLineOrComma ws*}* ws* lastParam={name}? ws* '\)'
 args := '\(' ws* leadingArgs={value=expression newLineOrComma ws*}* ws* lastArg={expression}? ws* '\)'
 assignment := target=expression space* equals space* value=expression
+
+ifs := 'if' space+ cond=expression do=scopedExecution

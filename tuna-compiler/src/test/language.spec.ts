@@ -203,4 +203,15 @@ describe("language", () => {
         }
         `
     ))
+
+    it("ifs", tunaTest(
+        "succeed",
+        `
+        pub func maybe(a) {
+            if a {
+                return a
+            }
+        }
+        `
+    ))
 })
