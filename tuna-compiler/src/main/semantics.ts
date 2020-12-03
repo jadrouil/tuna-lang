@@ -323,11 +323,21 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
                     kind: "If",
                     conditionally:  [{
                         kind: "Conditional",
-                        do: to_computation(e.value.do.body, scope),
-                        cond: to_value_node(expression_to_node(e.value.cond, scope))
+                        do: to_computation(e.value.if_this.do.body, scope),
+                        cond: to_value_node(expression_to_node(e.value.if_this.cond, scope))
                     }]
                 }
                 scope.popScope()
+
+                e.value.elifs.forEach(elif => {
+                    scope.pushScope()
+                    this_if.conditionally.push({
+                        kind: "Conditional",
+                        do: to_computation(elif.else_this.do.body, scope),
+                        cond: to_value_node(expression_to_node(elif.else_this.cond, scope))
+                    })
+                    scope.popScope()
+                })
                 scope.pushScope()
                 if (e.value.otherwise) {
                     this_if.conditionally.push({

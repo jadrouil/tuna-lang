@@ -35,5 +35,7 @@ params := '\(' ws* leadingParams={name=name newLineOrComma ws*}* ws* lastParam={
 args := '\(' ws* leadingArgs={value=expression newLineOrComma ws*}* ws* lastArg={expression}? ws* '\)'
 assignment := target=expression space* equals space* value=expression
 
-ifs := 'if' space+ cond=expression do=scopedExecution  otherwise={otherwise}?
-otherwise := ws* 'else' space+ do=scopedExecution
+conditionalExec := cond=expression do=scopedExecution
+ifs := 'if' space+ if_this={conditionalExec} elifs={elif}*  otherwise={otherwise}?
+elif := ws* 'else' space* 'if' space+ else_this={conditionalExec}
+otherwise := ws* 'else' do=scopedExecution
