@@ -18,9 +18,10 @@
 * space := ' '
 * executable := ws* value={value={ret | varDecl | assignment | expression } ws+ }*
 * expression := !ret root={literal | name   } methods={method}*
-* method := method={parameterIndex | literalIndex}
+* method := method={parameterIndex | funcMethod | literalIndex}
 * parameterIndex := '\[' space* value={expression} space* '\]'
 * literalIndex := '\.' value={name}
+* funcMethod := '\.' name=name args=args
 * objectIndex := obj=expression index={parameterIndex | literalIndex}
 * ret := 'return(?=\s)' space* value={'(?<= )' exp=expression}?
 * func := ws* 'public' space+ 'function' space+ name=name space* args=args ws* '\{' body=executable '\}'
@@ -77,10 +78,12 @@ export enum ASTKinds {
     method = "method",
     method_$0_1 = "method_$0_1",
     method_$0_2 = "method_$0_2",
+    method_$0_3 = "method_$0_3",
     parameterIndex = "parameterIndex",
     parameterIndex_$0 = "parameterIndex_$0",
     literalIndex = "literalIndex",
     literalIndex_$0 = "literalIndex_$0",
+    funcMethod = "funcMethod",
     objectIndex = "objectIndex",
     objectIndex_$0_1 = "objectIndex_$0_1",
     objectIndex_$0_2 = "objectIndex_$0_2",
@@ -181,9 +184,10 @@ export interface method {
     kind: ASTKinds.method;
     method: method_$0;
 }
-export type method_$0 = method_$0_1 | method_$0_2;
+export type method_$0 = method_$0_1 | method_$0_2 | method_$0_3;
 export type method_$0_1 = parameterIndex;
-export type method_$0_2 = literalIndex;
+export type method_$0_2 = funcMethod;
+export type method_$0_3 = literalIndex;
 export interface parameterIndex {
     kind: ASTKinds.parameterIndex;
     value: parameterIndex_$0;
@@ -194,6 +198,11 @@ export interface literalIndex {
     value: literalIndex_$0;
 }
 export type literalIndex_$0 = name;
+export interface funcMethod {
+    kind: ASTKinds.funcMethod;
+    name: name;
+    args: args;
+}
 export interface objectIndex {
     kind: ASTKinds.objectIndex;
     obj: expression;
@@ -607,12 +616,16 @@ export class Parser {
         return this.choice<method_$0>([
             () => this.matchmethod_$0_1($$dpth + 1, $$cr),
             () => this.matchmethod_$0_2($$dpth + 1, $$cr),
+            () => this.matchmethod_$0_3($$dpth + 1, $$cr),
         ]);
     }
     public matchmethod_$0_1($$dpth: number, $$cr?: ContextRecorder): Nullable<method_$0_1> {
         return this.matchparameterIndex($$dpth + 1, $$cr);
     }
     public matchmethod_$0_2($$dpth: number, $$cr?: ContextRecorder): Nullable<method_$0_2> {
+        return this.matchfuncMethod($$dpth + 1, $$cr);
+    }
+    public matchmethod_$0_3($$dpth: number, $$cr?: ContextRecorder): Nullable<method_$0_3> {
         return this.matchliteralIndex($$dpth + 1, $$cr);
     }
     public matchparameterIndex($$dpth: number, $$cr?: ContextRecorder): Nullable<parameterIndex> {
@@ -657,6 +670,25 @@ export class Parser {
     }
     public matchliteralIndex_$0($$dpth: number, $$cr?: ContextRecorder): Nullable<literalIndex_$0> {
         return this.matchname($$dpth + 1, $$cr);
+    }
+    public matchfuncMethod($$dpth: number, $$cr?: ContextRecorder): Nullable<funcMethod> {
+        return this.runner<funcMethod>($$dpth,
+            (log) => {
+                if (log) {
+                    log("funcMethod");
+                }
+                let $scope$name: Nullable<name>;
+                let $scope$args: Nullable<args>;
+                let $$res: Nullable<funcMethod> = null;
+                if (true
+                    && this.regexAccept(String.raw`(?:\.)`, $$dpth + 1, $$cr) !== null
+                    && ($scope$name = this.matchname($$dpth + 1, $$cr)) !== null
+                    && ($scope$args = this.matchargs($$dpth + 1, $$cr)) !== null
+                ) {
+                    $$res = {kind: ASTKinds.funcMethod, name: $scope$name, args: $scope$args};
+                }
+                return $$res;
+            }, $$cr)();
     }
     public matchobjectIndex($$dpth: number, $$cr?: ContextRecorder): Nullable<objectIndex> {
         return this.runner<objectIndex>($$dpth,

@@ -18,10 +18,11 @@ space := ' '
 
 executable := ws* value={value={ret | varDecl | assignment | expression } ws+ }*
 expression := !ret root={literal | name   } methods={method}*
-method := method={parameterIndex | literalIndex}
+method := method={parameterIndex | funcMethod | literalIndex}
 
 parameterIndex := '\[' space* value={expression} space* '\]'
 literalIndex := '\.' value={name}
+funcMethod := '\.' name=name args=args
 objectIndex := obj=expression index={parameterIndex | literalIndex}
 ret := 'return(?=\s)' space* value={'(?<= )' exp=expression}?
 func := ws* 'public' space+ 'function' space+ name=name space* args=args ws* '\{' body=executable '\}'
