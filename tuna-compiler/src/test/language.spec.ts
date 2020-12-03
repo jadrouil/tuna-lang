@@ -136,4 +136,12 @@ describe("language", () => {
     }
     `
     ))
+
+    it("allows keys on nested object", tunaTest("succeed", 
+    `
+    public function f(a) {
+        return a['b'].cdef.keys()
+    }
+    `
+    ))
 })

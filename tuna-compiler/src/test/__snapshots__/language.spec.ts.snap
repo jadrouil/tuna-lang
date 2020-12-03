@@ -1,5 +1,46 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`language allows keys on nested object: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Keys",
+            "target": Object {
+              "kind": "Selection",
+              "level": Array [
+                Object {
+                  "kind": "String",
+                  "value": "b",
+                },
+                Object {
+                  "kind": "String",
+                  "value": "cdef",
+                },
+              ],
+              "root": Object {
+                "index": 0,
+                "kind": "Saved",
+              },
+            },
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language allows users to call keys() on globals and locals: intermediate representation 1`] = `
 Object {
   "funcs": Map {
