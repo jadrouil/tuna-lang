@@ -125,6 +125,15 @@ describe("language", () => {
 
     it('globals must be empty objects', tunaTest("fail", `
     const someVar = false
-    
     `))
+
+    it("allows users to call keys() on globals and locals", tunaTest("succeed",
+    `
+    const g = {}
+    public function f(a) {
+        const b = a.keys()
+        const gk = g.keys()
+    }
+    `
+    ))
 })

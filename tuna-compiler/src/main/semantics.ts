@@ -99,28 +99,50 @@ function method_to_node(target: PickNode<"Saved" | "GlobalObject">, methods: exp
     if (methods.length === 0) {
         return target
     }
-    const fields: PickNode<"Selection">["level"] = []
-    methods.forEach(m => {
+    let current: PickNode<"Selection"> = {
+        kind: "Selection",
+        level: [],
+        root: target
+    }
+    
+    for (let i = 0; i < methods.length; i++) {
+        const m = methods[i];
         switch(m.method.kind) {
             case ASTKinds.literalIndex: 
-                fields.push({kind: "String", value: m.method.value.name})
+                current.level.push({kind: "String", value: m.method.value.name})
         
                 break
             case ASTKinds.parameterIndex:
                 const e = expression_to_node(m.method.value, scope)
-                fields.push(only(e, "String", "Saved"))
+                current.level.push(only(e, "String", "Saved"))
                 break
 
+            case ASTKinds.funcMethod: {
+                if (m.method.name.name !== "keys") {
+                    throw Error(`Unrecognized method ${m.method.name}`)
+                }
+                if (m.method.args.lastArg || m.method.args.leadingArgs.length > 0) {
+                    throw Error(`keys should be called with zero args.`)
+                }
+                if (i !== methods.length - 1) {
+                    throw Error(`Cannot call methods on keys results`)
+                }
+                return {
+                    kind: "Keys",
+                    target: current.level.length === 0 ? target : {
+                        kind: "Selection",
+                        level: current.level,
+                        root: current.root
+                    }
+                }
+            }
+                
             default: 
                 const n: never = m.method
         }
-    })
-    
-    return {
-        kind: "Selection",
-        root: target,
-        level: fields
     }
+    
+    return current
 }
 
 type Target = {root: PickNode<"Update">["root"], level: PickNode<"Update">["level"]}
@@ -153,11 +175,15 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
                         
                     case ASTKinds.parameterIndex:
                         return only(expression_to_node(m.method.value, scope), "String", "Saved")
+
+                    case ASTKinds.funcMethod:
+                        throw Error(`Cannot update the temporary value returned from a function`)
+
                     default: 
                         const n: never = m.method
               }
             })
-            return {root, level}
+            return {root, level} 
 
 
         default: throw Error(`Invalid assignment to ${exp.root.kind}`)
