@@ -121,7 +121,7 @@ function method_to_node(target: PickNode<"Saved" | "GlobalObject">, methods: exp
                 if (m.method.name.name !== "keys") {
                     throw Error(`Unrecognized method ${m.method.name}`)
                 }
-                if (m.method.args.lastArg || m.method.args.leadingArgs.length > 0) {
+                if (m.method.args.lastArg|| m.method.args.leadingArgs.length > 0) {
                     throw Error(`keys should be called with zero args.`)
                 }
                 if (i !== methods.length - 1) {
@@ -174,7 +174,7 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
                         }
                         
                     case ASTKinds.parameterIndex:
-                        return only(expression_to_node(m.method.value, scope), "String", "Saved")
+                        return to_value_node(expression_to_node(m.method.value, scope))
 
                     case ASTKinds.funcMethod:
                         throw Error(`Cannot update the temporary value returned from a function`)
@@ -265,6 +265,27 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
                     value,
                 })
                 break
+
+            case ASTKinds.functionCall:
+                if (e.value.name.name !== "delete") {
+                    throw Error(`At the moment, you can only call the delete() function.`)
+                }
+                if (e.value.args.leadingArgs.length !== 0 || e.value.args.lastArg == undefined) {
+                    throw Error(`Delete expects one argument`)
+                }
+                const {root, level} = expression_to_update_target(e.value.args.lastArg, scope)
+                if (level.length === 0) {
+                    throw Error(`Delete cannot be applied to whole variables`)
+                }
+                ret.push({
+                    kind: "Update",
+                    root,
+                    level,
+                    operation: {
+                        kind: "DeleteField"
+                    }
+                })
+                break
             default: 
                 const n: never = e.value
         }
@@ -275,11 +296,11 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
 function to_descr(f: func, scope: ScopeMap): FunctionDescription {
     try {
         const argList: string[] = []
-        if (f.args.leadingArgs.length > 0) {
-            argList.push(...f.args.leadingArgs.map(a => a.name.name))
+        if (f.params.leadingParams.length > 0) {
+            argList.push(...f.params.leadingParams.map(a => a.name.name))
         }
-        if (f.args.lastArg) {
-            argList.push(f.args.lastArg.name)
+        if (f.params.lastParam) {
+            argList.push(f.params.lastParam.name)
         }
         const input: FunctionDescription["input"] = []
         argList.forEach((a, i) => {

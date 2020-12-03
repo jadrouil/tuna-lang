@@ -152,4 +152,30 @@ describe("language", () => {
         return a.keys()[0]
     }
     `))
+
+    it("allows deleting of keys in objects", tunaTest("succeed",
+    `
+    public function f(a) {
+        delete(a.b)
+    }
+    `
+    ))
+
+    it("shouldn't allow deleting of whole variables", tunaTest("fail",
+    `
+    public function f(b0) {
+        delete(b0)
+    }
+    `
+    ))
+
+    // #dontlike 
+    // delete should work on arrays like it does on objects
+    it("allows deleting of array fields even though it produces a runtime error", tunaTest("succeed",
+    `
+    public function f(b) {
+        delete(b[0])
+    }
+    `
+    ))
 })
