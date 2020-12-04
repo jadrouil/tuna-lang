@@ -314,4 +314,19 @@ describe("language", () => {
             `
         ))
     })
+
+    describe("infix operators", () => {
+        it("+", tunaTest(
+            "succeed",
+            `
+            pub func double(a) {
+                return a + a
+            }
+
+            pub func zero(a) {
+                return a + -a
+            }
+            `
+        ))
+    })
 })

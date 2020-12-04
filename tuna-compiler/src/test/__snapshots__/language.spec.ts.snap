@@ -749,6 +749,72 @@ Object {
 }
 `;
 
+exports[`language infix operators +: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "double" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "right": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "sign": "+",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+    "zero" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "right": Object {
+              "kind": "Math",
+              "left": Object {
+                "index": 0,
+                "kind": "Saved",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": -1,
+              },
+              "sign": "*",
+            },
+            "sign": "+",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language only allows global constants 1`] = `"Global variable someVar must be const"`;
 
 exports[`language prefix operators - is shorthand for * -1: intermediate representation 1`] = `
