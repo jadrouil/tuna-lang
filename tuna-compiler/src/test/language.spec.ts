@@ -291,6 +291,15 @@ describe("language", () => {
             }
             `
         ))
+
+        it("can 'not' values", tunaTest(
+            "succeed",
+            `
+            pub func negate(a) {
+                return not a
+            }
+            `
+        ))
     })
     
 })

@@ -208,7 +208,23 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
     }
 }
 
+
 function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
+    if (exp.prefix) {
+        const prefix = exp.prefix.op
+        exp.prefix = undefined
+        switch (prefix.kind) {
+            case ASTKinds.not:
+                // Eventually make a not operator so none can be falsy too
+                return {
+                    kind: "Comparison",
+                    left: to_value_node(expression_to_node(exp, scope)),
+                    right: {kind: "Bool", value: false},
+                    sign: "=="
+                }
+            default: const n: never = prefix.kind
+        }
+    }
     switch(exp.root.kind) {
         case ASTKinds.bool:
         case ASTKinds.str:

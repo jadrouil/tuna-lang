@@ -491,6 +491,39 @@ Object {
 }
 `;
 
+exports[`language ifs can 'not' values: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "negate" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Comparison",
+            "left": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "right": Object {
+              "kind": "Bool",
+              "value": false,
+            },
+            "sign": "==",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language ifs cleans up variables across else ifs: intermediate representation 1`] = `
 Object {
   "funcs": Map {
