@@ -345,5 +345,14 @@ describe("language", () => {
             }
             `
         ))
+
+        it("/", tunaTest(
+            "succeed",
+            `
+            pub func half(a) {
+                return a / 2
+            }
+            `
+        ))
     })
 })

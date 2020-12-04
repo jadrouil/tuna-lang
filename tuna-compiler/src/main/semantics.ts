@@ -212,7 +212,8 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
 const signToConder: Record<infixOps_$0["kind"], Sign> = {
     "minus": "-",
     "plus": "+",
-    "mult": "*"
+    "mult": "*",
+    "divide": "/"
 }
 
 function get_all_infix(exp: expression): [Sign, expression][]{

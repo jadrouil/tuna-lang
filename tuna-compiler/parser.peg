@@ -26,7 +26,8 @@ minus := space* '-' space*
 mult := space* '\*' space*
 prefixOps := op={not | minus}
 plus := space* '\+' space*
-infixOps := op={plus | minus | mult}
+divide := space* '\/' space*
+infixOps := op={plus | minus | mult | divide}
 
 functionCall := name=name args=args
 parameterIndex := '\[' space* value={expression} space* '\]'
