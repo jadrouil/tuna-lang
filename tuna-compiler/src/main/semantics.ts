@@ -253,7 +253,13 @@ function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
                     right: excluding(to_value_node(expression_to_node(infix.arg, scope)), "GlobalObject"),
                     sign: "+"
                 }
-                
+            case ASTKinds.mult:
+                return {
+                    kind: "Math",
+                    left: excluding(to_value_node(expression_to_node(exp, scope)), "GlobalObject"),
+                    right: excluding(to_value_node(expression_to_node(infix.arg, scope)), "GlobalObject"),
+                    sign: "*"
+                }
             default: 
                 const n: never = infix.sign.op
         }

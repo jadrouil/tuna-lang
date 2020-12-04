@@ -749,6 +749,39 @@ Object {
 }
 `;
 
+exports[`language infix operators *: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "exponent" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "right": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "sign": "*",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language infix operators +: intermediate representation 1`] = `
 Object {
   "funcs": Map {

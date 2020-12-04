@@ -328,5 +328,14 @@ describe("language", () => {
             }
             `
         ))
+
+        it("*", tunaTest(
+            "succeed",
+            `
+            pub func exponent(a) {
+                return a * a
+            }
+            `
+        ))
     })
 })
