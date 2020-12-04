@@ -749,6 +749,66 @@ Object {
 }
 `;
 
+exports[`language infix operators * / * / * : intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Int",
+              "value": 12,
+            },
+            "right": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Math",
+                  "left": Object {
+                    "kind": "Math",
+                    "left": Object {
+                      "kind": "Int",
+                      "value": 2,
+                    },
+                    "right": Object {
+                      "kind": "Int",
+                      "value": 4,
+                    },
+                    "sign": "/",
+                  },
+                  "right": Object {
+                    "kind": "Int",
+                    "value": 3,
+                  },
+                  "sign": "*",
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 9,
+                },
+                "sign": "/",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 6,
+              },
+              "sign": "*",
+            },
+            "sign": "*",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language infix operators * / priority: intermediate representation 1`] = `
 Object {
   "funcs": Map {
@@ -933,6 +993,138 @@ Object {
 }
 `;
 
+exports[`language infix operators divide divide then multiply: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "t" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Int",
+              "value": 100,
+            },
+            "right": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "sign": "*",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 42,
+              },
+              "sign": "/",
+            },
+            "sign": "/",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators divide divide: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "t" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Int",
+                "value": 100,
+              },
+              "right": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "sign": "*",
+              },
+              "sign": "/",
+            },
+            "right": Object {
+              "kind": "Int",
+              "value": 99,
+            },
+            "sign": "+",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators divide multiply divide: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "t" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Int",
+              "value": 10,
+            },
+            "right": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 2,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 4,
+                },
+                "sign": "/",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 2,
+              },
+              "sign": "*",
+            },
+            "sign": "/",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language infix operators math ordering: intermediate representation 1`] = `
 Object {
   "funcs": Map {
@@ -976,6 +1168,242 @@ Object {
           "kind": "Any",
         },
       ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators minus minus plus: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 5,
+                },
+                "sign": "-",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 5,
+              },
+              "sign": "-",
+            },
+            "right": Object {
+              "kind": "Int",
+              "value": 10,
+            },
+            "sign": "+",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators multiple parts summed: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "t" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "sign": "*",
+              },
+              "right": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 7,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 7,
+                },
+                "sign": "*",
+              },
+              "sign": "+",
+            },
+            "right": Object {
+              "kind": "Int",
+              "value": 51,
+            },
+            "sign": "-",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators multiply divide divide: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Int",
+              "value": 100,
+            },
+            "right": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 2,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 25,
+                },
+                "sign": "/",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 8,
+              },
+              "sign": "/",
+            },
+            "sign": "*",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators multiply multiply divide multiply: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Int",
+              "value": 10,
+            },
+            "right": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Math",
+                  "left": Object {
+                    "kind": "Int",
+                    "value": 10,
+                  },
+                  "right": Object {
+                    "kind": "Int",
+                    "value": 10,
+                  },
+                  "sign": "*",
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 500,
+                },
+                "sign": "/",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 0.5,
+              },
+              "sign": "*",
+            },
+            "sign": "*",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators plus plus minus: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "sign": "+",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 10,
+              },
+              "sign": "+",
+            },
+            "right": Object {
+              "kind": "Int",
+              "value": 30,
+            },
+            "sign": "-",
+          },
+        },
+      ],
+      "input": Array [],
     },
   },
   "globals": Map {},

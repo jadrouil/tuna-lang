@@ -363,8 +363,86 @@ describe("language", () => {
                 return 1 - 2 * 3 / 4 + 10
             }
             `
-        )
-        
-        )
+        ))
+
+        it("divide divide", tunaTest(
+            "succeed",
+            `
+            pub func t() {
+                return 100 / 10 / 10 + 99
+            }
+            `
+        ))
+        it("divide divide then multiply", tunaTest(
+            "succeed",
+            `
+            pub func t() {
+                return 100 / 10 / 10 * 42
+            }
+            `
+        ))
+
+        it("multiple parts summed", tunaTest(
+            "succeed",
+            `
+            pub func t() {
+                return 10 * 10 + 7 * 7 - 51
+            }
+            `
+        ))
+
+        it("divide multiply divide", tunaTest(
+            "succeed",
+            `
+            pub func t() {
+                return 10 / 2 * 4 / 2
+            }
+            `
+        ))
+
+        it("multiply multiply divide multiply", tunaTest(
+            "succeed",
+            `
+            pub func f() {
+                return 10 * 10 * 10 / 500 * 0.5
+            }
+            `
+        ))
+
+        it("minus minus plus", tunaTest(
+            "succeed",
+            `
+            pub func f() {
+                return 10 - 5 - 5 + 10
+            }
+            `
+        ))
+
+        it("plus plus minus", tunaTest(
+            "succeed",
+            `
+            pub func f() {
+                return 10 + 10 + 10 - 30
+            }
+            `
+        ))
+
+        it("multiply divide divide", tunaTest(
+            "succeed",
+            `
+            pub func f() {
+                return 100 * 2 / 25 / 8
+            }
+            `
+        ))
+
+        it("* / * / * ", tunaTest(
+            "succeed",
+            `
+            pub func f() {
+                return 12 * 2 / 4 * 3 / 9 * 6
+            }
+            `
+        ))
     })
 })
