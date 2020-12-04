@@ -337,5 +337,13 @@ describe("language", () => {
             }
             `
         ))
+        it("math ordering", tunaTest(
+            "succeed",
+            `
+            pub func check_ordering(a) {
+                return 10 - a * a + 10
+            }
+            `
+        ))
     })
 })
