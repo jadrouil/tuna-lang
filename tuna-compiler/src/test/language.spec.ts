@@ -292,6 +292,10 @@ describe("language", () => {
             `
         ))
 
+        
+    })
+
+    describe("prefix operators", () => {
         it("can 'not' values", tunaTest(
             "succeed",
             `
@@ -300,6 +304,14 @@ describe("language", () => {
             }
             `
         ))
+
+        it("- is shorthand for * -1",  tunaTest(
+            "succeed",
+            `
+            pub func min(a) {
+                return -a 
+            }
+            `
+        ))
     })
-    
 })

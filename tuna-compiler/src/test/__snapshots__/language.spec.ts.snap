@@ -491,39 +491,6 @@ Object {
 }
 `;
 
-exports[`language ifs can 'not' values: intermediate representation 1`] = `
-Object {
-  "funcs": Map {
-    "negate" => FunctionDescription {
-      "computation": Array [
-        Object {
-          "kind": "Return",
-          "value": Object {
-            "kind": "Comparison",
-            "left": Object {
-              "index": 0,
-              "kind": "Saved",
-            },
-            "right": Object {
-              "kind": "Bool",
-              "value": false,
-            },
-            "sign": "==",
-          },
-        },
-      ],
-      "input": Array [
-        Object {
-          "data": undefined,
-          "kind": "Any",
-        },
-      ],
-    },
-  },
-  "globals": Map {},
-}
-`;
-
 exports[`language ifs cleans up variables across else ifs: intermediate representation 1`] = `
 Object {
   "funcs": Map {
@@ -783,6 +750,72 @@ Object {
 `;
 
 exports[`language only allows global constants 1`] = `"Global variable someVar must be const"`;
+
+exports[`language prefix operators - is shorthand for * -1: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "min" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "right": Object {
+              "kind": "Int",
+              "value": -1,
+            },
+            "sign": "*",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language prefix operators can 'not' values: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "negate" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Comparison",
+            "left": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "right": Object {
+              "kind": "Bool",
+              "value": false,
+            },
+            "sign": "==",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
 
 exports[`language should allow a fixed number of args in functions: intermediate representation 1`] = `
 Object {

@@ -211,9 +211,9 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
 
 function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
     if (exp.prefix) {
-        const prefix = exp.prefix.op
+        const prefix = exp.prefix.op.kind
         exp.prefix = undefined
-        switch (prefix.kind) {
+        switch (prefix) {
             case ASTKinds.not:
                 // Eventually make a not operator so none can be falsy too
                 return {
@@ -222,7 +222,18 @@ function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
                     right: {kind: "Bool", value: false},
                     sign: "=="
                 }
-            default: const n: never = prefix.kind
+
+            case ASTKinds.minus: 
+                return {
+                    kind: "Math",
+                    left: excluding(to_value_node(expression_to_node(exp, scope)), "GlobalObject"),
+                    right: {kind: "Int", value: -1},
+                    sign: "*"
+                }
+
+            
+            default: 
+                const n: never = prefix
         }
     }
     switch(exp.root.kind) {
