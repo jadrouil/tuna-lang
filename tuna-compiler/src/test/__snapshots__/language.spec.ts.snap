@@ -749,6 +749,58 @@ Object {
 }
 `;
 
+exports[`language infix operators * / priority: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "test" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Int",
+                "value": 1,
+              },
+              "right": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Math",
+                  "left": Object {
+                    "kind": "Int",
+                    "value": 2,
+                  },
+                  "right": Object {
+                    "kind": "Int",
+                    "value": 3,
+                  },
+                  "sign": "*",
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 4,
+                },
+                "sign": "/",
+              },
+              "sign": "-",
+            },
+            "right": Object {
+              "kind": "Int",
+              "value": 10,
+            },
+            "sign": "+",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language infix operators *: intermediate representation 1`] = `
 Object {
   "funcs": Map {

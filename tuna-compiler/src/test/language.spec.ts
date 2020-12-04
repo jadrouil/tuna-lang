@@ -354,5 +354,17 @@ describe("language", () => {
             }
             `
         ))
+
+        it("* / priority", tunaTest(
+
+            "succeed",
+            `
+            pub func test() {
+                return 1 - 2 * 3 / 4 + 10
+            }
+            `
+        )
+        
+        )
     })
 })
