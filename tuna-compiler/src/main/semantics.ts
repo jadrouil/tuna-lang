@@ -231,7 +231,6 @@ function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
                     sign: "*"
                 }
 
-            
             default: 
                 const n: never = prefix
         }
