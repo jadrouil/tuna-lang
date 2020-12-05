@@ -1,4 +1,5 @@
-import { ParseResult, executable, ASTKinds, func, expression, literal } from "./parser";
+import { MathExpression, MathInfix, Ordering, AnyInfix } from './math';
+import { ParseResult, executable, ASTKinds, func, expression, literal, infixOps_$0 } from "./parser";
 import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest, ValueNode, FunctionData} from "conder_core"
 
 type ScopeMapEntry= "func" | "global" | {kind: "const" | "mut", index: number}
@@ -131,11 +132,11 @@ function method_to_node(target: PickNode<"Saved" | "GlobalObject">, methods: exp
         
                 break
             case ASTKinds.parameterIndex:
-                const e = expression_to_node(m.method.value, scope)
+                const e = complete_expression_to_node(m.method.value, scope)
                 current.level.push(only(e, "String", "Saved"))
                 break
 
-            case ASTKinds.funcMethod: {
+            case ASTKinds.methodInvoke: {
                 if (m.method.name.name !== "keys") {
                     throw Error(`Unrecognized method ${m.method.name}`)
                 }
@@ -192,9 +193,9 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
                         }
                         
                     case ASTKinds.parameterIndex:
-                        return to_value_node(expression_to_node(m.method.value, scope))
+                        return to_value_node(complete_expression_to_node(m.method.value, scope))
 
-                    case ASTKinds.funcMethod:
+                    case ASTKinds.methodInvoke:
                         throw Error(`Cannot update the temporary value returned from a function`)
 
                     default: 
@@ -208,7 +209,70 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
     }
 }
 
+const signToConder: Record<infixOps_$0["kind"], AnyInfix> = {
+    "minus": "-",
+    "plus": "+",
+    "mult": "*",
+    "divide": "/",
+    "eq": "==",
+    "geq": ">=",
+    "gt": '>',
+    "lt": "<",
+    "neq": "!=",
+    "leq": "<=",
+    "and": "and",
+    "or": "or"
+}
+
+function get_all_infix(exp: expression): [AnyInfix, expression][]{
+    if (exp.infix != undefined) {
+        return [[signToConder[exp.infix.sign.op.kind], exp.infix.arg], ...get_all_infix(exp.infix.arg)]
+    } else {
+        return []
+    }
+}
+
+function complete_expression_to_node(root_exp: expression, scope: ScopeMap): AnyNode {
+    
+    
+    const root = to_value_node(expression_to_node(root_exp, scope))
+    let entirity: MathExpression = new Ordering(excluding(root, "GlobalObject"))
+    const infixes = get_all_infix(root_exp)
+    infixes.forEach(([sign, exp]) => {
+        entirity = entirity.then(sign, excluding(to_value_node(expression_to_node(exp, scope)), "GlobalObject"))
+    })
+    
+    return entirity.build()
+}
+
+// Does not evaluate infix operators
 function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
+    if (exp.prefix) {
+        const prefix = exp.prefix.op.kind
+        exp.prefix = undefined
+        switch (prefix) {
+            case ASTKinds.not:
+                // Eventually make a not operator so none can be falsy too
+                return {
+                    kind: "Comparison",
+                    left: to_value_node(complete_expression_to_node(exp, scope)),
+                    right: {kind: "Bool", value: false},
+                    sign: "=="
+                }
+
+            case ASTKinds.minus: 
+                return {
+                    kind: "Math",
+                    left: excluding(to_value_node(complete_expression_to_node(exp, scope)), "GlobalObject"),
+                    right: {kind: "Int", value: -1},
+                    sign: "*"
+                }
+
+            default: 
+                const n: never = prefix
+        }
+    }
+
     switch(exp.root.kind) {
         case ASTKinds.bool:
         case ASTKinds.str:
@@ -235,8 +299,8 @@ function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
         default: 
             const n: never = exp.root
     }
-    
 }
+
 
 function to_computation(ex: executable, scope: ScopeMap): FunctionData["computation"] {
     const ret: FunctionDescription["computation"] = []
@@ -246,7 +310,7 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
             case ASTKinds.ret:
                 ret.push({
                     kind: "Return", 
-                    value: e.value.value !== null ? to_value_node(expression_to_node(e.value.value.exp, scope)) : undefined
+                    value: e.value.value !== null ? to_value_node(complete_expression_to_node(e.value.value.exp, scope)) : undefined
                     }
                 )
                 break
@@ -255,7 +319,7 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
             case ASTKinds.assignment: {
                 const target: Target = expression_to_update_target(e.value.target, scope)
                 // This needs to also accept mutations
-                const value: PickNode<"Update">["operation"] = to_value_node(expression_to_node(e.value.value, scope))
+                const value: PickNode<"Update">["operation"] = to_value_node(complete_expression_to_node(e.value.value, scope))
                 
                 ret.push({
                     kind: "Update",
@@ -266,13 +330,13 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
                 break
             }
             case ASTKinds.expression: {
-                cbOnly(expression_to_node(e.value, scope), ret.push, "Return", "If", "Save", "Update")
+                cbOnly(complete_expression_to_node(e.value, scope), ret.push, "Return", "If", "Save", "Update")
                 
                 break
             }
 
             case ASTKinds.varDecl: 
-                const value = to_value_node(expression_to_node(e.value.value, scope))
+                const value = to_value_node(complete_expression_to_node(e.value.value, scope))
                 const index = scope.nextVariableIndex
                 scope.set(e.value.name.name, {kind: e.value.mutability === "const" ? "const" : "mut", index})
                 ret.push({
@@ -307,7 +371,7 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
                 const rowVar = scope.nextVariableIndex
                 scope.set(e.value.rowVar.name, {kind: "const", index: rowVar})
                 const loopDo = to_computation(e.value.do.body, scope)
-                const target = to_value_node(expression_to_node(e.value.value, scope))
+                const target = to_value_node(complete_expression_to_node(e.value.value, scope))
                 ret.push({
                     kind: 'ArrayForEach',
                     do: loopDo,
@@ -324,7 +388,7 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
                     conditionally:  [{
                         kind: "Conditional",
                         do: to_computation(e.value.if_this.do.body, scope),
-                        cond: to_value_node(expression_to_node(e.value.if_this.cond, scope))
+                        cond: to_value_node(complete_expression_to_node(e.value.if_this.cond, scope))
                     }]
                 }
                 scope.popScope()
@@ -334,7 +398,7 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
                     this_if.conditionally.push({
                         kind: "Conditional",
                         do: to_computation(elif.else_this.do.body, scope),
-                        cond: to_value_node(expression_to_node(elif.else_this.cond, scope))
+                        cond: to_value_node(complete_expression_to_node(elif.else_this.cond, scope))
                     })
                     scope.popScope()
                 })
@@ -435,7 +499,11 @@ export function semantify(p: ParseResult): Manifest {
     })
 
 
-    aFunc.forEach(f => funcs.set(f.name.name, to_descr(f, globalScope)))
+    aFunc.forEach(f => {
+        globalScope.pushScope()
+        funcs.set(f.name.name, to_descr(f, globalScope))
+        globalScope.popScope()
+    })
 
     return  {
         globals: globs,

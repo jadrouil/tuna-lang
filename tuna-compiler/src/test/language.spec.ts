@@ -291,6 +291,211 @@ describe("language", () => {
             }
             `
         ))
+
+        
     })
-    
+
+    describe("prefix operators", () => {
+        it("can 'not' values", tunaTest(
+            "succeed",
+            `
+            pub func negate(a) {
+                return not a
+            }
+            `
+        ))
+
+        it("- is shorthand for * -1",  tunaTest(
+            "succeed",
+            `
+            pub func min(a) {
+                return -a 
+            }
+            `
+        ))
+    })
+
+    describe("infix operators", () => {
+        it("+", tunaTest(
+            "succeed",
+            `
+            pub func double(a) {
+                return a + a
+            }
+
+            pub func zero(a) {
+                return a + -a
+            }
+            `
+        ))
+
+        it("*", tunaTest(
+            "succeed",
+            `
+            pub func exponent(a) {
+                return a * a
+            }
+            `
+        ))
+        it("math ordering", tunaTest(
+            "succeed",
+            `
+            pub func check_ordering(a) {
+                return 10 - a * a + 10
+            }
+            `
+        ))
+
+        it("/", tunaTest(
+            "succeed",
+            `
+            pub func half(a) {
+                return a / 2
+            }
+            `
+        ))
+
+        it("* / priority", tunaTest(
+
+            "succeed",
+            `
+            pub func test() {
+                return 1 - 2 * 3 / 4 + 10
+            }
+            `
+        ))
+
+        it("divide divide", tunaTest(
+            "succeed",
+            `
+            pub func t() {
+                return 100 / 10 / 10 + 99
+            }
+            `
+        ))
+        it("divide divide then multiply", tunaTest(
+            "succeed",
+            `
+            pub func t() {
+                return 100 / 10 / 10 * 42
+            }
+            `
+        ))
+
+        it("multiple parts summed", tunaTest(
+            "succeed",
+            `
+            pub func t() {
+                return 10 * 10 + 7 * 7 - 51
+            }
+            `
+        ))
+
+        it("divide multiply divide", tunaTest(
+            "succeed",
+            `
+            pub func t() {
+                return 10 / 2 * 4 / 2
+            }
+            `
+        ))
+
+        it("multiply multiply divide multiply", tunaTest(
+            "succeed",
+            `
+            pub func f() {
+                return 10 * 10 * 10 / 500 * 0.5
+            }
+            `
+        ))
+
+        it("minus minus plus", tunaTest(
+            "succeed",
+            `
+            pub func f() {
+                return 10 - 5 - 5 + 10
+            }
+            `
+        ))
+
+        it("plus plus minus", tunaTest(
+            "succeed",
+            `
+            pub func f() {
+                return 10 + 10 + 10 - 30
+            }
+            `
+        ))
+
+        it("multiply divide divide", tunaTest(
+            "succeed",
+            `
+            pub func f() {
+                return 100 * 2 / 25 / 8
+            }
+            `
+        ))
+
+        it("* / * / * ", tunaTest(
+            "succeed",
+            `
+            pub func f() {
+                return 12 * 2 / 4 * 3 / 9 * 6
+            }
+            `
+        ))
+
+        it("==", tunaTest(
+            "succeed",
+            `
+            pub func comps(a) {
+                if a == 12 {
+
+                } else if a <= 1 {
+
+                } else if a < 2 {
+
+                } else if a > 3 {
+
+                } else if a >= 4 {
+
+                } else if a != 21 {
+
+                }
+            }
+            `
+        ))
+
+        it("should allow mixing of comparisons and math", tunaTest(
+            "succeed",
+            `
+            pub func t() {
+                return 1 + 1 == 3 - 1
+            }
+            `
+        ))
+
+        it("allows ands and or", tunaTest(
+            "succeed",
+            `
+            pub func t() {
+                return true and true
+            }
+
+            pub func f() {
+                return false or false
+            }
+            `
+        ))
+
+        it("infers intent when mixing comparisons and boolean expressions", tunaTest(
+            "succeed",
+            `
+            pub func test() {
+                return 12 < 13 and 15 > 16
+            }
+            `
+        ))
+
+    })
 })

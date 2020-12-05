@@ -749,7 +749,989 @@ Object {
 }
 `;
 
+exports[`language infix operators * / * / * : intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Int",
+              "value": 12,
+            },
+            "right": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Math",
+                  "left": Object {
+                    "kind": "Math",
+                    "left": Object {
+                      "kind": "Int",
+                      "value": 2,
+                    },
+                    "right": Object {
+                      "kind": "Int",
+                      "value": 4,
+                    },
+                    "sign": "/",
+                  },
+                  "right": Object {
+                    "kind": "Int",
+                    "value": 3,
+                  },
+                  "sign": "*",
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 9,
+                },
+                "sign": "/",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 6,
+              },
+              "sign": "*",
+            },
+            "sign": "*",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators * / priority: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "test" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Int",
+                "value": 1,
+              },
+              "right": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Math",
+                  "left": Object {
+                    "kind": "Int",
+                    "value": 2,
+                  },
+                  "right": Object {
+                    "kind": "Int",
+                    "value": 3,
+                  },
+                  "sign": "*",
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 4,
+                },
+                "sign": "/",
+              },
+              "sign": "-",
+            },
+            "right": Object {
+              "kind": "Int",
+              "value": 10,
+            },
+            "sign": "+",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators *: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "exponent" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "right": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "sign": "*",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators +: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "double" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "right": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "sign": "+",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+    "zero" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "right": Object {
+              "kind": "Math",
+              "left": Object {
+                "index": 0,
+                "kind": "Saved",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": -1,
+              },
+              "sign": "*",
+            },
+            "sign": "+",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators /: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "half" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "right": Object {
+              "kind": "Int",
+              "value": 2,
+            },
+            "sign": "/",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators ==: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "comps" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "conditionally": Array [
+            Object {
+              "cond": Object {
+                "kind": "Comparison",
+                "left": Object {
+                  "index": 0,
+                  "kind": "Saved",
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 12,
+                },
+                "sign": "==",
+              },
+              "do": Array [],
+              "kind": "Conditional",
+            },
+            Object {
+              "cond": Object {
+                "kind": "Comparison",
+                "left": Object {
+                  "index": 0,
+                  "kind": "Saved",
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 1,
+                },
+                "sign": "<=",
+              },
+              "do": Array [],
+              "kind": "Conditional",
+            },
+            Object {
+              "cond": Object {
+                "kind": "Comparison",
+                "left": Object {
+                  "index": 0,
+                  "kind": "Saved",
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 2,
+                },
+                "sign": "<",
+              },
+              "do": Array [],
+              "kind": "Conditional",
+            },
+            Object {
+              "cond": Object {
+                "kind": "Comparison",
+                "left": Object {
+                  "index": 0,
+                  "kind": "Saved",
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 3,
+                },
+                "sign": ">",
+              },
+              "do": Array [],
+              "kind": "Conditional",
+            },
+            Object {
+              "cond": Object {
+                "kind": "Comparison",
+                "left": Object {
+                  "index": 0,
+                  "kind": "Saved",
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 4,
+                },
+                "sign": ">=",
+              },
+              "do": Array [],
+              "kind": "Conditional",
+            },
+            Object {
+              "cond": Object {
+                "kind": "Comparison",
+                "left": Object {
+                  "index": 0,
+                  "kind": "Saved",
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 21,
+                },
+                "sign": "!=",
+              },
+              "do": Array [],
+              "kind": "Conditional",
+            },
+          ],
+          "kind": "If",
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators allows ands and or: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "t" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "BoolAlg",
+            "left": Object {
+              "kind": "Bool",
+              "value": true,
+            },
+            "right": Object {
+              "kind": "Bool",
+              "value": true,
+            },
+            "sign": "and",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "BoolAlg",
+            "left": Object {
+              "kind": "Bool",
+              "value": false,
+            },
+            "right": Object {
+              "kind": "Bool",
+              "value": false,
+            },
+            "sign": "or",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators divide divide then multiply: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "t" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Int",
+              "value": 100,
+            },
+            "right": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "sign": "*",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 42,
+              },
+              "sign": "/",
+            },
+            "sign": "/",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators divide divide: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "t" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Int",
+                "value": 100,
+              },
+              "right": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "sign": "*",
+              },
+              "sign": "/",
+            },
+            "right": Object {
+              "kind": "Int",
+              "value": 99,
+            },
+            "sign": "+",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators divide multiply divide: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "t" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Int",
+              "value": 10,
+            },
+            "right": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 2,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 4,
+                },
+                "sign": "/",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 2,
+              },
+              "sign": "*",
+            },
+            "sign": "/",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators infers intent when mixing comparisons and boolean expressions: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "test" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "BoolAlg",
+            "left": Object {
+              "kind": "Comparison",
+              "left": Object {
+                "kind": "Int",
+                "value": 12,
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 13,
+              },
+              "sign": "<",
+            },
+            "right": Object {
+              "kind": "Comparison",
+              "left": Object {
+                "kind": "Int",
+                "value": 15,
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 16,
+              },
+              "sign": ">",
+            },
+            "sign": "and",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators math ordering: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "check_ordering" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Int",
+                "value": 10,
+              },
+              "right": Object {
+                "kind": "Math",
+                "left": Object {
+                  "index": 0,
+                  "kind": "Saved",
+                },
+                "right": Object {
+                  "index": 0,
+                  "kind": "Saved",
+                },
+                "sign": "*",
+              },
+              "sign": "-",
+            },
+            "right": Object {
+              "kind": "Int",
+              "value": 10,
+            },
+            "sign": "+",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators minus minus plus: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 5,
+                },
+                "sign": "-",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 5,
+              },
+              "sign": "-",
+            },
+            "right": Object {
+              "kind": "Int",
+              "value": 10,
+            },
+            "sign": "+",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators multiple parts summed: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "t" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "sign": "*",
+              },
+              "right": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 7,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 7,
+                },
+                "sign": "*",
+              },
+              "sign": "+",
+            },
+            "right": Object {
+              "kind": "Int",
+              "value": 51,
+            },
+            "sign": "-",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators multiply divide divide: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Int",
+              "value": 100,
+            },
+            "right": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 2,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 25,
+                },
+                "sign": "/",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 8,
+              },
+              "sign": "/",
+            },
+            "sign": "*",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators multiply multiply divide multiply: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Int",
+              "value": 10,
+            },
+            "right": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Math",
+                  "left": Object {
+                    "kind": "Int",
+                    "value": 10,
+                  },
+                  "right": Object {
+                    "kind": "Int",
+                    "value": 10,
+                  },
+                  "sign": "*",
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 500,
+                },
+                "sign": "/",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 0.5,
+              },
+              "sign": "*",
+            },
+            "sign": "*",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators plus plus minus: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Math",
+                "left": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 10,
+                },
+                "sign": "+",
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 10,
+              },
+              "sign": "+",
+            },
+            "right": Object {
+              "kind": "Int",
+              "value": 30,
+            },
+            "sign": "-",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators should allow mixing of comparisons and math: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "t" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Comparison",
+            "left": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Int",
+                "value": 1,
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 1,
+              },
+              "sign": "+",
+            },
+            "right": Object {
+              "kind": "Math",
+              "left": Object {
+                "kind": "Int",
+                "value": 3,
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 1,
+              },
+              "sign": "-",
+            },
+            "sign": "==",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language only allows global constants 1`] = `"Global variable someVar must be const"`;
+
+exports[`language prefix operators - is shorthand for * -1: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "min" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "right": Object {
+              "kind": "Int",
+              "value": -1,
+            },
+            "sign": "*",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language prefix operators can 'not' values: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "negate" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Comparison",
+            "left": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "right": Object {
+              "kind": "Bool",
+              "value": false,
+            },
+            "sign": "==",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
 
 exports[`language should allow a fixed number of args in functions: intermediate representation 1`] = `
 Object {
