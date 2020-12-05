@@ -497,5 +497,14 @@ describe("language", () => {
             `
         ))
 
+        it("make sure and suffixes on names aren't mistaken for infixes", tunaTest(
+            "succeed",
+            `
+            pub func test(wand) {
+                return wand
+            }
+            `
+        ))
+
     })
 })
