@@ -1336,6 +1336,31 @@ Object {
 }
 `;
 
+exports[`language infix operators make sure and suffixes on names aren't mistaken for infixes: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "test" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "index": 0,
+            "kind": "Saved",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language infix operators math ordering: intermediate representation 1`] = `
 Object {
   "funcs": Map {
