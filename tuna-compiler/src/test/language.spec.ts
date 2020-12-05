@@ -474,5 +474,28 @@ describe("language", () => {
             }
             `
         ))
+
+        it("allows ands and or", tunaTest(
+            "succeed",
+            `
+            pub func t() {
+                return true and true
+            }
+
+            pub func f() {
+                return false or false
+            }
+            `
+        ))
+
+        it("infers intent when mixing comparisons and boolean expressions", tunaTest(
+            "succeed",
+            `
+            pub func test() {
+                return 12 < 13 and 15 > 16
+            }
+            `
+        ))
+
     })
 })

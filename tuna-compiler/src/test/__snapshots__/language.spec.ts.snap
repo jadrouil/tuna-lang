@@ -1112,6 +1112,54 @@ Object {
 }
 `;
 
+exports[`language infix operators allows ands and or: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "t" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "BoolAlg",
+            "left": Object {
+              "kind": "Bool",
+              "value": true,
+            },
+            "right": Object {
+              "kind": "Bool",
+              "value": true,
+            },
+            "sign": "and",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "BoolAlg",
+            "left": Object {
+              "kind": "Bool",
+              "value": false,
+            },
+            "right": Object {
+              "kind": "Bool",
+              "value": false,
+            },
+            "sign": "or",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language infix operators divide divide then multiply: intermediate representation 1`] = `
 Object {
   "funcs": Map {
@@ -1234,6 +1282,50 @@ Object {
               "sign": "*",
             },
             "sign": "/",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators infers intent when mixing comparisons and boolean expressions: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "test" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "BoolAlg",
+            "left": Object {
+              "kind": "Comparison",
+              "left": Object {
+                "kind": "Int",
+                "value": 12,
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 13,
+              },
+              "sign": "<",
+            },
+            "right": Object {
+              "kind": "Comparison",
+              "left": Object {
+                "kind": "Int",
+                "value": 15,
+              },
+              "right": Object {
+                "kind": "Int",
+                "value": 16,
+              },
+              "sign": ">",
+            },
+            "sign": "and",
           },
         },
       ],

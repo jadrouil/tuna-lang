@@ -33,8 +33,10 @@ geq := '>=' space*
 gt := '>' space*
 lt := '<' space*
 leq := '<=' space*
+and := 'and' ws+
+or := 'or' ws+
 
-infixOps := space* op={plus | minus | mult | divide | eq | neq | leq | geq | gt | lt }
+infixOps := space* op={plus | minus | mult | divide | eq | neq | leq | geq | gt | lt  | and | or}
 
 functionCall := name=name args=args
 parameterIndex := '\[' space* value={expression} space* '\]'

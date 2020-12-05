@@ -1,9 +1,11 @@
 import { PickNode, ValueNode } from "conder_core";
 
 
-export type AnyInfix = PickNode<"Math">["sign"] | CompInfix
+export type AnyInfix = MathInfix | CompInfix | BoolInfix
+
 export type MathInfix = PickNode<"Math">["sign"]
 type CompInfix = PickNode<"Comparison">["sign"]
+type BoolInfix = PickNode<'BoolAlg'>["sign"]
 type MathNode = PickNode<"Math">["left"]
 export type MathExpression = {
     then(sign: AnyInfix, value: MathNode): MathExpression
@@ -60,6 +62,10 @@ export class Ordering implements MathExpression {
                 }
                 break
 
+            case "and":
+            case "or":
+                return new BoolAlg(this.build(), sign, new Ordering(value))
+            
             case "==":
             case "<=":
             case ">":
@@ -120,6 +126,29 @@ export class Ordering implements MathExpression {
     }
 }
 
+class BoolAlg implements MathExpression {
+    private readonly left: ValueNode
+    private readonly sign: BoolInfix
+    private right: MathExpression
+    constructor(left: ValueNode, sign: BoolInfix, right: MathExpression) {
+        this.left = left
+        this.sign = sign
+        this.right = right
+    }
+    then(sign: AnyInfix, value: MathNode): MathExpression {
+        this.right = this.right.then(sign, value)
+        return this
+    }
+    build(): ValueNode {
+        return {
+            kind: "BoolAlg",
+            sign: this.sign,
+            left: this.left,
+            right: this.right.build()
+        }
+    }
+}
+
 class Comparison implements MathExpression {
     private readonly left: ValueNode
     private readonly sign: CompInfix
@@ -131,8 +160,14 @@ class Comparison implements MathExpression {
     }
 
     then(sign: AnyInfix, value: MathNode): MathExpression {
-        this.right = this.right.then(sign, value)
-        return this
+        switch (sign) {
+            case "or":
+            case "and":
+                return new BoolAlg(this.build(), sign, new Ordering(value))
+            default:
+                this.right = this.right.then(sign, value)
+                return this
+        }
     }
 
     build(): ValueNode {

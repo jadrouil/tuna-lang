@@ -219,7 +219,9 @@ const signToConder: Record<infixOps_$0["kind"], AnyInfix> = {
     "gt": '>',
     "lt": "<",
     "neq": "!=",
-    "leq": "<="
+    "leq": "<=",
+    "and": "and",
+    "or": "or"
 }
 
 function get_all_infix(exp: expression): [AnyInfix, expression][]{
