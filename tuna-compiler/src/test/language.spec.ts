@@ -444,5 +444,35 @@ describe("language", () => {
             }
             `
         ))
+
+        it("==", tunaTest(
+            "succeed",
+            `
+            pub func comps(a) {
+                if a == 12 {
+
+                } else if a <= 1 {
+
+                } else if a < 2 {
+
+                } else if a > 3 {
+
+                } else if a >= 4 {
+
+                } else if a != 21 {
+
+                }
+            }
+            `
+        ))
+
+        it("should allow mixing of comparisons and math", tunaTest(
+            "succeed",
+            `
+            pub func t() {
+                return 1 + 1 == 3 - 1
+            }
+            `
+        ))
     })
 })

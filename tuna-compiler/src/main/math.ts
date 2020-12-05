@@ -1,17 +1,18 @@
 import { PickNode, ValueNode } from "conder_core";
 
 
-export type Sign = PickNode<"Math">["sign"]
+export type AnyInfix = PickNode<"Math">["sign"] | CompInfix
+export type MathInfix = PickNode<"Math">["sign"]
+type CompInfix = PickNode<"Comparison">["sign"]
 type MathNode = PickNode<"Math">["left"]
 export type MathExpression = {
-    then(sign: Sign, value: MathNode): MathExpression
+    then(sign: AnyInfix, value: MathNode): MathExpression
     build(): ValueNode
 }
-type MathTup = [Sign, MathNode]
+type MathTup = [MathInfix, MathNode]
 type MathInstr = MathTup[]
 
 export class Ordering implements MathExpression {
-    //always len(values) == len(signs) + 1
     private readonly first: MathNode
     private readonly instrs: MathInstr[]
     private state: "+-" | "*" | "/" | "uninitialized" = "uninitialized"
@@ -20,7 +21,7 @@ export class Ordering implements MathExpression {
         this.instrs = []
     }
 
-    private startMultiplication(state: Ordering["state"], sign: Sign, value: MathNode) {
+    private startMultiplication(state: Ordering["state"], sign: MathInfix, value: MathNode) {
         const last = this.instrs.pop()
         
         const steal = last.pop()
@@ -30,12 +31,12 @@ export class Ordering implements MathExpression {
         this.instrs.push([steal, [sign, value]])
         this.state = state
     }
-    pushToGroup(sign: Sign, value: MathNode) {
+    pushToGroup(sign: MathInfix, value: MathNode) {
         const last = this.instrs.pop()
         last.push([sign, value])
         this.instrs.push(last)
     }
-    then(sign: Sign, value: MathNode): MathExpression {
+    then(sign: AnyInfix, value: MathNode): MathExpression {
 
         switch (sign) {
             case "+":
@@ -57,7 +58,18 @@ export class Ordering implements MathExpression {
                     case "/":
                         this.pushToGroup(sign === this.state ? "*" : "/", value)
                 }
-            
+                break
+
+            case "==":
+            case "<=":
+            case ">":
+            case "<":
+            case ">=":
+            case "!=":
+                const built = this.build()
+                return new Comparison(built, sign, new Ordering(value))
+
+            default: const n: never = sign
         }
         
          
@@ -105,5 +117,30 @@ export class Ordering implements MathExpression {
             tups.push([group_sign, agg])
         }
         return tups
+    }
+}
+
+class Comparison implements MathExpression {
+    private readonly left: ValueNode
+    private readonly sign: CompInfix
+    private right: MathExpression
+    constructor(left: ValueNode, sign: CompInfix, right: MathExpression) {
+        this.left = left
+        this.sign = sign
+        this.right = right
+    }
+
+    then(sign: AnyInfix, value: MathNode): MathExpression {
+        this.right = this.right.then(sign, value)
+        return this
+    }
+
+    build(): ValueNode {
+        return {
+            kind: "Comparison",
+            left: this.left,
+            right: this.right.build(),
+            sign: this.sign
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { MathExpression, Sign, Ordering } from './math';
+import { MathExpression, MathInfix, Ordering, AnyInfix } from './math';
 import { ParseResult, executable, ASTKinds, func, expression, literal, infixOps_$0 } from "./parser";
 import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest, ValueNode, FunctionData} from "conder_core"
 
@@ -209,14 +209,20 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
     }
 }
 
-const signToConder: Record<infixOps_$0["kind"], Sign> = {
+const signToConder: Record<infixOps_$0["kind"], AnyInfix> = {
     "minus": "-",
     "plus": "+",
     "mult": "*",
-    "divide": "/"
+    "divide": "/",
+    "eq": "==",
+    "geq": ">=",
+    "gt": '>',
+    "lt": "<",
+    "neq": "!=",
+    "leq": "<="
 }
 
-function get_all_infix(exp: expression): [Sign, expression][]{
+function get_all_infix(exp: expression): [AnyInfix, expression][]{
     if (exp.infix != undefined) {
         return [[signToConder[exp.infix.sign.op.kind], exp.infix.arg], ...get_all_infix(exp.infix.arg)]
     } else {
@@ -228,13 +234,13 @@ function complete_expression_to_node(root_exp: expression, scope: ScopeMap): Any
     
     
     const root = to_value_node(expression_to_node(root_exp, scope))
-    const math = new Ordering(excluding(root, "GlobalObject"))
+    let entirity: MathExpression = new Ordering(excluding(root, "GlobalObject"))
     const infixes = get_all_infix(root_exp)
     infixes.forEach(([sign, exp]) => {
-        math.then(sign, excluding(to_value_node(expression_to_node(exp, scope)), "GlobalObject"))
+        entirity = entirity.then(sign, excluding(to_value_node(expression_to_node(exp, scope)), "GlobalObject"))
     })
     
-    return math.build()
+    return entirity.build()
 }
 
 // Does not evaluate infix operators

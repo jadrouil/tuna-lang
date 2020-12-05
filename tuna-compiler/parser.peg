@@ -22,12 +22,19 @@ expression :=  prefix={prefixOps}? root={literal | name   } methods={method}* in
 method := method={parameterIndex | methodInvoke | literalIndex}
 
 not := 'not' ws+
-minus := space* '-' space*
-mult := space* '\*' space*
+minus := '-' space*
 prefixOps := op={not | minus}
-plus := space* '\+' space*
-divide := space* '\/' space*
-infixOps := op={plus | minus | mult | divide}
+mult := '\*' space*
+plus :=  '\+'  space*
+divide := '\/' space*
+eq := '==' space*
+neq := '!='  space*
+geq := '>=' space*
+gt := '>' space*
+lt := '<' space*
+leq := '<=' space*
+
+infixOps := space* op={plus | minus | mult | divide | eq | neq | leq | geq | gt | lt }
 
 functionCall := name=name args=args
 parameterIndex := '\[' space* value={expression} space* '\]'
