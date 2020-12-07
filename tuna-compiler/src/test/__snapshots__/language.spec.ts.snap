@@ -2310,3 +2310,53 @@ Object {
   "globals": Map {},
 }
 `;
+
+exports[`types should allow optional types: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "a" => FunctionDescription {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": Array [
+            Object {
+              "data": null,
+              "kind": "int",
+            },
+          ],
+          "kind": "Optional",
+        },
+      ],
+    },
+    "q" => FunctionDescription {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": Object {
+            "b": Object {
+              "data": Array [
+                Object {
+                  "data": null,
+                  "kind": "double",
+                },
+              ],
+              "kind": "Optional",
+            },
+            "c": Object {
+              "data": Array [
+                Object {
+                  "data": null,
+                  "kind": "string",
+                },
+              ],
+              "kind": "Optional",
+            },
+          },
+          "kind": "Object",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;

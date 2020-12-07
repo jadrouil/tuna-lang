@@ -1,5 +1,5 @@
 import { MathExpression, MathInfix, Ordering, AnyInfix } from './math';
-import { ParseResult, executable, ASTKinds, func, expression, literal, infixOps_$0, methodInvoke, schema, someType } from "./parser";
+import { ParseResult, executable, ASTKinds, func, expression, literal, infixOps_$0, methodInvoke, schema, someType, typePostfix } from "./parser";
 import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest, ValueNode, FunctionData} from "conder_core"
 // Export this at the root level
 import { AnySchemaInstance, schemaFactory } from 'conder_core/dist/src/main/ops';
@@ -520,7 +520,22 @@ function parsed_to_schema(schema: someType): AnySchemaInstance {
             default: const n: never = schema.type
         }
     }
-    return schema.asArray ? schemaFactory.Array(getInner()) : getInner()
+    return apply_type_postfix(getInner(), schema.postfix)
+}
+
+function apply_type_postfix(inner: AnySchemaInstance, post: typePostfix | undefined): AnySchemaInstance {
+    
+    if (post) {
+        switch (post.mod.kind) {
+            case ASTKinds.optional_t:
+                return schemaFactory.Optional(inner)
+            case ASTKinds.array_t:
+                return schemaFactory.Array(inner)
+            default: const n: never = post.mod
+        }
+    } else {
+        return inner
+    }
 }
 
 function to_descr(f: func, scope: ScopeMap, debug: boolean): FunctionDescription {
@@ -539,7 +554,9 @@ function to_descr(f: func, scope: ScopeMap, debug: boolean): FunctionDescription
                 const inner = a.schema.type.kind === ASTKinds.name ? 
                     scope.getKind(a.schema.type.name, "typeAlias").value :
                     parsed_to_schema(a.schema.type)
-                input.push(a.schema.asArray ? schemaFactory.Array(inner) : inner)
+                
+                input.push(apply_type_postfix(inner, a.schema.postfix))
+                
             } else {
                 input.push({kind: "Any", data: undefined})
             }

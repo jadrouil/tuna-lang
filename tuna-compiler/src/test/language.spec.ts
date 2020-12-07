@@ -593,5 +593,20 @@ describe("types", () => {
     }
     `
     ))
+
+    it("should allow optional types", tunaTest("succeed",
+    `
+    type opt = bool?
+
+    type obj = {
+        b: double?
+        c: string?
+    }
+    
+    pub func a(i: int?) {}
+    pub func q(i: obj) {}
+    `
+    
+    ))
     
 })

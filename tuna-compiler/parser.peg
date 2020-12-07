@@ -65,7 +65,9 @@ any_t := ws* 'any'
 object_t := ws* '{' fields=field_t* ws* '}'
 field_t := ws* name=name '\s*:\s*' schema=someType '(,|\s|(?=}))'
 array_t := ws* '\[\]'
-someType := type={str_t | int_t | double_t | bool_t | any_t | object_t} asArray=array_t?
-schema := '\s*:\s* ' type={someType | name} asArray=array_t?
+optional_t := ws* '\?'
+typePostfix := mod={array_t | optional_t}
+someType := type={str_t | int_t | double_t | bool_t | any_t | object_t} postfix=typePostfix?
+schema := '\s*:\s* ' type={someType | name} postfix=typePostfix?
 
 typeDef := ws* 'type' ws+ name=name ws* '=' ws* def=someType
