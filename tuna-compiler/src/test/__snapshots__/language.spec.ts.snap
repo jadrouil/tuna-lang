@@ -2190,6 +2190,23 @@ exports[`language shouldn't allow deleting of whole variables 1`] = `
 	Delete cannot be applied to whole variables"
 `;
 
+exports[`types allows explicitly saying a type is any: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "t" => FunctionDescription {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": null,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`types allows requiring inputs as primitives: intermediate representation 1`] = `
 Object {
   "funcs": Map {

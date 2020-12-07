@@ -480,6 +480,8 @@ function to_schema(schema: schema): AnySchemaInstance {
             return schemaFactory.double
         case ASTKinds.bool_t:
             return schemaFactory.bool
+        case ASTKinds.any_t:
+            return schemaFactory.Any
             
         default: const n: never = schema.type
     }

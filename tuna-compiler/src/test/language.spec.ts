@@ -545,8 +545,16 @@ describe("types", () => {
     it("allows requiring inputs as primitives", tunaTest("succeed",
     `
     pub func test(a: string, b: int, c: double, d: bool) {
+
+    }
+    `))
+
+    it("allows explicitly saying a type is any", tunaTest("succeed",
+    `
+    pub func t(a: any) {
         
     }
     `
     ))
+    
 })

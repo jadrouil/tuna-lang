@@ -61,4 +61,5 @@ str_t := 'string' ws*
 int_t := 'int' ws*
 double_t := 'double' ws*
 bool_t := 'bool' ws*
-schema := '\s*:\s* ' type={str_t | int_t | double_t | bool_t}
+any_t := 'any' ws*
+schema := '\s*:\s* ' type={str_t | int_t | double_t | bool_t | any_t}
