@@ -499,25 +499,28 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
 }
 
 function parsed_to_schema(schema: someType): AnySchemaInstance {
-    switch(schema.type.kind) {
-        case ASTKinds.str_t:
-            return schemaFactory.string
-        case ASTKinds.int_t:
-            return schemaFactory.int
-        case ASTKinds.double_t:
-            return schemaFactory.double
-        case ASTKinds.bool_t:
-            return schemaFactory.bool
-        case ASTKinds.any_t:
-            return schemaFactory.Any
-        case ASTKinds.object_t:
-            const obj: Record<string, AnySchemaInstance> = {}
-            schema.type.fields.forEach(field => {
-                obj[field.name.name] = parsed_to_schema(field.schema)
-            })
-            return schemaFactory.Object(obj)
-        default: const n: never = schema.type
+    const getInner: () => AnySchemaInstance = () =>  {
+        switch(schema.type.kind) {
+            case ASTKinds.str_t:
+                return schemaFactory.string
+            case ASTKinds.int_t:
+                return schemaFactory.int
+            case ASTKinds.double_t:
+                return schemaFactory.double
+            case ASTKinds.bool_t:
+                return schemaFactory.bool
+            case ASTKinds.any_t:
+                return schemaFactory.Any
+            case ASTKinds.object_t:
+                const obj: Record<string, AnySchemaInstance> = {}
+                schema.type.fields.forEach(field => {
+                    obj[field.name.name] = parsed_to_schema(field.schema)
+                })
+                return schemaFactory.Object(obj)
+            default: const n: never = schema.type
+        }
     }
+    return schema.asArray ? schemaFactory.Array(getInner()) : getInner()
 }
 
 function to_descr(f: func, scope: ScopeMap, debug: boolean): FunctionDescription {
@@ -533,11 +536,10 @@ function to_descr(f: func, scope: ScopeMap, debug: boolean): FunctionDescription
         argList.forEach((a, i) => {
             scope.set(a.name, {kind: "mut", index: i})
             if (a.schema) {
-                if (a.schema.type.kind === ASTKinds.name) {
-                    input.push(scope.getKind(a.schema.type.name, "typeAlias").value)
-                } else {
-                    input.push(parsed_to_schema(a.schema.type))
-                }
+                const inner = a.schema.type.kind === ASTKinds.name ? 
+                    scope.getKind(a.schema.type.name, "typeAlias").value :
+                    parsed_to_schema(a.schema.type)
+                input.push(a.schema.asArray ? schemaFactory.Array(inner) : inner)
             } else {
                 input.push({kind: "Any", data: undefined})
             }

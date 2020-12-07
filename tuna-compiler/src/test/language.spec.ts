@@ -576,7 +576,20 @@ describe("types", () => {
     }
 
     pub func a(input: someObj) {
-        
+
+    }
+    `
+    ))
+
+    it("should allow array types", tunaTest("succeed",
+    `
+    type boolean = bool
+    type obj = {
+        o: int[]
+    }
+
+    pub func a(i: obj[]) {
+
     }
     `
     ))

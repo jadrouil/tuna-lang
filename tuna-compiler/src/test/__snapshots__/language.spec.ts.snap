@@ -2253,6 +2253,38 @@ Object {
 }
 `;
 
+exports[`types should allow array types: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "a" => FunctionDescription {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": Array [
+            Object {
+              "data": Object {
+                "o": Object {
+                  "data": Array [
+                    Object {
+                      "data": null,
+                      "kind": "int",
+                    },
+                  ],
+                  "kind": "Array",
+                },
+              },
+              "kind": "Object",
+            },
+          ],
+          "kind": "Array",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`types should allow object types: intermediate representation 1`] = `
 Object {
   "funcs": Map {

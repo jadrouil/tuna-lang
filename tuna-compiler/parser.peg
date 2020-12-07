@@ -64,7 +64,8 @@ bool_t := ws* 'bool'
 any_t := ws* 'any' 
 object_t := ws* '{' fields=field_t* ws* '}'
 field_t := ws* name=name '\s*:\s*' schema=someType '(,|\s|(?=}))'
-someType := type={str_t | int_t | double_t | bool_t | any_t | object_t}
-schema := '\s*:\s* ' type={someType | name}
+array_t := ws* '\[\]'
+someType := type={str_t | int_t | double_t | bool_t | any_t | object_t} asArray=array_t?
+schema := '\s*:\s* ' type={someType | name} asArray=array_t?
 
 typeDef := ws* 'type' ws+ name=name ws* '=' ws* def=someType
