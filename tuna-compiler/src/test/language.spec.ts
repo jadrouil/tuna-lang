@@ -505,6 +505,37 @@ describe("language", () => {
             }
             `
         ))
+    })
+
+    describe("mutations", () => {
+        it("should allow overwrites at a parameterized level", tunaTest("succeed",
+        `
+        const g = {}
+        pub func param(a) {
+            g[a] = 12
+            g.a.b.c[0] = 42
+        }
+        `))
+
+        it("should allow delete at any level", tunaTest("succeed", 
+        `
+        const g = {}
+
+        pub func dd(a) {
+            delete(g.a.b.c[a])
+        }
+        `))
+
+        it("push against globals and locals", tunaTest("succeed",
+        `
+        const g = {}
+        
+        pub func pushes(a) {
+            a['a'].b[0].push('hello', 'world')
+            g[a].b.push('goodbye', 'cruel', 'world')
+        }
+        `
+        ))
 
     })
 })

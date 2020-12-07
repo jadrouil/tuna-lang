@@ -1,5 +1,5 @@
 import { MathExpression, MathInfix, Ordering, AnyInfix } from './math';
-import { ParseResult, executable, ASTKinds, func, expression, literal, infixOps_$0 } from "./parser";
+import { ParseResult, executable, ASTKinds, func, expression, literal, infixOps_$0, methodInvoke } from "./parser";
 import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest, ValueNode, FunctionData} from "conder_core"
 
 type ScopeMapEntry= "func" | "global" | {kind: "const" | "mut", index: number}
@@ -114,6 +114,52 @@ function literal_to_node(lit: literal, scope: ScopeMap): ValueNode {
     }
 }
 
+type IsMutation = "Push"
+type aaa = "Push"
+type BakedInMethods = PickNode<"Push"> | PickNode<"Keys">
+type MethodCompiler<P extends BakedInMethods["kind"]> = 
+    (current: PickNode<"Selection">, invoke: methodInvoke, scope: ScopeMap) => P extends IsMutation ? PickNode<"Update"> : PickNode<P>
+type MethodLookup = {
+    [P in BakedInMethods["kind"]]: MethodCompiler<P>
+}
+
+const baked_in_methods: MethodLookup = {
+    Keys: (current, invoke, scope) => {
+        
+        if (invoke.args.lastArg|| invoke.args.leadingArgs.length > 0) {
+            throw Error(`keys should be called with zero args.`)
+        }
+        
+        return {
+            kind: "Keys",
+            target: current.level.length === 0 ? current.root : {
+                kind: "Selection",
+                level: current.level,
+                root: current.root
+            }
+        }
+    },
+    Push: (current, invoke, scope) => {
+        if (invoke.args.lastArg == undefined) {
+            throw Error(`Push requires at least one argument`)
+        }
+
+        const args = [...invoke.args.leadingArgs.map(a => a.value), invoke.args.lastArg]
+        
+        return {
+            kind: "Update",
+            root: current.root,
+            level: current.level,
+            operation: {
+                kind: "Push",
+                values: args.map(arg => complete_expression_to_node(arg, scope)).map(to_value_node)
+            }
+        }
+        
+    }
+}
+
+
 function method_to_node(target: PickNode<"Saved" | "GlobalObject">, methods: expression["methods"], scope: ScopeMap): AnyNode {
     if (methods.length === 0) {
         return target
@@ -133,28 +179,26 @@ function method_to_node(target: PickNode<"Saved" | "GlobalObject">, methods: exp
                 break
             case ASTKinds.parameterIndex:
                 const e = complete_expression_to_node(m.method.value, scope)
-                current.level.push(only(e, "String", "Saved"))
+                current.level.push(to_value_node(e))
                 break
 
-            case ASTKinds.methodInvoke: {
-                if (m.method.name.name !== "keys") {
-                    throw Error(`Unrecognized method ${m.method.name}`)
-                }
-                if (m.method.args.lastArg|| m.method.args.leadingArgs.length > 0) {
-                    throw Error(`keys should be called with zero args.`)
-                }
-                if (i !== methods.length - 1) {
-                    throw Error(`Cannot call methods on keys results`)
-                }
-                return {
-                    kind: "Keys",
-                    target: current.level.length === 0 ? target : {
-                        kind: "Selection",
-                        level: current.level,
-                        root: current.root
+            case ASTKinds.methodInvoke: 
+                const capitalized = `${m.method.name.name[0].toUpperCase()}${m.method.name.name.slice(1)}`
+                if (capitalized in baked_in_methods) {
+                    const res = baked_in_methods[capitalized as keyof MethodLookup](current, m.method, scope)
+                    if (res.kind === "Update" && i !== methods.length - 1) {
+                        throw Error(`Mutations do not return results`)
                     }
+                    if (res.kind === "Keys") {
+                        if (i !== methods.length - 1) {
+                            throw Error("Currently cannot index directly into keys result")
+                        }
+                        return res
+                    }
+                    return res
+                } else {
+                    throw Error(`Unrecognized method ${m.method.name.name}`)
                 }
-            }
                 
             default: 
                 const n: never = m.method
@@ -233,11 +277,15 @@ function get_all_infix(exp: expression): [AnyInfix, expression][]{
 }
 
 function complete_expression_to_node(root_exp: expression, scope: ScopeMap): AnyNode {
-    
-    
-    const root = to_value_node(expression_to_node(root_exp, scope))
-    let entirity: MathExpression = new Ordering(excluding(root, "GlobalObject"))
     const infixes = get_all_infix(root_exp)
+    const root = expression_to_node(root_exp, scope)
+    if (root.kind === "Update") {
+        if (infixes.length > 0) {
+            throw Error(`Mutations do not return any results`)
+        }
+        return root
+    }
+    let entirity: MathExpression = new Ordering(excluding(to_value_node(root), "GlobalObject"))
     infixes.forEach(([sign, exp]) => {
         entirity = entirity.then(sign, excluding(to_value_node(expression_to_node(exp, scope)), "GlobalObject"))
     })
@@ -330,7 +378,7 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
                 break
             }
             case ASTKinds.expression: {
-                cbOnly(complete_expression_to_node(e.value, scope), ret.push, "Return", "If", "Save", "Update")
+                cbOnly(complete_expression_to_node(e.value, scope), (...items) => ret.push(...items), "Return", "If", "Save", "Update")
                 
                 break
             }
@@ -420,7 +468,7 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
     return ret
 }
 
-function to_descr(f: func, scope: ScopeMap): FunctionDescription {
+function to_descr(f: func, scope: ScopeMap, debug: boolean): FunctionDescription {
     try {
         const argList: string[] = []
         if (f.params.leadingParams.length > 0) {
@@ -443,12 +491,12 @@ function to_descr(f: func, scope: ScopeMap): FunctionDescription {
             computation: to_computation(f.body.body, scope)
         })
     } catch(e) {
-        throw Error(`In function ${f.name.name}: \n\t${e.message}`)
+        throw Error(`In function ${f.name.name}: \n\t${e.message}${debug ? `\n\n${e.stack}` : ''}`)
     }
     
 }
 
-export function semantify(p: ParseResult): Manifest {
+export function semantify(p: ParseResult, debug: boolean): Manifest {
     if (p.err) {
         throw Error(`Failure parsing: line ${p.err.pos.line} col ${p.err.pos.offset}: ${p.err.toString()}`)
     }
@@ -501,7 +549,7 @@ export function semantify(p: ParseResult): Manifest {
 
     aFunc.forEach(f => {
         globalScope.pushScope()
-        funcs.set(f.name.name, to_descr(f, globalScope))
+        funcs.set(f.name.name, to_descr(f, globalScope, debug))
         globalScope.popScope()
     })
 
