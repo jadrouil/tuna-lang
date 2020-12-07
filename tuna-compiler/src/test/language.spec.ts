@@ -552,7 +552,17 @@ describe("types", () => {
     it("allows explicitly saying a type is any", tunaTest("succeed",
     `
     pub func t(a: any) {
-        
+
+    }
+    `
+    ))
+
+    it("allows type aliases", tunaTest("succeed",
+    `
+    type MyType = bool
+
+    pub func a(input: MyType) {
+     
     }
     `
     ))

@@ -1,10 +1,21 @@
 import { MathExpression, MathInfix, Ordering, AnyInfix } from './math';
-import { ParseResult, executable, ASTKinds, func, expression, literal, infixOps_$0, methodInvoke, schema } from "./parser";
+import { ParseResult, executable, ASTKinds, func, expression, literal, infixOps_$0, methodInvoke, schema, someType } from "./parser";
 import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest, ValueNode, FunctionData} from "conder_core"
 // Export this at the root level
 import { AnySchemaInstance, schemaFactory } from 'conder_core/dist/src/main/ops';
 
-type ScopeMapEntry= "func" | "global" | {kind: "const" | "mut", index: number}
+type ScopeMapEntry= "func" | 
+"global" | 
+{kind: "const", index: number} |
+{kind: "mut", index: number} | 
+{kind: "typeAlias", value: AnySchemaInstance}
+
+type EntityKind = Extract<ScopeMapEntry, {kind: any}>["kind"] | Exclude<ScopeMapEntry, {kind: any}>
+type Entry<K extends EntityKind> = Extract<ScopeMapEntry, K> extends never ? Extract<ScopeMapEntry, {kind: K}> : K
+type PickEnt<K extends EntityKind> =  {
+    [E in K]: Entry<E>
+}[K]
+
 class ScopeMap extends Map<string, ScopeMapEntry>  {
     private nextVar: number = 0
     private scopes: Set<string>[] = [new Set()]
@@ -13,6 +24,29 @@ class ScopeMap extends Map<string, ScopeMapEntry>  {
         return this.nextVar
     }
 
+    getKind<S extends EntityKind>(key: string, ...kinds: S[]): PickEnt<S> {
+        const obj = this.get(key)
+        if (obj === undefined) {
+            throw Error(`No such entity in scope: ${key}`)
+        }
+        switch (obj) {
+            case "func":
+            case "global":
+                //@ts-ignore
+                if (kinds.includes(obj)) {
+                    return obj as any
+                }
+                break
+            default:
+                //@ts-ignore
+                if (kinds.includes(obj.kind)) {
+                    return obj as any
+                }
+                break
+        }
+        throw Error(`Expected one of ${kinds} but found ${JSON.stringify(obj)}`)
+        
+    }
 
     set(k: string, v: ScopeMapEntry): this {
         if (v !== "global" && v !== "func") {
@@ -215,13 +249,11 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
 
     switch (exp.root.kind) {
         case ASTKinds.name:
-            const name = scope.get(exp.root.name)
+            const name = scope.getKind(exp.root.name, "mut", "const", "global")
             if (name === undefined) {
                 throw Error(`Unrecognized name ${exp.root.name}`)
             }
-            if (name === "func") {
-                throw Error(`Invalid function reference ${exp.root.name}`)
-            }
+            
             if (name !== "global" && name.kind === "const") {
                 throw Error(`Attempting to overwrite constant variable ${exp.root.name}`)
             }
@@ -335,13 +367,9 @@ function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
             
         
         case ASTKinds.name:
-            const name = scope.get(exp.root.name)
-            if (name === undefined) {
-                throw Error(`Unrecognized name ${exp.root.name}`)
-            }
-            if (name === "func") {
-                throw Error(`Invalid function reference ${exp.root.name}`)
-            } else if (name === "global") {
+            const name = scope.getKind(exp.root.name, "global", "const", "mut")
+            
+            if (name === "global") {
                 return method_to_node({kind: "GlobalObject", name: exp.root.name}, exp.methods, scope)
             } else {
                 return method_to_node({kind: "Saved", index: name.index}, exp.methods, scope)
@@ -470,7 +498,7 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
     return ret
 }
 
-function to_schema(schema: schema): AnySchemaInstance {
+function parsed_to_schema(schema: someType): AnySchemaInstance {
     switch(schema.type.kind) {
         case ASTKinds.str_t:
             return schemaFactory.string
@@ -500,7 +528,11 @@ function to_descr(f: func, scope: ScopeMap, debug: boolean): FunctionDescription
         argList.forEach((a, i) => {
             scope.set(a.name, {kind: "mut", index: i})
             if (a.schema) {
-                input.push(to_schema(a.schema))
+                if (a.schema.type.kind === ASTKinds.name) {
+                    input.push(scope.getKind(a.schema.type.name, "typeAlias").value)
+                } else {
+                    input.push(parsed_to_schema(a.schema.type))
+                }
             } else {
                 input.push({kind: "Any", data: undefined})
             }
@@ -528,10 +560,14 @@ export function semantify(p: ParseResult, debug: boolean): Manifest {
     const globs: Map<string, GlobalObject> = new Map()
 
     p.ast.forEach(g => {
-        const name = g.value.name.name
-        if (globalScope.has(name)) {
-            throw Error(`Another global or function is already called ${name}`)
+        switch (g.value.kind) {
+            case ASTKinds.typeDef:
+                globalScope.set(g.value.name.name, {kind: "typeAlias", value: parsed_to_schema(g.value.def)})
         }
+    })
+
+    p.ast.forEach(g => {
+        const name = g.value.name.name
         
         switch (g.value.kind) {
         
@@ -560,6 +596,8 @@ export function semantify(p: ParseResult, debug: boolean): Manifest {
             case ASTKinds.func: 
                 globalScope.set(name, "func")
                 aFunc.push(g.value)
+                break
+            case ASTKinds.typeDef:
                 break
             default: 
                 const ne: never = g.value

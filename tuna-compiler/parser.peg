@@ -1,4 +1,4 @@
-globals := {value={varDecl | func} {ws+ | '$'}}*
+globals := {value={varDecl | func | typeDef} {ws+ | '$'}}*
 
 mutable := 'let'
 constant := 'const'
@@ -57,9 +57,12 @@ ifs := 'if' space+ if_this={conditionalExec} elifs={elif}*  otherwise={otherwise
 elif := ws* 'else' space* 'if' space+ else_this={conditionalExec}
 otherwise := ws* 'else' do=scopedExecution
 
-str_t := 'string' ws*
-int_t := 'int' ws*
-double_t := 'double' ws*
-bool_t := 'bool' ws*
-any_t := 'any' ws*
-schema := '\s*:\s* ' type={str_t | int_t | double_t | bool_t | any_t}
+str_t := ws* 'string' 
+int_t := ws* 'int' 
+double_t := ws* 'double' 
+bool_t := ws* 'bool' 
+any_t := ws* 'any' 
+someType := type={str_t | int_t | double_t | bool_t | any_t}
+schema := '\s*:\s* ' type={someType | name}
+
+typeDef := ws* 'type' ws+ name=name ws* '=' ws* def=someType

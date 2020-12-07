@@ -2235,3 +2235,20 @@ Object {
   "globals": Map {},
 }
 `;
+
+exports[`types allows type aliases: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "a" => FunctionDescription {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": null,
+          "kind": "bool",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
