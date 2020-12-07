@@ -1,6 +1,8 @@
 import { MathExpression, MathInfix, Ordering, AnyInfix } from './math';
-import { ParseResult, executable, ASTKinds, func, expression, literal, infixOps_$0, methodInvoke } from "./parser";
+import { ParseResult, executable, ASTKinds, func, expression, literal, infixOps_$0, methodInvoke, schema } from "./parser";
 import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest, ValueNode, FunctionData} from "conder_core"
+// Export this at the root level
+import { AnySchemaInstance, schemaFactory } from 'conder_core/dist/src/main/ops';
 
 type ScopeMapEntry= "func" | "global" | {kind: "const" | "mut", index: number}
 class ScopeMap extends Map<string, ScopeMapEntry>  {
@@ -468,22 +470,38 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
     return ret
 }
 
+function to_schema(schema: schema): AnySchemaInstance {
+    switch(schema.type.kind) {
+        case ASTKinds.str_t:
+            return schemaFactory.string
+        case ASTKinds.int_t:
+            return schemaFactory.int
+        case ASTKinds.double_t:
+            return schemaFactory.double
+        case ASTKinds.bool_t:
+            return schemaFactory.bool
+            
+        default: const n: never = schema.type
+    }
+}
+
 function to_descr(f: func, scope: ScopeMap, debug: boolean): FunctionDescription {
     try {
-        const argList: string[] = []
+        const argList: {name: string, schema?: schema}[] = []
         if (f.params.leadingParams.length > 0) {
-            argList.push(...f.params.leadingParams.map(a => a.name.name))
+            argList.push(...f.params.leadingParams.map(a => ({name: a.name.name, schema: a.schema})))
         }
         if (f.params.lastParam) {
-            argList.push(f.params.lastParam.name)
+            argList.push({name: f.params.lastParam.name.name, schema: f.params.lastParam.schema})
         }
         const input: FunctionDescription["input"] = []
         argList.forEach((a, i) => {
-            if (scope.has(a)) {
-                throw Error(`Arg ${a} is using a name already in use`)
+            scope.set(a.name, {kind: "mut", index: i})
+            if (a.schema) {
+                input.push(to_schema(a.schema))
+            } else {
+                input.push({kind: "Any", data: undefined})
             }
-            scope.set(a, {kind: "mut", index: i})
-            input.push({kind: "Any", data: undefined})
         })
         
         return new FunctionDescription({

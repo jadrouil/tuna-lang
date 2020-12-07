@@ -48,7 +48,7 @@ forLoop := 'for' space+ rowVar=name space+ 'in' space+ value=expression do=scope
 objectIndex := obj=expression index={parameterIndex | literalIndex}
 ret := 'return(?=\s)' space* value={'(?<= )' exp=expression}?
 func := ws* 'pub' space+ 'func' space+ name=name space* params=params body=scopedExecution
-params := '\(' ws* leadingParams={name=name newLineOrComma ws*}* ws* lastParam={name}? ws* '\)'
+params := '\(' ws* leadingParams={name=name schema={schema}? newLineOrComma ws*}* ws* lastParam={name=name schema={schema}?}? ws* '\)'
 args := '\(' ws* leadingArgs={value=expression newLineOrComma ws*}* ws* lastArg={expression}? ws* '\)'
 assignment := target=expression space* equals space* value=expression
 
@@ -56,3 +56,9 @@ conditionalExec := cond=expression do=scopedExecution
 ifs := 'if' space+ if_this={conditionalExec} elifs={elif}*  otherwise={otherwise}?
 elif := ws* 'else' space* 'if' space+ else_this={conditionalExec}
 otherwise := ws* 'else' do=scopedExecution
+
+str_t := 'string' ws*
+int_t := 'int' ws*
+double_t := 'double' ws*
+bool_t := 'bool' ws*
+schema := '\s*:\s* ' type={str_t | int_t | double_t | bool_t}
