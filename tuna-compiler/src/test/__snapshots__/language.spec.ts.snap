@@ -1690,6 +1690,97 @@ Object {
 }
 `;
 
+exports[`language mutations push against globals and locals: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "pushes" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Update",
+          "level": Array [
+            Object {
+              "kind": "String",
+              "value": "a",
+            },
+            Object {
+              "kind": "String",
+              "value": "b",
+            },
+            Object {
+              "kind": "Int",
+              "value": 0,
+            },
+          ],
+          "operation": Object {
+            "kind": "Push",
+            "values": Array [
+              Object {
+                "kind": "String",
+                "value": "hello",
+              },
+              Object {
+                "kind": "String",
+                "value": "world",
+              },
+            ],
+          },
+          "root": Object {
+            "index": 0,
+            "kind": "Saved",
+          },
+        },
+        Object {
+          "kind": "Update",
+          "level": Array [
+            Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            Object {
+              "kind": "String",
+              "value": "b",
+            },
+          ],
+          "operation": Object {
+            "kind": "Push",
+            "values": Array [
+              Object {
+                "kind": "String",
+                "value": "goodbye",
+              },
+              Object {
+                "kind": "String",
+                "value": "cruel",
+              },
+              Object {
+                "kind": "String",
+                "value": "world",
+              },
+            ],
+          },
+          "root": Object {
+            "kind": "GlobalObject",
+            "name": "g",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {
+    "g" => Object {
+      "kind": "glob",
+      "name": "g",
+    },
+  },
+}
+`;
+
 exports[`language mutations should allow delete at any level: intermediate representation 1`] = `
 Object {
   "funcs": Map {

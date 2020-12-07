@@ -526,5 +526,16 @@ describe("language", () => {
         }
         `))
 
+        it("push against globals and locals", tunaTest("succeed",
+        `
+        const g = {}
+        
+        pub func pushes(a) {
+            a['a'].b[0].push('hello', 'world')
+            g[a].b.push('goodbye', 'cruel', 'world')
+        }
+        `
+        ))
+
     })
 })
