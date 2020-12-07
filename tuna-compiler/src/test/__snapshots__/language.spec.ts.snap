@@ -2189,3 +2189,174 @@ exports[`language shouldn't allow deleting of whole variables 1`] = `
 "In function f: 
 	Delete cannot be applied to whole variables"
 `;
+
+exports[`types allows explicitly saying a type is any: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "t" => FunctionDescription {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": null,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`types allows requiring inputs as primitives: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "test" => FunctionDescription {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": null,
+          "kind": "string",
+        },
+        Object {
+          "data": null,
+          "kind": "int",
+        },
+        Object {
+          "data": null,
+          "kind": "double",
+        },
+        Object {
+          "data": null,
+          "kind": "bool",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`types allows type aliases: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "a" => FunctionDescription {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": null,
+          "kind": "bool",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`types should allow array types: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "a" => FunctionDescription {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": Array [
+            Object {
+              "data": Object {
+                "o": Object {
+                  "data": Array [
+                    Object {
+                      "data": null,
+                      "kind": "int",
+                    },
+                  ],
+                  "kind": "Array",
+                },
+              },
+              "kind": "Object",
+            },
+          ],
+          "kind": "Array",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`types should allow object types: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "a" => FunctionDescription {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": Object {
+            "a": Object {
+              "data": null,
+              "kind": "bool",
+            },
+            "b": Object {
+              "data": null,
+              "kind": "int",
+            },
+          },
+          "kind": "Object",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`types should allow optional types: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "a" => FunctionDescription {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": Array [
+            Object {
+              "data": null,
+              "kind": "int",
+            },
+          ],
+          "kind": "Optional",
+        },
+      ],
+    },
+    "q" => FunctionDescription {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": Object {
+            "b": Object {
+              "data": Array [
+                Object {
+                  "data": null,
+                  "kind": "double",
+                },
+              ],
+              "kind": "Optional",
+            },
+            "c": Object {
+              "data": Array [
+                Object {
+                  "data": null,
+                  "kind": "string",
+                },
+              ],
+              "kind": "Optional",
+            },
+          },
+          "kind": "Object",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;

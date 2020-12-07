@@ -1,22 +1,22 @@
 import { OPSIFY_MANIFEST, Transformer } from 'conder_core';
 import { TUNA_TO_MANIFEST } from '../main/assembled';
 
-describe("language", () => {
+function tunaTest(maybeSucceed: "succeed" | "fail", code: string): jest.ProvidesCallback {
+    return (cb) => {
+        if (maybeSucceed === "succeed") {
+            const ops = TUNA_TO_MANIFEST.then(new Transformer(i => {
+                expect(i).toMatchSnapshot("intermediate representation")
+                return i
+            })).then(OPSIFY_MANIFEST).run(code)
 
-    function tunaTest(maybeSucceed: "succeed" | "fail", code: string): jest.ProvidesCallback {
-        return (cb) => {
-            if (maybeSucceed === "succeed") {
-                const ops = TUNA_TO_MANIFEST.then(new Transformer(i => {
-                    expect(i).toMatchSnapshot("intermediate representation")
-                    return i
-                })).then(OPSIFY_MANIFEST).run(code)
-
-            } else {
-                expect(() => TUNA_TO_MANIFEST.run(code)).toThrowErrorMatchingSnapshot()
-            }
-            cb()
+        } else {
+            expect(() => TUNA_TO_MANIFEST.run(code)).toThrowErrorMatchingSnapshot()
         }
+        cb()
     }
+}
+
+describe("language", () => {
 
     it("should allow a global object", tunaTest("succeed", `const obj = {}`))
         
@@ -538,4 +538,75 @@ describe("language", () => {
         ))
 
     })
+})
+
+describe("types", () => {
+
+    it("allows requiring inputs as primitives", tunaTest("succeed",
+    `
+    pub func test(a: string, b: int, c: double, d: bool) {
+
+    }
+    `))
+
+    it("allows explicitly saying a type is any", tunaTest("succeed",
+    `
+    pub func t(a: any) {
+
+    }
+    `
+    ))
+
+    it("allows type aliases", tunaTest("succeed",
+    `
+    type MyType = bool
+
+    pub func a(input: MyType) {
+     
+    }
+    `
+    ))
+
+    it("should allow object types", tunaTest("succeed",
+    `
+
+    type someObj = {
+        a: bool
+        b: int
+    }
+
+    pub func a(input: someObj) {
+
+    }
+    `
+    ))
+
+    it("should allow array types", tunaTest("succeed",
+    `
+    type boolean = bool
+    type obj = {
+        o: int[]
+    }
+
+    pub func a(i: obj[]) {
+
+    }
+    `
+    ))
+
+    it("should allow optional types", tunaTest("succeed",
+    `
+    type opt = bool?
+
+    type obj = {
+        b: double?
+        c: string?
+    }
+    
+    pub func a(i: int?) {}
+    pub func q(i: obj) {}
+    `
+    
+    ))
+    
 })
