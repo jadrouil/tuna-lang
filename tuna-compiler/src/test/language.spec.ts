@@ -566,5 +566,19 @@ describe("types", () => {
     }
     `
     ))
+
+    it("should allow object types", tunaTest("succeed",
+    `
+
+    type someObj = {
+        a: bool
+        b: int
+    }
+
+    pub func a(input: someObj) {
+        
+    }
+    `
+    ))
     
 })

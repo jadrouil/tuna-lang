@@ -62,7 +62,9 @@ int_t := ws* 'int'
 double_t := ws* 'double' 
 bool_t := ws* 'bool' 
 any_t := ws* 'any' 
-someType := type={str_t | int_t | double_t | bool_t | any_t}
+object_t := ws* '{' fields=field_t* ws* '}'
+field_t := ws* name=name '\s*:\s*' schema=someType '(,|\s|(?=}))'
+someType := type={str_t | int_t | double_t | bool_t | any_t | object_t}
 schema := '\s*:\s* ' type={someType | name}
 
 typeDef := ws* 'type' ws+ name=name ws* '=' ws* def=someType

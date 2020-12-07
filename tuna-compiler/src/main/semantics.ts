@@ -510,7 +510,12 @@ function parsed_to_schema(schema: someType): AnySchemaInstance {
             return schemaFactory.bool
         case ASTKinds.any_t:
             return schemaFactory.Any
-            
+        case ASTKinds.object_t:
+            const obj: Record<string, AnySchemaInstance> = {}
+            schema.type.fields.forEach(field => {
+                obj[field.name.name] = parsed_to_schema(field.schema)
+            })
+            return schemaFactory.Object(obj)
         default: const n: never = schema.type
     }
 }
