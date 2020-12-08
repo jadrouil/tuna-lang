@@ -7,7 +7,9 @@ function tunaTest(maybeSucceed: "succeed" | "fail", code: string): jest.Provides
             const ops = TUNA_TO_MANIFEST.then(new Transformer(i => {
                 expect(i).toMatchSnapshot("intermediate representation")
                 return i
-            })).then(OPSIFY_MANIFEST).run(code)
+            })).then(OPSIFY_MANIFEST).tap(data => {
+                expect(data).toMatchSnapshot("OPS")
+            }).run(code)
 
         } else {
             expect(() => TUNA_TO_MANIFEST.run(code)).toThrowErrorMatchingSnapshot()
@@ -218,9 +220,36 @@ describe("language", () => {
 
     pub func get_user(name: string) {
         return {
-            b: users[name] != none
+            exists: users[name] != none
             val: users[name]
         }
+    }
+    `
+    ))
+
+    it("should allow loops over inputs", tunaTest("succeed",
+    `
+    const users = {}
+    const chats = {}
+    type msg = {
+        from: string,
+        body: string
+    }
+    
+    pub func send_message(m: msg, group) {
+        if chats[group] != none {
+            chats[group].msgs.push(m)
+        } else {
+            return 'group does not exist'
+        }
+    }
+ 
+    pub func create_chat_group(group_name: string, initial_users: string[]) {
+        for user in initial_users {
+        users[user].chats.push(group_name)
+        }
+        
+        return 'created'
     }
     `
     ))
@@ -355,7 +384,6 @@ describe("language", () => {
             }
             `
         ))
-
         
     })
 

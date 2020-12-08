@@ -13,7 +13,7 @@ pub func create_user(name: string) {
 
 pub func get_user(name: string) {
     return {
-        b: users[name] != none
+        isNone: users[name] == none
         val: users[name]
     }
 }
@@ -55,7 +55,7 @@ pub func get_my_messages(user) {
         for chat in my_chats {
             msgs[chat] = chats[chat].msgs
         }
-
+        return msgs
     } else {
         return 'user does not exist'
     }

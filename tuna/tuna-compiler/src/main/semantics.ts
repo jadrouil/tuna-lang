@@ -49,7 +49,7 @@ class ScopeMap extends Map<string, ScopeMapEntry>  {
     }
 
     set(k: string, v: ScopeMapEntry): this {
-        if (v !== "global" && v !== "func") {
+        if (v !== "global" && v !== "func" && v.kind !== "typeAlias") {
             this.nextVar++
         }
         if (this.has(k)) {

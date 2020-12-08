@@ -58,16 +58,14 @@ const command: GluegunCommand = {
     
         await db.listCollections().toArray()
         const mongoAddress = child_process.execSync(`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${mongoname}`, {encoding: "utf-8"}).trim()
-        info(mongoAddress)
         const string_env: ServerEnv = {
             MONGO_CONNECTION_URI: `mongodb://${mongoAddress}`,
             ...output
         };
-        
         info("starting server...")
         
         child_process.execSync(
-            `docker run --rm -d -p 7213:8080 ${Object.keys(string_env).map(k => `-e ${k}`).join(' ')} --name tuna-run condersystems/sps:0.1.0`, 
+            `docker run --rm -d -p 7213:8080 ${Object.keys(string_env).map(k => `-e ${k}`).join(' ')} --name tuna-run condersystems/sps:0.1.1`, 
             {
                 env: {
                     ...string_env, 
