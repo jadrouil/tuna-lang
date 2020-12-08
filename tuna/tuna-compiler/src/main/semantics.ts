@@ -263,7 +263,7 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
                 throw Error(`Unrecognized name ${exp.root.name}`)
             }
             
-            if (name !== "global" && name.kind === "const") {
+            if (name !== "global" && name.kind === "const" && exp.methods.length === 0) {
                 throw Error(`Attempting to overwrite constant variable ${exp.root.name}`)
             }
             

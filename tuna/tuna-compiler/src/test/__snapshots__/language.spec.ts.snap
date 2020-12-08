@@ -175,6 +175,43 @@ Object {
 }
 `;
 
+exports[`language allows overwriting of some level of constants: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "b" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Save",
+          "value": Object {
+            "fields": Array [],
+            "kind": "Object",
+          },
+        },
+        Object {
+          "kind": "Update",
+          "level": Array [
+            Object {
+              "kind": "String",
+              "value": "c",
+            },
+          ],
+          "operation": Object {
+            "kind": "Int",
+            "value": 10,
+          },
+          "root": Object {
+            "index": 0,
+            "kind": "Saved",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language allows users to call keys() on globals and locals: intermediate representation 1`] = `
 Object {
   "funcs": Map {

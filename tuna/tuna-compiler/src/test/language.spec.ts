@@ -184,6 +184,15 @@ describe("language", () => {
     `
     ))
 
+    it("allows overwriting of some level of constants", tunaTest("succeed",
+    `
+    pub func b() {
+        const a = {}
+        a.c = 10
+    }
+    `
+    ))
+
     it("shouldn't allow deleting of whole variables", tunaTest("fail",
     `
     pub func f(b0) {
