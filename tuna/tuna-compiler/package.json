@@ -1,5 +1,5 @@
 {
-  "name": "tuna-lang",
+  "name": "tuna-compiler",
   "version": "0.0.1",
   "scripts": {
     "compile": "tspeg parser.peg src/main/parser.ts && tsc -b",

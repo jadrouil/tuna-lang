@@ -21,8 +21,10 @@
     "strict": false,
     "target": "es5",
     "declaration": true,
-    "declarationDir": "build/types"
+    "declarationDir": "build/types",
+    "typeRoots": ["node_modules/@types/"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "references": [{"path": "./tuna-compiler"}]
 }
