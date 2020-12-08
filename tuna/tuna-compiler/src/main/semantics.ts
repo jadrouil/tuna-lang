@@ -149,6 +149,13 @@ function literal_to_node(lit: literal, scope: ScopeMap): ValueNode {
             }
         case ASTKinds.none:
             return {kind: "None"}
+
+        case ASTKinds.array:
+            return {
+                kind: "ArrayLiteral",
+                values: lit.values.map(v => complete_expression_to_node(v.value, scope)).map(to_value_node)
+            }
+        default: const n: never = lit
     }
 }
 
@@ -363,10 +370,11 @@ function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
         case ASTKinds.num:
         case ASTKinds.obj:
         case ASTKinds.none:
+        case ASTKinds.array:
             if (exp.methods.length > 0) {
                 throw Error(`Unexpected method on ${exp.root.kind} literal`)
             }
-            return only(literal_to_node(exp.root, scope), "Bool", "Int", "String", "Object", "None")
+            return only(literal_to_node(exp.root, scope), "Bool", "Int", "String", "Object", "None", "ArrayLiteral")
             
         
         case ASTKinds.name:

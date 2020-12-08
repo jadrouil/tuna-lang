@@ -11,7 +11,8 @@ str := '\'' value='[\w \t]*' '\''
 bool := value={'true' | 'false'}
 num := value='-?\d+(\.\d+)?'
 none := 'none' '(?=(\s|}))'
-literal := obj | str | bool | num | none
+array := '\[' values={value=expression '(\n|,|(?=\]))' ws*}*'\]'
+literal := obj | str | bool | num | none | array
 newLineOrComma := '\n|,'
 field := name=name ws* ':' value=literal newLineOrComma?
 fields := value=field*

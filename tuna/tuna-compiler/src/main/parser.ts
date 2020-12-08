@@ -12,7 +12,8 @@
 * bool := value={'true' | 'false'}
 * num := value='-?\d+(\.\d+)?'
 * none := 'none' '(?=(\s|}))'
-* literal := obj | str | bool | num | none
+* array := '\[' values={value=expression '(\n|,|(?=\]))' ws*}*'\]'
+* literal := obj | str | bool | num | none | array
 * newLineOrComma := '\n|,'
 * field := name=name ws* ':' value=literal newLineOrComma?
 * fields := value=field*
@@ -96,11 +97,14 @@ export enum ASTKinds {
     bool_$0_2 = "bool_$0_2",
     num = "num",
     none = "none",
+    array = "array",
+    array_$0 = "array_$0",
     literal_1 = "literal_1",
     literal_2 = "literal_2",
     literal_3 = "literal_3",
     literal_4 = "literal_4",
     literal_5 = "literal_5",
+    literal_6 = "literal_6",
     newLineOrComma = "newLineOrComma",
     field = "field",
     fields = "fields",
@@ -259,12 +263,21 @@ export interface num {
 export interface none {
     kind: ASTKinds.none;
 }
-export type literal = literal_1 | literal_2 | literal_3 | literal_4 | literal_5;
+export interface array {
+    kind: ASTKinds.array;
+    values: array_$0[];
+}
+export interface array_$0 {
+    kind: ASTKinds.array_$0;
+    value: expression;
+}
+export type literal = literal_1 | literal_2 | literal_3 | literal_4 | literal_5 | literal_6;
 export type literal_1 = obj;
 export type literal_2 = str;
 export type literal_3 = bool;
 export type literal_4 = num;
 export type literal_5 = none;
+export type literal_6 = array;
 export type newLineOrComma = string;
 export interface field {
     kind: ASTKinds.field;
@@ -774,6 +787,42 @@ export class Parser {
                 return $$res;
             }, $$cr)();
     }
+    public matcharray($$dpth: number, $$cr?: ContextRecorder): Nullable<array> {
+        return this.runner<array>($$dpth,
+            (log) => {
+                if (log) {
+                    log("array");
+                }
+                let $scope$values: Nullable<array_$0[]>;
+                let $$res: Nullable<array> = null;
+                if (true
+                    && this.regexAccept(String.raw`(?:\[)`, $$dpth + 1, $$cr) !== null
+                    && ($scope$values = this.loop<array_$0>(() => this.matcharray_$0($$dpth + 1, $$cr), true)) !== null
+                    && this.regexAccept(String.raw`(?:\])`, $$dpth + 1, $$cr) !== null
+                ) {
+                    $$res = {kind: ASTKinds.array, values: $scope$values};
+                }
+                return $$res;
+            }, $$cr)();
+    }
+    public matcharray_$0($$dpth: number, $$cr?: ContextRecorder): Nullable<array_$0> {
+        return this.runner<array_$0>($$dpth,
+            (log) => {
+                if (log) {
+                    log("array_$0");
+                }
+                let $scope$value: Nullable<expression>;
+                let $$res: Nullable<array_$0> = null;
+                if (true
+                    && ($scope$value = this.matchexpression($$dpth + 1, $$cr)) !== null
+                    && this.regexAccept(String.raw`(?:(\n|,|(?=\])))`, $$dpth + 1, $$cr) !== null
+                    && this.loop<ws>(() => this.matchws($$dpth + 1, $$cr), true) !== null
+                ) {
+                    $$res = {kind: ASTKinds.array_$0, value: $scope$value};
+                }
+                return $$res;
+            }, $$cr)();
+    }
     public matchliteral($$dpth: number, $$cr?: ContextRecorder): Nullable<literal> {
         return this.choice<literal>([
             () => this.matchliteral_1($$dpth + 1, $$cr),
@@ -781,6 +830,7 @@ export class Parser {
             () => this.matchliteral_3($$dpth + 1, $$cr),
             () => this.matchliteral_4($$dpth + 1, $$cr),
             () => this.matchliteral_5($$dpth + 1, $$cr),
+            () => this.matchliteral_6($$dpth + 1, $$cr),
         ]);
     }
     public matchliteral_1($$dpth: number, $$cr?: ContextRecorder): Nullable<literal_1> {
@@ -797,6 +847,9 @@ export class Parser {
     }
     public matchliteral_5($$dpth: number, $$cr?: ContextRecorder): Nullable<literal_5> {
         return this.matchnone($$dpth + 1, $$cr);
+    }
+    public matchliteral_6($$dpth: number, $$cr?: ContextRecorder): Nullable<literal_6> {
+        return this.matcharray($$dpth + 1, $$cr);
     }
     public matchnewLineOrComma($$dpth: number, $$cr?: ContextRecorder): Nullable<newLineOrComma> {
         return this.regexAccept(String.raw`(?:\n|,)`, $$dpth + 1, $$cr);

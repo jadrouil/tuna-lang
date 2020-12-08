@@ -63,6 +63,14 @@ describe("language", () => {
     `
     ))
 
+    it("should allow array literals", tunaTest("succeed",
+    `
+    pub func a() {
+        return []
+    }
+    `
+    ))
+
 
     it("should allow getting of nested keys",
     

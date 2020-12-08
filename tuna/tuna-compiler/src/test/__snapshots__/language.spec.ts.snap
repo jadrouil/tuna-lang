@@ -2006,6 +2006,26 @@ Object {
 }
 `;
 
+exports[`language should allow array literals: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "a" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "ArrayLiteral",
+            "values": Array [],
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language should allow bools, numbers, and strings: intermediate representation 1`] = `
 Object {
   "funcs": Map {
