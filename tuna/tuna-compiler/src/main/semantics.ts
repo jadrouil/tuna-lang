@@ -49,7 +49,7 @@ class ScopeMap extends Map<string, ScopeMapEntry>  {
     }
 
     set(k: string, v: ScopeMapEntry): this {
-        if (v !== "global" && v !== "func") {
+        if (v !== "global" && v !== "func" && v.kind !== "typeAlias") {
             this.nextVar++
         }
         if (this.has(k)) {
@@ -128,12 +128,12 @@ function literal_to_node(lit: literal, scope: ScopeMap): ValueNode {
             
             return {
                 kind: "Object", 
-                fields: lit.fields.value.map(f => {
+                fields: lit.fields.data.map(f => {
                 
                     return {
                         kind: "Field", 
                         key: {kind: "String", value: f.name.name}, 
-                        value: literal_to_node(f.value, scope)
+                        value: to_value_node(complete_expression_to_node(f.value, scope))
                     }
                 })
             }
@@ -147,6 +147,15 @@ function literal_to_node(lit: literal, scope: ScopeMap): ValueNode {
                 kind: "Int",
                 value: parseFloat(lit.value)
             }
+        case ASTKinds.none:
+            return {kind: "None"}
+
+        case ASTKinds.array:
+            return {
+                kind: "ArrayLiteral",
+                values: lit.values.map(v => complete_expression_to_node(v.value, scope)).map(to_value_node)
+            }
+        default: const n: never = lit
     }
 }
 
@@ -254,7 +263,7 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
                 throw Error(`Unrecognized name ${exp.root.name}`)
             }
             
-            if (name !== "global" && name.kind === "const") {
+            if (name !== "global" && name.kind === "const" && exp.methods.length === 0) {
                 throw Error(`Attempting to overwrite constant variable ${exp.root.name}`)
             }
             
@@ -360,10 +369,12 @@ function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
         case ASTKinds.str:
         case ASTKinds.num:
         case ASTKinds.obj:
+        case ASTKinds.none:
+        case ASTKinds.array:
             if (exp.methods.length > 0) {
                 throw Error(`Unexpected method on ${exp.root.kind} literal`)
             }
-            return only(literal_to_node(exp.root, scope), "Bool", "Int", "String", "Object")
+            return only(literal_to_node(exp.root, scope), "Bool", "Int", "String", "Object", "None", "ArrayLiteral")
             
         
         case ASTKinds.name:
@@ -602,7 +613,7 @@ export function semantify(p: ParseResult, debug: boolean): Manifest {
                 
                 switch (g.value.value.root.kind) {
                     case ASTKinds.obj: 
-                        if (g.value.value.root.fields.value.length > 0) {
+                        if (g.value.value.root.fields.data.length > 0) {
                             break
                         }
                         if (g.value.value.methods.length > 0) {

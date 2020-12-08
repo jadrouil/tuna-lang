@@ -1,0 +1,62 @@
+
+const users = {}
+
+const chats = {}
+
+pub func create_user(name: string) {
+    if users[name] != none {
+        return 'user already exists'
+    }
+    users[name] = {chats: []}
+    return 'user created'
+}
+
+pub func get_user(name: string) {
+    return {
+        isNone: users[name] == none
+        val: users[name]
+    }
+}
+
+pub func create_chat_group(group_name: string, initial_users: string[]) {
+    if chats[group_name] != none {
+        return 'group already exists'
+    }
+
+    chats[group_name] = {
+        msgs: []
+    }
+
+    for user in initial_users {
+        users[user].chats.push(group_name)
+    }
+    return 'created'
+}
+
+type msg = {
+    from: string,
+    body: string
+}
+
+pub func send_message(m: msg, group) {
+    if chats[group] != none {
+        chats[group].msgs.push(m)
+    } else {
+        return 'group does not exist'
+    }
+}
+
+pub func get_my_messages(user) {
+    
+    if users[user] != none {
+        const my_chats = users[user].chats
+
+        const msgs = {}
+        for chat in my_chats {
+            msgs[chat] = chats[chat].msgs
+        }
+        return msgs
+    } else {
+        return 'user does not exist'
+    }
+}

@@ -7,7 +7,9 @@ function tunaTest(maybeSucceed: "succeed" | "fail", code: string): jest.Provides
             const ops = TUNA_TO_MANIFEST.then(new Transformer(i => {
                 expect(i).toMatchSnapshot("intermediate representation")
                 return i
-            })).then(OPSIFY_MANIFEST).run(code)
+            })).then(OPSIFY_MANIFEST).tap(data => {
+                expect(data).toMatchSnapshot("OPS")
+            }).run(code)
 
         } else {
             expect(() => TUNA_TO_MANIFEST.run(code)).toThrowErrorMatchingSnapshot()
@@ -54,6 +56,22 @@ describe("language", () => {
         }
         `)
     )
+
+    it("should allow none", tunaTest("succeed", 
+    `
+    pub func a() {
+        return none
+    }
+    `
+    ))
+
+    it("should allow array literals", tunaTest("succeed",
+    `
+    pub func a() {
+        return []
+    }
+    `
+    ))
 
 
     it("should allow getting of nested keys",
@@ -157,6 +175,81 @@ describe("language", () => {
     `
     pub func f(a) {
         delete(a.b)
+    }
+    `
+    ))
+    it("allows object literals", tunaTest("succeed",
+    `
+    pub func a() {
+        return {b: '12'}
+    }
+    `
+    ))
+
+    it("allows overwriting of some level of constants", tunaTest("succeed",
+    `
+    pub func b() {
+        const a = {}
+        a.c = 10
+    }
+    `
+    ))
+
+    it("allows expressions in object literals", tunaTest("succeed",
+    `
+    pub func a(b) {
+        return {
+            c: b
+            d: b == 2
+        }
+    }
+    `))
+
+    it("should allow existence checking", tunaTest("succeed", 
+    `
+    const users = {}
+    const chats = {}
+
+    pub func create_user(name: string) {
+        if users[name] != none {
+            return 'user already exists'
+        }
+        users[name] = {chats: []}
+        return 'user created'
+    }
+
+    pub func get_user(name: string) {
+        return {
+            exists: users[name] != none
+            val: users[name]
+        }
+    }
+    `
+    ))
+
+    it("should allow loops over inputs", tunaTest("succeed",
+    `
+    const users = {}
+    const chats = {}
+    type msg = {
+        from: string,
+        body: string
+    }
+    
+    pub func send_message(m: msg, group) {
+        if chats[group] != none {
+            chats[group].msgs.push(m)
+        } else {
+            return 'group does not exist'
+        }
+    }
+ 
+    pub func create_chat_group(group_name: string, initial_users: string[]) {
+        for user in initial_users {
+        users[user].chats.push(group_name)
+        }
+        
+        return 'created'
     }
     `
     ))
@@ -291,7 +384,6 @@ describe("language", () => {
             }
             `
         ))
-
         
     })
 

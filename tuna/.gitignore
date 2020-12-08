@@ -6,7 +6,3 @@ coverage
 dist
 build
 .vscode
-bin/
-node_modules/
-dist/
-tuna-compiler/src/main/parser.ts
