@@ -64,7 +64,7 @@ const command: GluegunCommand = {
         info("starting server...")
         
         child_process.execSync(
-            `docker run --rm -d -p 7213:8080 ${Object.keys(string_env).map(k => `-e ${k}`).join(' ')} --name tuna-run condersystems/sps:0.1.3`, 
+            `docker run --rm -d -p 7213:8080 ${Object.keys(string_env).map(k => `-e ${k}`).join(' ')} --name tuna-run condersystems/sps:0.1.4`, 
             {
                 env: {
                     ...string_env, 
