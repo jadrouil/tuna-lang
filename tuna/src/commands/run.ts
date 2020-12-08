@@ -1,7 +1,6 @@
 import { ServerEnv } from 'conder_core/dist/src/main/ops';
 
 import { GluegunToolbox, GluegunCommand, print } from 'gluegun'
-// import * from 'tuna-lang'
 import * as child_process from 'child_process'
 import { TUNA_LOCAL_COMPILER } from 'tuna-lang'
 import * as mongodb from 'mongodb'
@@ -65,7 +64,7 @@ const command: GluegunCommand = {
         info("starting server...")
         
         child_process.execSync(
-            `docker run --rm -d -p 7213:8080 ${Object.keys(string_env).map(k => `-e ${k}`).join(' ')} --name tuna-run condersystems/sps:0.1.1`, 
+            `docker run --rm -d -p 7213:8080 ${Object.keys(string_env).map(k => `-e ${k}`).join(' ')} --name tuna-run condersystems/sps:0.1.3`, 
             {
                 env: {
                     ...string_env, 

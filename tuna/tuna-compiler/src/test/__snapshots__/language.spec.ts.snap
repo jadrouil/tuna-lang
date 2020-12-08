@@ -399,6 +399,178 @@ Object {
 }
 `;
 
+exports[`language allows getting of whole globals: OPS 1`] = `
+Object {
+  "funcs": Map {
+    "f" => Array [
+      Object {
+        "data": 1,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": Array [
+          0,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": "g",
+        "kind": "getAllFromStore",
+      },
+      Object {
+        "data": undefined,
+        "kind": "repackageCollection",
+      },
+      Object {
+        "data": undefined,
+        "kind": "returnStackTop",
+      },
+    ],
+  },
+  "globals": Map {
+    "g" => Object {
+      "kind": "glob",
+      "name": "g",
+    },
+  },
+}
+`;
+
+exports[`language allows getting of whole globals: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Selection",
+            "level": Array [],
+            "root": Object {
+              "kind": "GlobalObject",
+              "name": "g",
+            },
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {
+    "g" => Object {
+      "kind": "glob",
+      "name": "g",
+    },
+  },
+}
+`;
+
+exports[`language allows indexing into keys results: OPS 1`] = `
+Object {
+  "funcs": Map {
+    "f" => Array [
+      Object {
+        "data": 1,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": Array [
+          0,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": undefined,
+        "kind": "getKeys",
+      },
+      Object {
+        "data": 0,
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 1,
+        "kind": "getField",
+      },
+      Object {
+        "data": undefined,
+        "kind": "returnStackTop",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language allows indexing into keys results: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "f" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Selection",
+            "level": Array [
+              Object {
+                "kind": "Keys",
+              },
+              Object {
+                "kind": "Int",
+                "value": 0,
+              },
+            ],
+            "root": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language allows keys on nested object: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -462,23 +634,23 @@ Object {
         Object {
           "kind": "Return",
           "value": Object {
-            "kind": "Keys",
-            "target": Object {
-              "kind": "Selection",
-              "level": Array [
-                Object {
-                  "kind": "String",
-                  "value": "b",
-                },
-                Object {
-                  "kind": "String",
-                  "value": "cdef",
-                },
-              ],
-              "root": Object {
-                "index": 0,
-                "kind": "Saved",
+            "kind": "Selection",
+            "level": Array [
+              Object {
+                "kind": "String",
+                "value": "b",
               },
+              Object {
+                "kind": "String",
+                "value": "cdef",
+              },
+              Object {
+                "kind": "Keys",
+              },
+            ],
+            "root": Object {
+              "index": 0,
+              "kind": "Saved",
             },
           },
         },
@@ -756,8 +928,13 @@ Object {
         Object {
           "kind": "Save",
           "value": Object {
-            "kind": "Keys",
-            "target": Object {
+            "kind": "Selection",
+            "level": Array [
+              Object {
+                "kind": "Keys",
+              },
+            ],
+            "root": Object {
               "index": 0,
               "kind": "Saved",
             },
@@ -766,8 +943,13 @@ Object {
         Object {
           "kind": "Save",
           "value": Object {
-            "kind": "Keys",
-            "target": Object {
+            "kind": "Selection",
+            "level": Array [
+              Object {
+                "kind": "Keys",
+              },
+            ],
+            "root": Object {
               "kind": "GlobalObject",
               "name": "g",
             },

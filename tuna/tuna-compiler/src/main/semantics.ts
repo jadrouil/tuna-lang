@@ -115,7 +115,8 @@ function to_value_node(n: AnyNode): ValueNode {
         "Else", 
         "Noop", 
         "Push",
-        "Conditional"
+        "Conditional",
+        "Keys"
         )
 }
 
@@ -160,10 +161,9 @@ function literal_to_node(lit: literal, scope: ScopeMap): ValueNode {
 }
 
 type IsMutation = "Push"
-type aaa = "Push"
 type BakedInMethods = PickNode<"Push"> | PickNode<"Keys">
 type MethodCompiler<P extends BakedInMethods["kind"]> = 
-    (current: PickNode<"Selection">, invoke: methodInvoke, scope: ScopeMap) => P extends IsMutation ? PickNode<"Update"> : PickNode<P>
+    (current: PickNode<"Selection">, invoke: methodInvoke, scope: ScopeMap) => P extends IsMutation ? PickNode<"Update"> : PickNode<"Selection">
 type MethodLookup = {
     [P in BakedInMethods["kind"]]: MethodCompiler<P>
 }
@@ -174,15 +174,8 @@ const baked_in_methods: MethodLookup = {
         if (invoke.args.lastArg|| invoke.args.leadingArgs.length > 0) {
             throw Error(`keys should be called with zero args.`)
         }
-        
-        return {
-            kind: "Keys",
-            target: current.level.length === 0 ? current.root : {
-                kind: "Selection",
-                level: current.level,
-                root: current.root
-            }
-        }
+        current.level.push({kind: "Keys"})
+        return current
     },
     Push: (current, invoke, scope) => {
         if (invoke.args.lastArg == undefined) {
@@ -207,9 +200,16 @@ const baked_in_methods: MethodLookup = {
 
 function method_to_node(target: PickNode<"Saved" | "GlobalObject">, methods: expression["methods"], scope: ScopeMap): AnyNode {
     if (methods.length === 0) {
+        if (target.kind === "GlobalObject") {
+            return {
+                kind: "Selection",
+                root: target,
+                level: []
+            }
+        }
         return target
     }
-    let current: PickNode<"Selection"> = {
+    let current: PickNode<"Selection" | "Update"> = {
         kind: "Selection",
         level: [],
         root: target
@@ -230,20 +230,15 @@ function method_to_node(target: PickNode<"Saved" | "GlobalObject">, methods: exp
             case ASTKinds.methodInvoke: 
                 const capitalized = `${m.method.name.name[0].toUpperCase()}${m.method.name.name.slice(1)}`
                 if (capitalized in baked_in_methods) {
-                    const res = baked_in_methods[capitalized as keyof MethodLookup](current, m.method, scope)
-                    if (res.kind === "Update" && i !== methods.length - 1) {
+                    if (current.kind === "Update") {
                         throw Error(`Mutations do not return results`)
                     }
-                    if (res.kind === "Keys") {
-                        if (i !== methods.length - 1) {
-                            throw Error("Currently cannot index directly into keys result")
-                        }
-                        return res
-                    }
-                    return res
+                    current = baked_in_methods[capitalized as keyof MethodLookup](current, m.method, scope)
+                    
                 } else {
                     throw Error(`Unrecognized method ${m.method.name.name}`)
                 }
+                break
                 
             default: 
                 const n: never = m.method
@@ -328,9 +323,9 @@ function complete_expression_to_node(root_exp: expression, scope: ScopeMap): Any
         }
         return root
     }
-    let entirity: MathExpression = new Ordering(excluding(to_value_node(root), "GlobalObject"))
+    let entirity: MathExpression = new Ordering(to_value_node(root))
     infixes.forEach(([sign, exp]) => {
-        entirity = entirity.then(sign, excluding(to_value_node(expression_to_node(exp, scope)), "GlobalObject"))
+        entirity = entirity.then(sign, to_value_node(expression_to_node(exp, scope)))
     })
     
     return entirity.build()
@@ -354,7 +349,7 @@ function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
             case ASTKinds.minus: 
                 return {
                     kind: "Math",
-                    left: excluding(to_value_node(complete_expression_to_node(exp, scope)), "GlobalObject"),
+                    left: to_value_node(complete_expression_to_node(exp, scope)),
                     right: {kind: "Int", value: -1},
                     sign: "*"
                 }

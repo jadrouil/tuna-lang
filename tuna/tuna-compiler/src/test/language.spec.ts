@@ -162,9 +162,16 @@ describe("language", () => {
     }
     `
     ))
+    it("allows getting of whole globals", tunaTest("succeed", 
+    `
+    const g = {}
+    pub func f(a) {
+        return g
+    }
+    `
+    ))
 
-    //Blocked by https://github.com/Conder-Systems/conder/issues/66
-    it.skip("allows indexing into keys results", tunaTest("succeed",
+    it("allows indexing into keys results", tunaTest("succeed",
     `
     pub func f(a) {
         return a.keys()[0]
