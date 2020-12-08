@@ -15,7 +15,7 @@
 * array := '\[' values={value=expression '(\n|,|(?=\]))' ws*}*'\]'
 * literal := obj | str | bool | num | none | array
 * newLineOrComma := '\n|,'
-* field := name=name ws* ':' value=literal newLineOrComma?
+* field := name=name ws* ':' ws* value=literal newLineOrComma?
 * fields := value=field*
 * space := ' '
 * scopedExecution := ws* '\{' body=executable '\s*\}'
@@ -867,6 +867,7 @@ export class Parser {
                     && ($scope$name = this.matchname($$dpth + 1, $$cr)) !== null
                     && this.loop<ws>(() => this.matchws($$dpth + 1, $$cr), true) !== null
                     && this.regexAccept(String.raw`(?::)`, $$dpth + 1, $$cr) !== null
+                    && this.loop<ws>(() => this.matchws($$dpth + 1, $$cr), true) !== null
                     && ($scope$value = this.matchliteral($$dpth + 1, $$cr)) !== null
                     && ((this.matchnewLineOrComma($$dpth + 1, $$cr)) || true)
                 ) {

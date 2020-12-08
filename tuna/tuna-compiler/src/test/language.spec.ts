@@ -176,6 +176,13 @@ describe("language", () => {
     }
     `
     ))
+    it("allows object literals", tunaTest("succeed",
+    `
+    pub func a() {
+        return {b: '12'}
+    }
+    `
+    ))
 
     it("shouldn't allow deleting of whole variables", tunaTest("fail",
     `

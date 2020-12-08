@@ -143,6 +143,38 @@ Object {
 }
 `;
 
+exports[`language allows object literals: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "a" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "fields": Array [
+              Object {
+                "key": Object {
+                  "kind": "String",
+                  "value": "b",
+                },
+                "kind": "Field",
+                "value": Object {
+                  "kind": "String",
+                  "value": "12",
+                },
+              },
+            ],
+            "kind": "Object",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language allows users to call keys() on globals and locals: intermediate representation 1`] = `
 Object {
   "funcs": Map {
