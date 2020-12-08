@@ -55,6 +55,14 @@ describe("language", () => {
         `)
     )
 
+    it("should allow none", tunaTest("succeed", 
+    `
+    pub func a() {
+        return none
+    }
+    `
+    ))
+
 
     it("should allow getting of nested keys",
     

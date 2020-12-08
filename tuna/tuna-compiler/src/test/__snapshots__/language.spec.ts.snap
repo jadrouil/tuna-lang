@@ -2094,6 +2094,25 @@ Object {
 }
 `;
 
+exports[`language should allow none: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "a" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "None",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+}
+`;
+
 exports[`language should allow return statements within functions: intermediate representation 1`] = `
 Object {
   "funcs": Map {

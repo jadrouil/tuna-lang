@@ -10,13 +10,14 @@ obj := '\{' ws* fields=fields ws* '\}'
 str := '\'' value='[\w \t]*' '\''
 bool := value={'true' | 'false'}
 num := value='-?\d+(\.\d+)?'
-literal := obj | str | bool | num
+none := 'none' '(?=(\s|}))'
+literal := obj | str | bool | num | none
 newLineOrComma := '\n|,'
 field := name=name ws* ':' value=literal newLineOrComma?
 fields := value=field*
 space := ' '
 
-scopedExecution := ws* '\{' body=executable '\}'
+scopedExecution := ws* '\{' body=executable '\s*\}'
 executable := ws* value={value={ret | varDecl | forLoop | ifs | assignment | functionCall | expression } ws+ }*
 expression :=  prefix={prefixOps}? root={literal | name   } methods={method}* infix={sign=infixOps arg=expression}?
 method := method={parameterIndex | methodInvoke | literalIndex}
