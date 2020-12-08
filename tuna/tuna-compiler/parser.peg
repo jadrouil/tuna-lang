@@ -14,8 +14,7 @@ none := 'none' '(?=(\s|}))'
 array := '\[' values={value=expression '(\n|,|(?=\]))' ws*}*'\]'
 literal := obj | str | bool | num | none | array
 newLineOrComma := '\n|,'
-field := name=name ws* ':' ws* value=literal newLineOrComma?
-fields := value=field*
+fields := data={ws* name=name ws* ':' ws* value=expression '(\n|,|(?=}))'}*
 space := ' '
 
 scopedExecution := ws* '\{' body=executable '\s*\}'

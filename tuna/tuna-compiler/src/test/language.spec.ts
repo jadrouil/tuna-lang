@@ -193,6 +193,38 @@ describe("language", () => {
     `
     ))
 
+    it("allows expressions in object literals", tunaTest("succeed",
+    `
+    pub func a(b) {
+        return {
+            c: b
+            d: b == 2
+        }
+    }
+    `))
+
+    it("should allow existence checking", tunaTest("succeed", 
+    `
+    const users = {}
+    const chats = {}
+
+    pub func create_user(name: string) {
+        if users[name] != none {
+            return 'user already exists'
+        }
+        users[name] = {chats: []}
+        return 'user created'
+    }
+
+    pub func get_user(name: string) {
+        return {
+            b: users[name] != none
+            val: users[name]
+        }
+    }
+    `
+    ))
+
     it("shouldn't allow deleting of whole variables", tunaTest("fail",
     `
     pub func f(b0) {

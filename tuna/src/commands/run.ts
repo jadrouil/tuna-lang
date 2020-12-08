@@ -30,7 +30,6 @@ const command: GluegunCommand = {
         const startMongo = `docker run -d -p 27017:27017 --rm  --mount type=tmpfs,destination=/data/db --name ${mongoname} mongo:4.4`
         child_process.execSync(startMongo);
         killActions.push({name: "killing mongo", action: () => child_process.execSync(`docker kill ${mongoname}`)})
-        
         const kill = () => {
             killActions.forEach(m => {
                 try {
@@ -45,11 +44,9 @@ const command: GluegunCommand = {
 
         process.on("SIGINT", kill)
         process.on("SIGTERM", kill)
-    
-        const ipaddress = child_process.execSync(`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${mongoname}`, {encoding: "utf-8"})
-        
+            
         const client = await mongodb.MongoClient.connect(
-            `mongodb://localhost:${ipaddress}`,
+            `mongodb://localhost:27017`,
             { useUnifiedTopology: true }
         ).catch((e) => {console.error(e); process.exit(1)});
         
@@ -60,24 +57,25 @@ const command: GluegunCommand = {
         
     
         await db.listCollections().toArray()
+        const mongoAddress = child_process.execSync(`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${mongoname}`, {encoding: "utf-8"}).trim()
+        info(mongoAddress)
         const string_env: ServerEnv = {
-            MONGO_CONNECTION_URI: `mongodb://${ipaddress}`,
+            MONGO_CONNECTION_URI: `mongodb://${mongoAddress}`,
             ...output
         };
         
-        info("starting server")
+        info("starting server...")
         
         child_process.execSync(
-            `docker run --rm -d -t -p 7213:8080 ${Object.keys(string_env).map(k => `-e ${k}=$${k}`).join(' ')} --name tuna-run us.gcr.io/conder-systems-281115/sps:0.1.0`, 
+            `docker run --rm -d -p 7213:8080 ${Object.keys(string_env).map(k => `-e ${k}`).join(' ')} --name tuna-run condersystems/sps:0.1.0`, 
             {
                 env: {
                     ...string_env, 
                     ...process.env
                 },
-
             }
         );
-        killActions.push({name: "tearing down tuna server", action: () => child_process.execSync("docker kill conduit-run")})
+        killActions.push({name: "tearing down tuna server", action: () => child_process.execSync("docker kill tuna-run")})
         info("server available at: http://localhost:7213")
     } catch (e) {
         print.error(e)

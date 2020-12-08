@@ -128,12 +128,12 @@ function literal_to_node(lit: literal, scope: ScopeMap): ValueNode {
             
             return {
                 kind: "Object", 
-                fields: lit.fields.value.map(f => {
+                fields: lit.fields.data.map(f => {
                 
                     return {
                         kind: "Field", 
                         key: {kind: "String", value: f.name.name}, 
-                        value: literal_to_node(f.value, scope)
+                        value: to_value_node(complete_expression_to_node(f.value, scope))
                     }
                 })
             }
@@ -613,7 +613,7 @@ export function semantify(p: ParseResult, debug: boolean): Manifest {
                 
                 switch (g.value.value.root.kind) {
                     case ASTKinds.obj: 
-                        if (g.value.value.root.fields.value.length > 0) {
+                        if (g.value.value.root.fields.data.length > 0) {
                             break
                         }
                         if (g.value.value.methods.length > 0) {
