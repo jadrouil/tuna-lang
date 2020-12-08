@@ -2,7 +2,7 @@ import { ServerEnv } from 'conder_core/dist/src/main/ops';
 
 import { GluegunToolbox, GluegunCommand, print } from 'gluegun'
 import * as child_process from 'child_process'
-import { TUNA_LOCAL_COMPILER } from 'tuna-lang'
+import { TUNA_LOCAL_COMPILER } from 'tuna-compiler'
 import * as mongodb from 'mongodb'
 
 const command: GluegunCommand = {
