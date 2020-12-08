@@ -30,7 +30,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "gluegun": "latest"
+    "gluegun": "latest",
+    "tuna-lang": "file:../tuna-compiler"
   },
   "devDependencies": {
     "@types/node": "^12.7.11",
