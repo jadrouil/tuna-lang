@@ -1,6 +1,6 @@
 {
   "name": "tuna-lang",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "tuna CLI",
   "types": "build/types/types.d.ts",
   "bin": {
@@ -32,7 +32,7 @@
     "@types/mongodb": "^3.6.1",
     "gluegun": "latest",
     "mongodb": "^3.6.3",
-    "tuna-compiler": "0.0.2"
+    "tuna-compiler": "0.0.5"
   },
   "devDependencies": {
     "@types/node": "^12.7.11",

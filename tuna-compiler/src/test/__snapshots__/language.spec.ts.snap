@@ -1,5 +1,389 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`demo apps can be used to create a messenger: OPS 1`] = `
+Object {
+  "funcs": Map {
+    "get_my_messages" => Array [
+      Object {
+        "data": 0,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": Object {
+          "_key": Object {},
+        },
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "_key",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "a",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 1,
+        "kind": "setField",
+      },
+      Object {
+        "data": Array [
+          "users",
+          Object {},
+        ],
+        "kind": "findOneInStore",
+      },
+      Object {
+        "data": undefined,
+        "kind": "isLastNone",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "_val",
+        "kind": "tryGetField",
+      },
+      Object {
+        "data": Array [
+          1,
+          true,
+        ],
+        "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": null,
+        "kind": "instantiate",
+      },
+      Object {
+        "data": null,
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "equal",
+      },
+      Object {
+        "data": undefined,
+        "kind": "negatePrev",
+      },
+      Object {
+        "data": undefined,
+        "kind": "negatePrev",
+      },
+      Object {
+        "data": 37,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": Object {
+          "_key": Object {},
+        },
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "_key",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "a",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 1,
+        "kind": "setField",
+      },
+      Object {
+        "data": Array [
+          "users",
+          Object {},
+        ],
+        "kind": "findOneInStore",
+      },
+      Object {
+        "data": undefined,
+        "kind": "isLastNone",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "_val",
+        "kind": "tryGetField",
+      },
+      Object {
+        "data": Array [
+          1,
+          true,
+        ],
+        "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": null,
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "moveStackTopToHeap",
+      },
+      Object {
+        "data": Object {},
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "moveStackTopToHeap",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": undefined,
+        "kind": "ndArrayLen",
+      },
+      Object {
+        "data": 0,
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "equal",
+      },
+      Object {
+        "data": 16,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": undefined,
+        "kind": "popArray",
+      },
+      Object {
+        "data": undefined,
+        "kind": "moveStackTopToHeap",
+      },
+      Object {
+        "data": 2,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": Object {
+          "_key": Object {},
+        },
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "_key",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 2,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "setField",
+      },
+      Object {
+        "data": Array [
+          "chats",
+          Object {},
+        ],
+        "kind": "findOneInStore",
+      },
+      Object {
+        "data": undefined,
+        "kind": "isLastNone",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "_val",
+        "kind": "tryGetField",
+      },
+      Object {
+        "data": Array [
+          1,
+          true,
+        ],
+        "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": null,
+        "kind": "instantiate",
+      },
+      Object {
+        "data": Array [
+          1,
+          1,
+        ],
+        "kind": "setSavedField",
+      },
+      Object {
+        "data": 1,
+        "kind": "truncateHeap",
+      },
+      Object {
+        "data": Array [
+          19,
+          false,
+        ],
+        "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": undefined,
+        "kind": "popStack",
+      },
+      Object {
+        "data": 2,
+        "kind": "truncateHeap",
+      },
+      Object {
+        "data": Array [
+          1,
+          true,
+        ],
+        "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": undefined,
+        "kind": "noop",
+      },
+    ],
+  },
+  "globals": Map {
+    "users" => Object {
+      "kind": "glob",
+      "name": "users",
+    },
+    "chats" => Object {
+      "kind": "glob",
+      "name": "chats",
+    },
+  },
+}
+`;
+
+exports[`demo apps can be used to create a messenger: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "get_my_messages" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "conditionally": Array [
+            Object {
+              "cond": Object {
+                "kind": "Comparison",
+                "left": Object {
+                  "kind": "Selection",
+                  "level": Array [
+                    Object {
+                      "kind": "String",
+                      "value": "a",
+                    },
+                  ],
+                  "root": Object {
+                    "kind": "GlobalObject",
+                    "name": "users",
+                  },
+                },
+                "right": Object {
+                  "kind": "None",
+                },
+                "sign": "!=",
+              },
+              "do": Array [
+                Object {
+                  "kind": "Save",
+                  "value": Object {
+                    "kind": "Selection",
+                    "level": Array [
+                      Object {
+                        "kind": "String",
+                        "value": "a",
+                      },
+                    ],
+                    "root": Object {
+                      "kind": "GlobalObject",
+                      "name": "users",
+                    },
+                  },
+                },
+                Object {
+                  "kind": "Save",
+                  "value": Object {
+                    "fields": Array [],
+                    "kind": "Object",
+                  },
+                },
+                Object {
+                  "do": Array [
+                    Object {
+                      "kind": "Update",
+                      "level": Array [
+                        Object {
+                          "index": 2,
+                          "kind": "Saved",
+                        },
+                      ],
+                      "operation": Object {
+                        "kind": "Selection",
+                        "level": Array [
+                          Object {
+                            "index": 2,
+                            "kind": "Saved",
+                          },
+                        ],
+                        "root": Object {
+                          "kind": "GlobalObject",
+                          "name": "chats",
+                        },
+                      },
+                      "root": Object {
+                        "index": 1,
+                        "kind": "Saved",
+                      },
+                    },
+                  ],
+                  "kind": "ArrayForEach",
+                  "target": Object {
+                    "index": 0,
+                    "kind": "Saved",
+                  },
+                },
+              ],
+              "kind": "Conditional",
+            },
+          ],
+          "kind": "If",
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {
+    "users" => Object {
+      "kind": "glob",
+      "name": "users",
+    },
+    "chats" => Object {
+      "kind": "glob",
+      "name": "chats",
+    },
+  },
+}
+`;
+
+exports[`demo apps can be used to create a messenger: locks 1`] = `
+Map {
+  "get_my_messages" => Map {},
+}
+`;
+
 exports[`language allows deleting of array fields even though it produces a runtime error: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -77,6 +461,12 @@ Object {
 }
 `;
 
+exports[`language allows deleting of array fields even though it produces a runtime error: locks 1`] = `
+Map {
+  "f" => Map {},
+}
+`;
+
 exports[`language allows deleting of keys in objects: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -151,6 +541,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language allows deleting of keys in objects: locks 1`] = `
+Map {
+  "f" => Map {},
 }
 `;
 
@@ -282,6 +678,12 @@ Object {
 }
 `;
 
+exports[`language allows expressions in object literals: locks 1`] = `
+Map {
+  "a" => Map {},
+}
+`;
+
 exports[`language allows for loops: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -399,6 +801,12 @@ Object {
 }
 `;
 
+exports[`language allows for loops: locks 1`] = `
+Map {
+  "loop" => Map {},
+}
+`;
+
 exports[`language allows getting of whole globals: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -479,6 +887,12 @@ Object {
       "name": "g",
     },
   },
+}
+`;
+
+exports[`language allows getting of whole globals: locks 1`] = `
+Map {
+  "f" => Map {},
 }
 `;
 
@@ -568,6 +982,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language allows indexing into keys results: locks 1`] = `
+Map {
+  "f" => Map {},
 }
 `;
 
@@ -667,6 +1087,12 @@ Object {
 }
 `;
 
+exports[`language allows keys on nested object: locks 1`] = `
+Map {
+  "f" => Map {},
+}
+`;
+
 exports[`language allows object literals: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -730,6 +1156,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language allows object literals: locks 1`] = `
+Map {
+  "a" => Map {},
 }
 `;
 
@@ -804,6 +1236,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language allows overwriting of some level of constants: locks 1`] = `
+Map {
+  "b" => Map {},
 }
 `;
 
@@ -973,6 +1411,12 @@ Object {
 }
 `;
 
+exports[`language allows users to call keys() on globals and locals: locks 1`] = `
+Map {
+  "f" => Map {},
+}
+`;
+
 exports[`language can declare temp variables: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -1084,6 +1528,12 @@ Object {
 }
 `;
 
+exports[`language can declare temp variables: locks 1`] = `
+Map {
+  "fff" => Map {},
+}
+`;
+
 exports[`language can overwrite inputs: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -1151,6 +1601,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language can overwrite inputs: locks 1`] = `
+Map {
+  "fff" => Map {},
 }
 `;
 
@@ -1409,6 +1865,12 @@ Object {
 }
 `;
 
+exports[`language ensure variables declared in for loop are cleaned up: locks 1`] = `
+Map {
+  "loop" => Map {},
+}
+`;
+
 exports[`language globals must be empty objects 1`] = `"Global someVar must be initialized as empty object"`;
 
 exports[`language ifs allows any number of else ifs: OPS 1`] = `
@@ -1658,6 +2120,12 @@ Object {
 }
 `;
 
+exports[`language ifs allows any number of else ifs: locks 1`] = `
+Map {
+  "maybe" => Map {},
+}
+`;
+
 exports[`language ifs allows elses: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -1768,6 +2236,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language ifs allows elses: locks 1`] = `
+Map {
+  "maybe" => Map {},
 }
 `;
 
@@ -2049,6 +2523,12 @@ Object {
 }
 `;
 
+exports[`language ifs cleans up variables across else ifs: locks 1`] = `
+Map {
+  "maybe" => Map {},
+}
+`;
+
 exports[`language ifs cleans up variables in ifs: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -2182,6 +2662,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language ifs cleans up variables in ifs: locks 1`] = `
+Map {
+  "maybe" => Map {},
 }
 `;
 
@@ -2337,6 +2823,12 @@ Object {
 }
 `;
 
+exports[`language ifs else scope is cleaned up after each block: locks 1`] = `
+Map {
+  "maybe" => Map {},
+}
+`;
+
 exports[`language ifs single simple if: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -2436,6 +2928,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language ifs single simple if: locks 1`] = `
+Map {
+  "maybe" => Map {},
 }
 `;
 
@@ -2561,6 +3059,12 @@ Object {
 }
 `;
 
+exports[`language infix operators * / * / * : locks 1`] = `
+Map {
+  "f" => Map {},
+}
+`;
+
 exports[`language infix operators * / priority: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -2667,6 +3171,12 @@ Object {
 }
 `;
 
+exports[`language infix operators * / priority: locks 1`] = `
+Map {
+  "test" => Map {},
+}
+`;
+
 exports[`language infix operators *: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -2745,6 +3255,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language infix operators *: locks 1`] = `
+Map {
+  "exponent" => Map {},
 }
 `;
 
@@ -2910,6 +3426,13 @@ Object {
 }
 `;
 
+exports[`language infix operators +: locks 1`] = `
+Map {
+  "double" => Map {},
+  "zero" => Map {},
+}
+`;
+
 exports[`language infix operators /: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -2988,6 +3511,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language infix operators /: locks 1`] = `
+Map {
+  "half" => Map {},
 }
 `;
 
@@ -3320,6 +3849,12 @@ Object {
 }
 `;
 
+exports[`language infix operators ==: locks 1`] = `
+Map {
+  "comps" => Map {},
+}
+`;
+
 exports[`language infix operators allows ands and or: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -3420,6 +3955,13 @@ Object {
 }
 `;
 
+exports[`language infix operators allows ands and or: locks 1`] = `
+Map {
+  "t" => Map {},
+  "f" => Map {},
+}
+`;
+
 exports[`language infix operators divide divide then multiply: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -3507,6 +4049,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language infix operators divide divide then multiply: locks 1`] = `
+Map {
+  "t" => Map {},
 }
 `;
 
@@ -3600,6 +4148,12 @@ Object {
 }
 `;
 
+exports[`language infix operators divide divide: locks 1`] = `
+Map {
+  "t" => Map {},
+}
+`;
+
 exports[`language infix operators divide multiply divide: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -3687,6 +4241,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language infix operators divide multiply divide: locks 1`] = `
+Map {
+  "t" => Map {},
 }
 `;
 
@@ -3784,6 +4344,12 @@ Object {
 }
 `;
 
+exports[`language infix operators infers intent when mixing comparisons and boolean expressions: locks 1`] = `
+Map {
+  "test" => Map {},
+}
+`;
+
 exports[`language infix operators make sure and suffixes on names aren't mistaken for infixes: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -3846,6 +4412,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language infix operators make sure and suffixes on names aren't mistaken for infixes: locks 1`] = `
+Map {
+  "test" => Map {},
 }
 `;
 
@@ -3962,6 +4534,12 @@ Object {
 }
 `;
 
+exports[`language infix operators math ordering: locks 1`] = `
+Map {
+  "check_ordering" => Map {},
+}
+`;
+
 exports[`language infix operators minus minus plus: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -4049,6 +4627,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language infix operators minus minus plus: locks 1`] = `
+Map {
+  "f" => Map {},
 }
 `;
 
@@ -4158,6 +4742,12 @@ Object {
 }
 `;
 
+exports[`language infix operators multiple parts summed: locks 1`] = `
+Map {
+  "t" => Map {},
+}
+`;
+
 exports[`language infix operators multiply divide divide: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -4245,6 +4835,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language infix operators multiply divide divide: locks 1`] = `
+Map {
+  "f" => Map {},
 }
 `;
 
@@ -4354,6 +4950,12 @@ Object {
 }
 `;
 
+exports[`language infix operators multiply multiply divide multiply: locks 1`] = `
+Map {
+  "f" => Map {},
+}
+`;
+
 exports[`language infix operators plus plus minus: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -4444,6 +5046,12 @@ Object {
 }
 `;
 
+exports[`language infix operators plus plus minus: locks 1`] = `
+Map {
+  "f" => Map {},
+}
+`;
+
 exports[`language infix operators should allow mixing of comparisons and math: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -4531,6 +5139,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language infix operators should allow mixing of comparisons and math: locks 1`] = `
+Map {
+  "t" => Map {},
 }
 `;
 
@@ -4818,6 +5432,12 @@ Object {
 }
 `;
 
+exports[`language mutations push against globals and locals: locks 1`] = `
+Map {
+  "pushes" => Map {},
+}
+`;
+
 exports[`language mutations should allow delete at any level: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -4973,6 +5593,12 @@ Object {
       "name": "g",
     },
   },
+}
+`;
+
+exports[`language mutations should allow delete at any level: locks 1`] = `
+Map {
+  "dd" => Map {},
 }
 `;
 
@@ -5243,6 +5869,12 @@ Object {
 }
 `;
 
+exports[`language mutations should allow overwrites at a parameterized level: locks 1`] = `
+Map {
+  "param" => Map {},
+}
+`;
+
 exports[`language only allows global constants 1`] = `"Global variable someVar must be const"`;
 
 exports[`language prefix operators - is shorthand for * -1: OPS 1`] = `
@@ -5326,6 +5958,12 @@ Object {
 }
 `;
 
+exports[`language prefix operators - is shorthand for * -1: locks 1`] = `
+Map {
+  "min" => Map {},
+}
+`;
+
 exports[`language prefix operators can 'not' values: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -5404,6 +6042,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language prefix operators can 'not' values: locks 1`] = `
+Map {
+  "negate" => Map {},
 }
 `;
 
@@ -5500,6 +6144,12 @@ Object {
 }
 `;
 
+exports[`language should allow a fixed number of args in functions: locks 1`] = `
+Map {
+  "argy" => Map {},
+}
+`;
+
 exports[`language should allow a global object: OPS 1`] = `
 Object {
   "funcs": Map {},
@@ -5523,6 +6173,8 @@ Object {
   },
 }
 `;
+
+exports[`language should allow a global object: locks 1`] = `Map {}`;
 
 exports[`language should allow array literals: OPS 1`] = `
 Object {
@@ -5563,6 +6215,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language should allow array literals: locks 1`] = `
+Map {
+  "a" => Map {},
 }
 `;
 
@@ -5615,6 +6273,12 @@ Object {
 }
 `;
 
+exports[`language should allow bools, numbers, and strings: locks 1`] = `
+Map {
+  "fff" => Map {},
+}
+`;
+
 exports[`language should allow empty pub funcs: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -5638,6 +6302,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language should allow empty pub funcs: locks 1`] = `
+Map {
+  "doSomething" => Map {},
 }
 `;
 
@@ -6182,6 +6852,15 @@ Object {
 }
 `;
 
+exports[`language should allow existence checking: locks 1`] = `
+Map {
+  "create_user" => Map {
+    "users" => "w",
+  },
+  "get_user" => Map {},
+}
+`;
+
 exports[`language should allow getting of nested keys: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -6323,6 +7002,12 @@ Object {
       "name": "gg",
     },
   },
+}
+`;
+
+exports[`language should allow getting of nested keys: locks 1`] = `
+Map {
+  "fff" => Map {},
 }
 `;
 
@@ -6957,6 +7642,15 @@ Object {
 }
 `;
 
+exports[`language should allow loops over inputs: locks 1`] = `
+Map {
+  "send_message" => Map {
+    "chats" => "w",
+  },
+  "create_chat_group" => Map {},
+}
+`;
+
 exports[`language should allow many global objects: OPS 1`] = `
 Object {
   "funcs": Map {},
@@ -6988,6 +7682,8 @@ Object {
   },
 }
 `;
+
+exports[`language should allow many global objects: locks 1`] = `Map {}`;
 
 exports[`language should allow none: OPS 1`] = `
 Object {
@@ -7030,6 +7726,12 @@ Object {
 }
 `;
 
+exports[`language should allow none: locks 1`] = `
+Map {
+  "a" => Map {},
+}
+`;
+
 exports[`language should allow return statements within functions: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -7066,6 +7768,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`language should allow return statements within functions: locks 1`] = `
+Map {
+  "returny" => Map {},
 }
 `;
 
@@ -7396,6 +8104,12 @@ Object {
 }
 `;
 
+exports[`language should allow setting of keys on a global object: locks 1`] = `
+Map {
+  "fff" => Map {},
+}
+`;
+
 exports[`language shouldn't allow deleting of whole variables 1`] = `
 "In function f: 
 	Delete cannot be applied to whole variables"
@@ -7447,6 +8161,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`types allows explicitly saying a type is any: locks 1`] = `
+Map {
+  "t" => Map {},
 }
 `;
 
@@ -7565,6 +8285,12 @@ Object {
 }
 `;
 
+exports[`types allows requiring inputs as primitives: locks 1`] = `
+Map {
+  "test" => Map {},
+}
+`;
+
 exports[`types allows type aliases: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -7611,6 +8337,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`types allows type aliases: locks 1`] = `
+Map {
+  "a" => Map {},
 }
 `;
 
@@ -7693,6 +8425,12 @@ Object {
 }
 `;
 
+exports[`types should allow array types: locks 1`] = `
+Map {
+  "a" => Map {},
+}
+`;
+
 exports[`types should allow object types: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -7757,6 +8495,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`types should allow object types: locks 1`] = `
+Map {
+  "a" => Map {},
 }
 `;
 
@@ -7887,5 +8631,12 @@ Object {
     },
   },
   "globals": Map {},
+}
+`;
+
+exports[`types should allow optional types: locks 1`] = `
+Map {
+  "a" => Map {},
+  "q" => Map {},
 }
 `;

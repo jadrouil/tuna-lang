@@ -1,4 +1,5 @@
-import {Transformer, Transform, Manifest, OPSIFY_MANIFEST} from 'conder_core'
+import {Transformer, Transform, Manifest, OPSIFY_MANIFEST, MONGO_GLOBAL_ABSTRACTION_REMOVAL, MONGO_UNPROVIDED_LOCK_CALCULATOR} from 'conder_core'
+import { LockRequirements } from 'conder_core/dist/src/main/abstract/mongo_logic/lock_calculation'
 // need to export this from core
 import { schemaFactory, ServerEnv, StrongServerEnv, Var } from 'conder_core/dist/src/main/ops'
 import {Parser} from './parser'
@@ -8,6 +9,10 @@ export const TUNA_TO_MANIFEST = new Transformer<string, Manifest>(str => {
     const p = new Parser(str).parse()
     return semantify(p, false)
 })
+
+export const TUNA_TO_LOCKS: Transform<string, Map<string, LockRequirements>> = TUNA_TO_MANIFEST.then(new Transformer(man => {
+    return MONGO_GLOBAL_ABSTRACTION_REMOVAL.run(man.funcs)
+})).then(MONGO_UNPROVIDED_LOCK_CALCULATOR)
 
 export const STRINGIFY_ENV: Transform<StrongServerEnv, Omit<ServerEnv, Var.MONGO_CONNECTION_URI>> = new Transformer(env => {
     

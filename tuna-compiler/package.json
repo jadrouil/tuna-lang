@@ -1,9 +1,10 @@
 {
   "name": "tuna-compiler",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "scripts": {
     "compile": "tspeg parser.peg src/main/parser.ts && tsc -b",
     "pretest": "npm run compile",
+    "prepublish": "npm run compile",
     "test": "jest --maxWorkers=50%"
   },
   "author": "Jeremy",
@@ -18,7 +19,7 @@
     "typescript": "^4.0.0"
   },
   "dependencies": {
-    "conder_core": "https://github.com/Conder-Systems/conder/releases/download/v0.1.3/conder-api.tar.gz"
+    "conder_core": "https://github.com/Conder-Systems/conder/releases/download/v0.1.4/conder-api.tar.gz"
   },
   "jest": {
     "preset": "ts-jest",
