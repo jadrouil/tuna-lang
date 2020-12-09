@@ -1,6 +1,6 @@
 # Welcome
 
-Tuna is a high-level, gradually-typed programming language where global state is persisted in database.
+Tuna is a high-level, gradually-typed programming language where global state is persisted in a database.
 
 # Purpose
 
