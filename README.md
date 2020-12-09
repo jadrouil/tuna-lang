@@ -6,7 +6,7 @@ Tuna is a high-level, gradually-typed, programming language where global state i
 
 The goal of tuna lang is to make it easier to build horizontally scalable and performant systems.
 
-Tuna accomplishes this by providing the same interface to global and local state despite global state being stored in a database. Performance is/will be achieved by building on[conder](https://github.com/Conder-Systems/conder). Conder is a compiler for abstract representations of functions that run mutations/queries against global and local state.
+Tuna accomplishes this by providing the same interface to global and local state despite global state being stored in a database. Performance is/will be achieved by building on [conder](https://github.com/Conder-Systems/conder). Conder is a compiler for abstract representations of functions that run mutations/queries against global and local state.
 
 Anyways, the goal is to build a scalable python.
 
