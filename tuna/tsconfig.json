@@ -25,6 +25,5 @@
     "typeRoots": ["node_modules/@types/"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"],
-  "references": [{"path": "./tuna-compiler"}]
+  "exclude": ["node_modules"]
 }

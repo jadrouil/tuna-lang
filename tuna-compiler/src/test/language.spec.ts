@@ -1,15 +1,18 @@
 import { OPSIFY_MANIFEST, Transformer } from 'conder_core';
-import { TUNA_TO_MANIFEST } from '../main/assembled';
+import { TUNA_TO_LOCKS, TUNA_TO_MANIFEST } from '../main/assembled';
 
 function tunaTest(maybeSucceed: "succeed" | "fail", code: string): jest.ProvidesCallback {
     return (cb) => {
         if (maybeSucceed === "succeed") {
             const ops = TUNA_TO_MANIFEST.then(new Transformer(i => {
                 expect(i).toMatchSnapshot("intermediate representation")
+                
                 return i
             })).then(OPSIFY_MANIFEST).tap(data => {
                 expect(data).toMatchSnapshot("OPS")
             }).run(code)
+            const locks = TUNA_TO_LOCKS.run(code)
+            expect(locks).toMatchSnapshot("locks")
 
         } else {
             expect(() => TUNA_TO_MANIFEST.run(code)).toThrowErrorMatchingSnapshot()
@@ -708,4 +711,27 @@ describe("types", () => {
     
     ))
     
+})
+
+describe("demo apps", () => {
+    it("can be used to create a messenger", tunaTest("succeed",
+    `
+
+const users = {}
+
+const chats = {}
+
+pub func get_my_messages() {
+    
+    if users.a != none {
+        const my_chats = users.a
+
+        const msgs = {}
+        for chat in my_chats {
+            msgs[chat] = chats[chat]
+        }
+    }
+}
+    `
+    ))
 })
