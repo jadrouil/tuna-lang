@@ -13,7 +13,7 @@ Anyways, the goal is to build a scalable python.
 # Getting Started
 - The most exhaustive documentation of the syntax can be found in [the compiler tests](tuna-compiler/src/test/language.spec.ts).
 - The [cli](tuna/readme.md) has its own getting started.
-
+- The [demos](tuna/demos) provide example(s) of how to build and interact with systems.
 
 # Details
 
