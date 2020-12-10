@@ -58,6 +58,6 @@ Currently, tuna uses mongo under the covers. Mongo doesn't expose locks in their
 All of the following limitations are temporary:
 - No type inference or static type checking.
 - No object oriented programming concepts.
-- No locks. (If you think you know of an ideal storage mechanism to use, please share!)
+- No locks
 
 
