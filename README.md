@@ -1,8 +1,8 @@
 # Welcome
 
-Tuna is a high-level, gradually-typed programming language where global state is persisted in a database. The goal of tuna lang is to make it easier to build horizontally scalable and performant systems.
+Tuna is intended to be a cloud programming language. This entails that global state, whether it is locks, application data, is automatically shared across any number of replicated compute nodes. This is achieved by transparently using distributed lock managers and databases to manage application state.
 
-Tuna accomplishes this by providing the same interface to global and local state despite global state being stored in a database. Performance is/will be achieved by building on [conder](https://github.com/Conder-Systems/conder). Conder is a compiler for abstract representations of functions that run mutations/queries against global and local state.
+The goal of tuna lang is to make it easier to build horizontally scalable and performant systems.
 
 # Getting Started
 - The most exhaustive documentation of the syntax can be found in [the compiler tests](tuna-compiler/src/test/language.spec.ts).
@@ -48,6 +48,9 @@ When `some_func` is invoked by a client, we automatically validate the input mat
 
 Type aliases can be defined like they are in typescript: `type my_type = string`.
 Note, type aliases may not refer to other type aliases. This is a temporary limitation.
+
+## Architecture
+Tuna is built on conder. Performance is/will be achieved by building on [conder](https://github.com/Conder-Systems/conder). Conder is a compiler for abstract representations of functions that run mutations/queries against global and local state. Assuming you're running locally, when you compile a tuna program, your functions are reduced to op code that can run on the conder interpreter. The op code is provided to the conder [stored procedure server](https://hub.docker.com/r/condersystems/sps/tags?page=1&ordering=last_updated) and the stored procedure server is run locally. Your functions will be reachable behind an http endpoint. See the demos and cli instructions for more details. 
 
 
 # Limitation Summary
