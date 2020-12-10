@@ -7741,12 +7741,8 @@ Object {
         "kind": "assertHeapLen",
       },
       Object {
-        "data": null,
-        "kind": "instantiate",
-      },
-      Object {
         "data": undefined,
-        "kind": "returnStackTop",
+        "kind": "returnVoid",
       },
     ],
   },
