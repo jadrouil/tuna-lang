@@ -553,6 +553,258 @@ Map {
 }
 `;
 
+exports[`language allows directly indexing into function results: OPS 1`] = `
+Object {
+  "funcs": Map {
+    "test" => Array [
+      Object {
+        "data": 1,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": Array [
+          0,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": "next",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 1,
+        "kind": "getField",
+      },
+      Object {
+        "data": null,
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "equal",
+      },
+      Object {
+        "data": undefined,
+        "kind": "negatePrev",
+      },
+      Object {
+        "data": 6,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": Object {},
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "result",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": null,
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 1,
+        "kind": "setField",
+      },
+      Object {
+        "data": undefined,
+        "kind": "returnStackTop",
+      },
+      Object {
+        "data": Array [
+          1,
+          true,
+        ],
+        "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": undefined,
+        "kind": "noop",
+      },
+      Object {
+        "data": Object {},
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "result",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": "next",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 1,
+        "kind": "getField",
+      },
+      Object {
+        "data": Array [
+          "test",
+          1,
+        ],
+        "kind": "invoke",
+      },
+      Object {
+        "data": "result",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 1,
+        "kind": "getField",
+      },
+      Object {
+        "data": 1,
+        "kind": "setField",
+      },
+      Object {
+        "data": undefined,
+        "kind": "returnStackTop",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language allows directly indexing into function results: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "test" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "conditionally": Array [
+            Object {
+              "cond": Object {
+                "kind": "Comparison",
+                "left": Object {
+                  "kind": "Selection",
+                  "level": Array [
+                    Object {
+                      "kind": "String",
+                      "value": "next",
+                    },
+                  ],
+                  "root": Object {
+                    "index": 0,
+                    "kind": "Saved",
+                  },
+                },
+                "right": Object {
+                  "kind": "None",
+                },
+                "sign": "==",
+              },
+              "do": Array [
+                Object {
+                  "kind": "Return",
+                  "value": Object {
+                    "fields": Array [
+                      Object {
+                        "key": Object {
+                          "kind": "String",
+                          "value": "result",
+                        },
+                        "kind": "Field",
+                        "value": Object {
+                          "kind": "None",
+                        },
+                      },
+                    ],
+                    "kind": "Object",
+                  },
+                },
+              ],
+              "kind": "Conditional",
+            },
+          ],
+          "kind": "If",
+        },
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "fields": Array [
+              Object {
+                "key": Object {
+                  "kind": "String",
+                  "value": "result",
+                },
+                "kind": "Field",
+                "value": Object {
+                  "kind": "Selection",
+                  "level": Array [
+                    Object {
+                      "kind": "String",
+                      "value": "result",
+                    },
+                  ],
+                  "root": Object {
+                    "args": Array [
+                      Object {
+                        "kind": "Selection",
+                        "level": Array [
+                          Object {
+                            "kind": "String",
+                            "value": "next",
+                          },
+                        ],
+                        "root": Object {
+                          "index": 0,
+                          "kind": "Saved",
+                        },
+                      },
+                    ],
+                    "function_name": "test",
+                    "kind": "Call",
+                  },
+                },
+              },
+            ],
+            "kind": "Object",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+  "privateFuncs": Set {
+    "test",
+  },
+}
+`;
+
+exports[`language allows directly indexing into function results: locks 1`] = `
+Map {
+  "test" => Map {},
+}
+`;
+
 exports[`language allows expressions in object literals: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -8406,7 +8658,7 @@ Map {
 
 exports[`language shouldn't allow deleting of whole variables 1`] = `
 "In function f: 
-	Delete cannot be applied to whole variables"
+	Cannot delete whole objects"
 `;
 
 exports[`types allows explicitly saying a type is any: OPS 1`] = `

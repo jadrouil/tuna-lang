@@ -184,7 +184,7 @@ describe("language", () => {
     it("allows deleting of keys in objects", tunaTest("succeed",
     `
     pub func f(a) {
-        delete(a.b)
+        a.b.deleteField()
     }
     `
     ))
@@ -267,9 +267,21 @@ describe("language", () => {
     it("shouldn't allow deleting of whole variables", tunaTest("fail",
     `
     pub func f(b0) {
-        delete(b0)
+        b0.deleteField()
     }
     `
+    ))
+
+    it("allows directly indexing into function results", tunaTest(
+        "succeed",
+        `
+        func test(a) {
+            if a.next == none {
+                return {result: none}
+            }
+            return {result: test(a.next)['result'] }
+        }
+        `
     ))
 
     // #dontlike 
@@ -277,7 +289,7 @@ describe("language", () => {
     it("allows deleting of array fields even though it produces a runtime error", tunaTest("succeed",
     `
     pub func f(b) {
-        delete(b[0])
+       b[0].deleteField()
     }
     `
     ))
@@ -645,7 +657,7 @@ describe("language", () => {
         const g = {}
 
         pub func dd(a) {
-            delete(g.a.b.c[a])
+            g.a.b.c[a].deleteField()
         }
         `))
 

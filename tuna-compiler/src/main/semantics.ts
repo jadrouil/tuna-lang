@@ -159,8 +159,8 @@ function literal_to_node(lit: literal, scope: ScopeMap): ValueNode {
     }
 }
 
-type IsMutation = "Push"
-type BakedInMethods = PickNode<"Push"> | PickNode<"Keys">
+type IsMutation = "Push" | "DeleteField"
+type BakedInMethods = PickNode<"Push" | "Keys" | "DeleteField">
 type MethodCompiler<P extends BakedInMethods["kind"]> = 
     (current: PickNode<"Selection">, invoke: methodInvoke, scope: ScopeMap) => P extends IsMutation ? PickNode<"Update"> : PickNode<P>
 type MethodLookup = {
@@ -197,6 +197,23 @@ const baked_in_methods: MethodLookup = {
             }
         }
         
+    },
+    DeleteField: (current, invoke, scope) => {
+        if (invoke.args.lastArg) {
+            throw Error(`Delete takes no arguments`)
+        }
+        if (current.root.kind !== "GlobalObject" && current.root.kind !== "Saved" ) {
+            throw Error(`Mutations cannot be performed against temporary variable`)
+        }
+        if (current.level.length === 0) {
+            throw Error(`Cannot delete whole objects`)
+        }
+        return {
+            kind: "Update",
+            root: current.root,
+            level: current.level,
+            operation: {kind: "DeleteField"}
+        }
     }
 }
 
@@ -455,27 +472,6 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
                 ret.push({
                     kind: "Save",
                     value,
-                })
-                break
-
-            case ASTKinds.functionCall:
-                if (e.value.name.name !== "delete") {
-                    throw Error(`At the moment, you can only call the delete() function.`)
-                }
-                if (e.value.args.leadingArgs.length !== 0 || e.value.args.lastArg == undefined) {
-                    throw Error(`Delete expects one argument`)
-                }
-                const {root, level} = expression_to_update_target(e.value.args.lastArg, scope)
-                if (level.length === 0) {
-                    throw Error(`Delete cannot be applied to whole variables`)
-                }
-                ret.push({
-                    kind: "Update",
-                    root,
-                    level,
-                    operation: {
-                        kind: "DeleteField"
-                    }
                 })
                 break
 

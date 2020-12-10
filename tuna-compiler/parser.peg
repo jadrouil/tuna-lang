@@ -14,12 +14,12 @@ none := 'none' '(?=(\s|}))'
 array := '\[' values={value=expression '(\n|,|(?=\]))' ws*}*'\]'
 literal := obj | str | bool | num | none | array
 newLineOrComma := '\n|,'
-fields := data={ws* name=name ws* ':' ws* value=expression '(\n|,|(?=}))'}*
+fields := data={ws* name=name ws* ':' ws* value=expression '\s*(\n|,|(?=}))'}*
 space := ' '
 
 scopedExecution := ws* '\{' body=executable '\s*\}'
-executable := ws* value={value={ret | varDecl | forLoop | ifs | assignment | functionCall | expression } ws+ }*
-expression :=  prefix={prefixOps}? root={literal | functionCall | name  } methods={method}* infix={sign=infixOps arg=expression}?
+executable := ws* value={value={ret | varDecl | forLoop | ifs | assignment | expression } ws+ }*
+expression :=  prefix={prefixOps}? root={ functionCall | literal | name  } methods={method}* infix={sign=infixOps arg=expression}?
 method := method={parameterIndex | methodInvoke | literalIndex }
 
 not := 'not' ws+
