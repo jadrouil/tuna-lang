@@ -19,8 +19,8 @@ space := ' '
 
 scopedExecution := ws* '\{' body=executable '\s*\}'
 executable := ws* value={value={ret | varDecl | forLoop | ifs | assignment | functionCall | expression } ws+ }*
-expression :=  prefix={prefixOps}? root={literal | name   } methods={method}* infix={sign=infixOps arg=expression}?
-method := method={parameterIndex | methodInvoke | literalIndex}
+expression :=  prefix={prefixOps}? root={literal | functionCall | name  } methods={method}* infix={sign=infixOps arg=expression}?
+method := method={parameterIndex | methodInvoke | literalIndex }
 
 not := 'not' ws+
 minus := '-' space*
@@ -38,7 +38,6 @@ and := 'and' ws+
 or := 'or' ws+
 
 infixOps := space* op={plus | minus | mult | divide | eq | neq | leq | geq | gt | lt  | and | or}
-
 functionCall := name=name args=args
 parameterIndex := '\[' space* value={expression} space* '\]'
 literalIndex := '\.' value={name}

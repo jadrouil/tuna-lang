@@ -116,7 +116,6 @@ function to_value_node(n: AnyNode): ValueNode {
         "Noop", 
         "Push",
         "Conditional",
-        "Keys"
         )
 }
 
@@ -163,23 +162,27 @@ function literal_to_node(lit: literal, scope: ScopeMap): ValueNode {
 type IsMutation = "Push"
 type BakedInMethods = PickNode<"Push"> | PickNode<"Keys">
 type MethodCompiler<P extends BakedInMethods["kind"]> = 
-    (current: PickNode<"Selection">, invoke: methodInvoke, scope: ScopeMap) => P extends IsMutation ? PickNode<"Update"> : PickNode<"Selection">
+    (current: PickNode<"Selection">, invoke: methodInvoke, scope: ScopeMap) => P extends IsMutation ? PickNode<"Update"> : PickNode<P>
 type MethodLookup = {
     [P in BakedInMethods["kind"]]: MethodCompiler<P>
 }
 
 const baked_in_methods: MethodLookup = {
     Keys: (current, invoke, scope) => {
-        
         if (invoke.args.lastArg|| invoke.args.leadingArgs.length > 0) {
             throw Error(`keys should be called with zero args.`)
         }
-        current.level.push({kind: "Keys"})
-        return current
+        return {
+            kind: "Keys",
+            from: current
+        }
     },
     Push: (current, invoke, scope) => {
         if (invoke.args.lastArg == undefined) {
             throw Error(`Push requires at least one argument`)
+        }
+        if (current.root.kind !== "GlobalObject" && current.root.kind !== "Saved" ) {
+            throw Error(`Mutations cannot be performed against temporary variable`)
         }
 
         const args = [...invoke.args.leadingArgs.map(a => a.value), invoke.args.lastArg]
@@ -198,7 +201,7 @@ const baked_in_methods: MethodLookup = {
 }
 
 
-function method_to_node(target: PickNode<"Saved" | "GlobalObject">, methods: expression["methods"], scope: ScopeMap): AnyNode {
+function method_to_node(target: PickNode<"Saved" | "GlobalObject" | "Call">, methods: expression["methods"], scope: ScopeMap): AnyNode {
     if (methods.length === 0) {
         if (target.kind === "GlobalObject") {
             return {
@@ -209,22 +212,30 @@ function method_to_node(target: PickNode<"Saved" | "GlobalObject">, methods: exp
         }
         return target
     }
-    let current: PickNode<"Selection" | "Update"> = {
-        kind: "Selection",
-        level: [],
-        root: target
-    }
-    
+    let current: AnyNode = target
+       
     for (let i = 0; i < methods.length; i++) {
         const m = methods[i];
         switch(m.method.kind) {
             case ASTKinds.literalIndex: 
-                current.level.push({kind: "String", value: m.method.value.name})
-        
-                break
             case ASTKinds.parameterIndex:
-                const e = complete_expression_to_node(m.method.value, scope)
-                current.level.push(to_value_node(e))
+                const index: ValueNode = m.method.kind === ASTKinds.literalIndex ? 
+                {kind: "String", value: m.method.value.name} : 
+                to_value_node(complete_expression_to_node(m.method.value, scope))
+                
+                
+                if (current.kind === "Update") {
+                    throw Error(`Cannot index into update results`)
+                }
+                if (current.kind !== "Selection") {
+                    current = {
+                        kind: "Selection",
+                        level: [index],
+                        root: current
+                    }
+                } else {
+                    current.level.push(index)
+                }        
                 break
 
             case ASTKinds.methodInvoke: 
@@ -233,13 +244,21 @@ function method_to_node(target: PickNode<"Saved" | "GlobalObject">, methods: exp
                     if (current.kind === "Update") {
                         throw Error(`Mutations do not return results`)
                     }
-                    current = baked_in_methods[capitalized as keyof MethodLookup](current, m.method, scope)
-                    
+                    switch (current.kind) {
+                        case "Selection":
+                            current = baked_in_methods[capitalized as keyof MethodLookup](current, m.method, scope)
+                            break
+                        case "Saved":
+                        case "GlobalObject":
+                            current = baked_in_methods[capitalized as keyof MethodLookup]({kind: "Selection", level: [], root: current}, m.method, scope)
+                            break
+                        default:
+                            throw Error(`Cannot perform updates on temporary data`)
+                    }
                 } else {
                     throw Error(`Unrecognized method ${m.method.name.name}`)
                 }
                 break
-                
             default: 
                 const n: never = m.method
         }
@@ -380,6 +399,16 @@ function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
             } else {
                 return method_to_node({kind: "Saved", index: name.index}, exp.methods, scope)
             }
+        case ASTKinds.functionCall:
+            const args = exp.root.args.lastArg ? [...exp.root.args.leadingArgs.map(a => a.value), exp.root.args.lastArg] : []
+            return method_to_node(
+                {kind: "Call", function_name: exp.root.name.name, args: args.map(a => 
+                    to_value_node(complete_expression_to_node(a, scope))
+                )},
+                exp.methods,
+                scope
+            )
+            
         default: 
             const n: never = exp.root
     }

@@ -608,6 +608,18 @@ describe("language", () => {
             `
         ))
 
+        it("allows functions to invoke other functions", tunaTest(
+            "succeed",
+            `
+            func fib(left, right, depth) {
+                if depth == 0 {
+                    return right
+                }
+                return fib(right, left + right, depth - 1)
+            }
+            `
+        ))
+
         it("make sure and suffixes on names aren't mistaken for infixes", tunaTest(
             "succeed",
             `

@@ -965,16 +965,20 @@ Object {
             "kind": "Selection",
             "level": Array [
               Object {
-                "kind": "Keys",
-              },
-              Object {
                 "kind": "Int",
                 "value": 0,
               },
             ],
             "root": Object {
-              "index": 0,
-              "kind": "Saved",
+              "from": Object {
+                "kind": "Selection",
+                "level": Array [],
+                "root": Object {
+                  "index": 0,
+                  "kind": "Saved",
+                },
+              },
+              "kind": "Keys",
             },
           },
         },
@@ -1025,6 +1029,10 @@ Object {
         "kind": "raiseError",
       },
       Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
         "data": "b",
         "kind": "instantiate",
       },
@@ -1033,11 +1041,8 @@ Object {
         "kind": "instantiate",
       },
       Object {
-        "data": Array [
-          2,
-          0,
-        ],
-        "kind": "getSavedField",
+        "data": 2,
+        "kind": "getField",
       },
       Object {
         "data": undefined,
@@ -1061,24 +1066,24 @@ Object {
         Object {
           "kind": "Return",
           "value": Object {
-            "kind": "Selection",
-            "level": Array [
-              Object {
-                "kind": "String",
-                "value": "b",
+            "from": Object {
+              "kind": "Selection",
+              "level": Array [
+                Object {
+                  "kind": "String",
+                  "value": "b",
+                },
+                Object {
+                  "kind": "String",
+                  "value": "cdef",
+                },
+              ],
+              "root": Object {
+                "index": 0,
+                "kind": "Saved",
               },
-              Object {
-                "kind": "String",
-                "value": "cdef",
-              },
-              Object {
-                "kind": "Keys",
-              },
-            ],
-            "root": Object {
-              "index": 0,
-              "kind": "Saved",
             },
+            "kind": "Keys",
           },
         },
       ],
@@ -1294,64 +1299,16 @@ Object {
         "kind": "moveStackTopToHeap",
       },
       Object {
-        "data": Array [],
-        "kind": "instantiate",
-      },
-      Object {
-        "data": Object {},
-        "kind": "instantiate",
-      },
-      Object {
-        "data": Array [
-          "g",
-          Object {
-            "_val": false,
-          },
-        ],
-        "kind": "queryStore",
+        "data": "g",
+        "kind": "getAllFromStore",
       },
       Object {
         "data": undefined,
-        "kind": "ndArrayLen",
-      },
-      Object {
-        "data": 0,
-        "kind": "instantiate",
+        "kind": "repackageCollection",
       },
       Object {
         "data": undefined,
-        "kind": "equal",
-      },
-      Object {
-        "data": 5,
-        "kind": "conditonallySkipXops",
-      },
-      Object {
-        "data": undefined,
-        "kind": "popArray",
-      },
-      Object {
-        "data": "_key",
-        "kind": "instantiate",
-      },
-      Object {
-        "data": 1,
-        "kind": "getField",
-      },
-      Object {
-        "data": 1,
-        "kind": "pArrayPush",
-      },
-      Object {
-        "data": Array [
-          8,
-          false,
-        ],
-        "kind": "offsetOpCursor",
-      },
-      Object {
-        "data": undefined,
-        "kind": "popStack",
+        "kind": "getKeys",
       },
       Object {
         "data": undefined,
@@ -1376,31 +1333,29 @@ Object {
         Object {
           "kind": "Save",
           "value": Object {
-            "kind": "Selection",
-            "level": Array [
-              Object {
-                "kind": "Keys",
+            "from": Object {
+              "kind": "Selection",
+              "level": Array [],
+              "root": Object {
+                "index": 0,
+                "kind": "Saved",
               },
-            ],
-            "root": Object {
-              "index": 0,
-              "kind": "Saved",
             },
+            "kind": "Keys",
           },
         },
         Object {
           "kind": "Save",
           "value": Object {
-            "kind": "Selection",
-            "level": Array [
-              Object {
-                "kind": "Keys",
+            "from": Object {
+              "kind": "Selection",
+              "level": Array [],
+              "root": Object {
+                "kind": "GlobalObject",
+                "name": "g",
               },
-            ],
-            "root": Object {
-              "kind": "GlobalObject",
-              "name": "g",
             },
+            "kind": "Keys",
           },
         },
       ],
@@ -1471,15 +1426,16 @@ Object {
         "kind": "moveStackTopToHeap",
       },
       Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
         "data": 1,
         "kind": "copyFromHeap",
       },
       Object {
-        "data": Array [
-          1,
-          0,
-        ],
-        "kind": "getSavedField",
+        "data": 1,
+        "kind": "getField",
       },
       Object {
         "data": undefined,
@@ -1935,21 +1891,22 @@ Object {
       },
       Object {
         "data": Array [
-          18,
+          20,
           true,
         ],
         "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
       },
       Object {
         "data": "b",
         "kind": "instantiate",
       },
       Object {
-        "data": Array [
-          1,
-          0,
-        ],
-        "kind": "getSavedField",
+        "data": 1,
+        "kind": "getField",
       },
       Object {
         "data": undefined,
@@ -1969,21 +1926,22 @@ Object {
       },
       Object {
         "data": Array [
-          11,
+          12,
           true,
         ],
         "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
       },
       Object {
         "data": "c",
         "kind": "instantiate",
       },
       Object {
-        "data": Array [
-          1,
-          0,
-        ],
-        "kind": "getSavedField",
+        "data": 1,
+        "kind": "getField",
       },
       Object {
         "data": undefined,
@@ -2313,21 +2271,22 @@ Object {
       },
       Object {
         "data": Array [
-          21,
+          23,
           true,
         ],
         "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
       },
       Object {
         "data": "b",
         "kind": "instantiate",
       },
       Object {
-        "data": Array [
-          1,
-          0,
-        ],
-        "kind": "getSavedField",
+        "data": 1,
+        "kind": "getField",
       },
       Object {
         "data": undefined,
@@ -2351,21 +2310,22 @@ Object {
       },
       Object {
         "data": Array [
-          13,
+          14,
           true,
         ],
         "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
       },
       Object {
         "data": "c",
         "kind": "instantiate",
       },
       Object {
-        "data": Array [
-          1,
-          0,
-        ],
-        "kind": "getSavedField",
+        "data": 1,
+        "kind": "getField",
       },
       Object {
         "data": undefined,
@@ -3986,6 +3946,253 @@ exports[`language infix operators allows ands and or: locks 1`] = `
 Map {
   "t" => Map {},
   "f" => Map {},
+}
+`;
+
+exports[`language infix operators allows functions to invoke other functions: OPS 1`] = `
+Object {
+  "funcs": Map {
+    "fib" => Array [
+      Object {
+        "data": 3,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": Array [
+          0,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": Array [
+          1,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": Array [
+          2,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": 2,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": 0,
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "equal",
+      },
+      Object {
+        "data": undefined,
+        "kind": "negatePrev",
+      },
+      Object {
+        "data": 3,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": 1,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": undefined,
+        "kind": "returnStackTop",
+      },
+      Object {
+        "data": Array [
+          1,
+          true,
+        ],
+        "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": undefined,
+        "kind": "noop",
+      },
+      Object {
+        "data": 1,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": undefined,
+        "kind": "nPlus",
+      },
+      Object {
+        "data": 2,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "nMinus",
+      },
+      Object {
+        "data": Array [
+          "fib",
+          3,
+        ],
+        "kind": "invoke",
+      },
+      Object {
+        "data": undefined,
+        "kind": "returnStackTop",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators allows functions to invoke other functions: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "fib" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "conditionally": Array [
+            Object {
+              "cond": Object {
+                "kind": "Comparison",
+                "left": Object {
+                  "index": 2,
+                  "kind": "Saved",
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 0,
+                },
+                "sign": "==",
+              },
+              "do": Array [
+                Object {
+                  "kind": "Return",
+                  "value": Object {
+                    "index": 1,
+                    "kind": "Saved",
+                  },
+                },
+              ],
+              "kind": "Conditional",
+            },
+          ],
+          "kind": "If",
+        },
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "args": Array [
+              Object {
+                "index": 1,
+                "kind": "Saved",
+              },
+              Object {
+                "kind": "Math",
+                "left": Object {
+                  "index": 0,
+                  "kind": "Saved",
+                },
+                "right": Object {
+                  "index": 1,
+                  "kind": "Saved",
+                },
+                "sign": "+",
+              },
+              Object {
+                "kind": "Math",
+                "left": Object {
+                  "index": 2,
+                  "kind": "Saved",
+                },
+                "right": Object {
+                  "kind": "Int",
+                  "value": 1,
+                },
+                "sign": "-",
+              },
+            ],
+            "function_name": "fib",
+            "kind": "Call",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+  "privateFuncs": Set {
+    "fib",
+  },
+}
+`;
+
+exports[`language infix operators allows functions to invoke other functions: locks 1`] = `
+Map {
+  "fib" => Map {},
 }
 `;
 
