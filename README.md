@@ -56,7 +56,6 @@ Currently, tuna uses mongo under the covers. Mongo doesn't expose locks in their
 
 # Limitation Summary
 All of the following limitations are temporary:
-- Cannot invoke other functions or declare private functions.
 - No type inference or static type checking.
 - No object oriented programming concepts.
 - No locks. (If you think you know of an ideal storage mechanism to use, please share!)
