@@ -1,3 +1,4 @@
+import { CONDER_CNTR } from './../conder_version';
 import { ServerEnv } from 'conder_core/dist/src/main/ops';
 
 import { GluegunToolbox, GluegunCommand, print } from 'gluegun'
@@ -64,7 +65,7 @@ const command: GluegunCommand = {
         info("starting server...")
         
         child_process.execSync(
-            `docker run --rm -d -p 7213:8080 ${Object.keys(string_env).map(k => `-e ${k}`).join(' ')} --name tuna-run condersystems/sps:0.1.4`, 
+            `docker run --rm -d -p 7213:8080 ${Object.keys(string_env).map(k => `-e ${k}`).join(' ')} --name tuna-run ${CONDER_CNTR}`, 
             {
                 env: {
                     ...string_env, 

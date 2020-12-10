@@ -32,7 +32,7 @@
     "@types/mongodb": "^3.6.1",
     "gluegun": "latest",
     "mongodb": "^3.6.3",
-    "tuna-compiler": "0.0.5"
+    "tuna-compiler": "^0.1.1"
   },
   "devDependencies": {
     "@types/node": "^12.7.11",
