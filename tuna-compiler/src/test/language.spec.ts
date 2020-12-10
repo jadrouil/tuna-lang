@@ -599,6 +599,15 @@ describe("language", () => {
             `
         ))
 
+        it("allows private functions", tunaTest(
+            "succeed",
+            `
+            func shh() {
+
+            }
+            `
+        ))
+
         it("make sure and suffixes on names aren't mistaken for infixes", tunaTest(
             "succeed",
             `

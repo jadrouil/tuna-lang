@@ -577,12 +577,12 @@ function to_descr(f: func, scope: ScopeMap, debug: boolean): FunctionDescription
     }
     
 }
-
-export function semantify(p: ParseResult, debug: boolean): Manifest {
+export type PrivateFuncs = {privateFuncs: Set<string>}
+export function semantify(p: ParseResult, debug: boolean): Manifest & PrivateFuncs {
     if (p.err) {
         throw Error(`Failure parsing: line ${p.err.pos.line} col ${p.err.pos.offset}: ${p.err.toString()}`)
     }
-
+    const privateFuncs = new Set<string>()
     const globalScope = new ScopeMap()
     const aFunc: func[] = []
 
@@ -625,6 +625,9 @@ export function semantify(p: ParseResult, debug: boolean): Manifest {
                 
             case ASTKinds.func: 
                 globalScope.set(name, "func")
+                if (!g.value.pub) {
+                    privateFuncs.add(name)
+                }
                 aFunc.push(g.value)
                 break
             case ASTKinds.typeDef:
@@ -643,7 +646,8 @@ export function semantify(p: ParseResult, debug: boolean): Manifest {
 
     return  {
         globals: globs,
-        funcs
+        funcs,
+        privateFuncs
     }
 
 
