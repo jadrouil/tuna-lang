@@ -49,10 +49,6 @@ When `some_func` is invoked by a client, we automatically validate the input mat
 Type aliases can be defined like they are in typescript: `type my_type = string`.
 Note, type aliases may not refer to other type aliases. This is a temporary limitation.
 
-## Locks
-
-Currently, tuna uses mongo under the covers. Mongo doesn't expose locks in their rust driver api, so no locks are acquired, which may make the application unsafe to run. To check if your application is safe you can run the `warn` command with the CLI.
-
 
 # Limitation Summary
 All of the following limitations are temporary:
