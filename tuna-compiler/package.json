@@ -19,7 +19,7 @@
     "typescript": "^4.0.0"
   },
   "dependencies": {
-    "conder_core": "https://github.com/Conder-Systems/conder/releases/download/v0.2.1/conder-api.tar.gz"
+    "conder_core": "https://github.com/Conder-Systems/conder/releases/download/v0.2.2/conder-api.tar.gz"
   },
   "jest": {
     "preset": "ts-jest",
