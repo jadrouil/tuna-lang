@@ -116,6 +116,8 @@ function to_value_node(n: AnyNode): ValueNode {
         "Noop", 
         "Push",
         "Conditional",
+        "Lock",
+        "Release"
         )
 }
 

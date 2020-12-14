@@ -3340,7 +3340,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": undefined,
@@ -3535,7 +3535,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": undefined,
@@ -3583,7 +3583,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": undefined,
@@ -4316,7 +4316,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": 2,
@@ -4614,7 +4614,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": undefined,
@@ -4999,7 +4999,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": undefined,
@@ -5101,7 +5101,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": undefined,
@@ -5198,7 +5198,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": 51,
@@ -5505,7 +5505,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": 10,
@@ -5513,7 +5513,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": 30,
@@ -5602,7 +5602,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": 3,
