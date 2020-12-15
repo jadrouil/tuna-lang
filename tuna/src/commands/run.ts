@@ -5,6 +5,8 @@ import { GluegunToolbox, GluegunCommand, print } from 'gluegun'
 import * as child_process from 'child_process'
 import { TUNA_LOCAL_COMPILER } from 'tuna-compiler'
 import * as mongodb from 'mongodb'
+import { Etcd3 } from 'etcd3';
+import * as etcd from 'etcd3'
 
 const command: GluegunCommand = {
   name: 'run',
@@ -23,8 +25,9 @@ const command: GluegunCommand = {
     try {
         info("compiling...")
         const output = TUNA_LOCAL_COMPILER.run(conduit)
-        info("starting mongo...")
+        info("starting mongo & etcd...")
         const mongoname = `mongodb-tuna`
+        const readiers: Promise<any>[] = []
         const killActions: ({name: string, action: () => void})[] = []
         
         const startMongo = `docker run -d -p 27017:27017 --rm  --mount type=tmpfs,destination=/data/db --name ${mongoname} mongo:4.4`
@@ -42,6 +45,16 @@ const command: GluegunCommand = {
             process.exit(1)
         }
 
+        const etcdPort = 2379
+        const etcname= `etcdtuna`
+        const etclocation = `localhost:${etcdPort}`
+        child_process.execSync(
+            `docker run -it --rm -d --name ${etcname} \
+            --env ALLOW_NONE_AUTHENTICATION=yes -p ${etcdPort}:2379 -p ${etcdPort + 1}:2380 \
+            bitnami/etcd`
+        )
+        killActions.push({name: "killing etcd", action: () => child_process.execSync(`docker kill ${etcname}`)})
+            
         process.on("SIGINT", kill)
         process.on("SIGTERM", kill)
             
@@ -49,17 +62,24 @@ const command: GluegunCommand = {
             `mongodb://localhost:27017`,
             { useUnifiedTopology: true }
         ).catch((e) => {console.error(e); process.exit(1)});
+        const backoff: etcd.IOptions["faultHandling"]["watchBackoff"] = {
+            duration: () => 3000,
+            next: () => backoff
+        }
+        const e_client = new Etcd3({hosts: etclocation, faultHandling: {watchBackoff: backoff}})
+        readiers.push(e_client.put("a").value("b").exec().then(() =>e_client.delete().key("a").exec()))
         
         const db = client.db("conduit");
-        
-    
+                
         Object.keys(output.STORES).forEach(storeName => db.createCollection(storeName))
         
-    
-        await db.listCollections().toArray()
+        readiers.push(db.listCollections().toArray())
+        await (Promise.all(readiers).catch(e => {error(e); throw e}))
         const mongoAddress = child_process.execSync(`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${mongoname}`, {encoding: "utf-8"}).trim()
+        const etcAddress = child_process.execSync(`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${etcname}`, {encoding: "utf-8"}).trim()
         const string_env: ServerEnv = {
             MONGO_CONNECTION_URI: `mongodb://${mongoAddress}`,
+            ETCD_URL: `http://${etcAddress}:${etcdPort}`,
             ...output
         };
         info("starting server...")
