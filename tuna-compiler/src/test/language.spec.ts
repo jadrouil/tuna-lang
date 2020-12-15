@@ -139,6 +139,29 @@ describe("language", () => {
     }
 
     `))
+
+    it("allows locking of strings", tunaTest(
+        "succeed",
+        `
+
+        
+        func l() {
+            'some string'.lock()
+
+            'some string'.release()
+        }
+        `
+    ))
+
+    it("allows string concat", tunaTest(
+        "succeed",
+        `
+        func concat() {
+            const a = 'a'
+            return a + 'b'
+        }
+        `
+    ))
     
     it('only allows global constants', tunaTest("fail", `    
     let someVar = {}
@@ -406,21 +429,6 @@ describe("language", () => {
             }
             `
         ))
-
-
-        it("allows locking of strings", tunaTest(
-            "succeed",
-            `
-
-            
-            func l() {
-                'some string'.lock()
-
-                'some string'.release()
-            }
-            `
-        ))
-        
     })
 
     describe("prefix operators", () => {

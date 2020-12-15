@@ -1354,6 +1354,72 @@ Map {
 }
 `;
 
+exports[`language allows locking of strings: OPS 1`] = `
+Object {
+  "funcs": Map {
+    "l" => Array [
+      Object {
+        "data": 0,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": "some string",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "lock",
+      },
+      Object {
+        "data": "some string",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "release",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language allows locking of strings: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "l" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Lock",
+          "name": Object {
+            "kind": "String",
+            "value": "some string",
+          },
+        },
+        Object {
+          "kind": "Release",
+          "name": Object {
+            "kind": "String",
+            "value": "some string",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+  "privateFuncs": Set {
+    "l",
+  },
+}
+`;
+
+exports[`language allows locking of strings: locks 1`] = `
+Map {
+  "l" => Map {},
+}
+`;
+
 exports[`language allows object literals: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -1505,6 +1571,88 @@ Object {
 exports[`language allows overwriting of some level of constants: locks 1`] = `
 Map {
   "b" => Map {},
+}
+`;
+
+exports[`language allows string concat: OPS 1`] = `
+Object {
+  "funcs": Map {
+    "concat" => Array [
+      Object {
+        "data": 0,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": "a",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "moveStackTopToHeap",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": "b",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "plus",
+      },
+      Object {
+        "data": undefined,
+        "kind": "returnStackTop",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language allows string concat: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "concat" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Save",
+          "value": Object {
+            "kind": "String",
+            "value": "a",
+          },
+        },
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "right": Object {
+              "kind": "String",
+              "value": "b",
+            },
+            "sign": "+",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+  "privateFuncs": Set {
+    "concat",
+  },
+}
+`;
+
+exports[`language allows string concat: locks 1`] = `
+Map {
+  "concat" => Map {},
 }
 `;
 
@@ -2504,72 +2652,6 @@ Object {
 exports[`language ifs allows elses: locks 1`] = `
 Map {
   "maybe" => Map {},
-}
-`;
-
-exports[`language ifs allows locking of strings: OPS 1`] = `
-Object {
-  "funcs": Map {
-    "l" => Array [
-      Object {
-        "data": 0,
-        "kind": "assertHeapLen",
-      },
-      Object {
-        "data": "some string",
-        "kind": "instantiate",
-      },
-      Object {
-        "data": undefined,
-        "kind": "lock",
-      },
-      Object {
-        "data": "some string",
-        "kind": "instantiate",
-      },
-      Object {
-        "data": undefined,
-        "kind": "release",
-      },
-    ],
-  },
-  "globals": Map {},
-}
-`;
-
-exports[`language ifs allows locking of strings: intermediate representation 1`] = `
-Object {
-  "funcs": Map {
-    "l" => FunctionDescription {
-      "computation": Array [
-        Object {
-          "kind": "Lock",
-          "name": Object {
-            "kind": "String",
-            "value": "some string",
-          },
-        },
-        Object {
-          "kind": "Release",
-          "name": Object {
-            "kind": "String",
-            "value": "some string",
-          },
-        },
-      ],
-      "input": Array [],
-    },
-  },
-  "globals": Map {},
-  "privateFuncs": Set {
-    "l",
-  },
-}
-`;
-
-exports[`language ifs allows locking of strings: locks 1`] = `
-Map {
-  "l" => Map {},
 }
 `;
 
