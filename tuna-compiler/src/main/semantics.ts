@@ -5,7 +5,8 @@ import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest, ValueNod
 import { AnySchemaInstance, schemaFactory } from 'conder_core/dist/src/main/ops';
 
 type ScopeMapEntry= "func" | 
-"global" | 
+{kind: "global object"} |
+{kind: "global str", value: string} |
 {kind: "const", index: number} |
 {kind: "mut", index: number} | 
 {kind: "typeAlias", value: AnySchemaInstance}
@@ -44,14 +45,22 @@ class ScopeMap extends Map<string, ScopeMapEntry>  {
                 }
                 break
         }
-        throw Error(`Expected one of ${kinds} but found ${JSON.stringify(obj)}`)
+        throw Error(`Expected one of ${kinds.join(", ")} but found ${JSON.stringify(obj)}`)
         
     }
 
     set(k: string, v: ScopeMapEntry): this {
-        if (v !== "global" && v !== "func" && v.kind !== "typeAlias") {
-            this.nextVar++
+        switch (v) {
+            case "func":
+                break
+            default: 
+                switch(v.kind) {
+                    case "const":
+                    case "mut":
+                        this.nextVar++
+                }                
         }
+
         if (this.has(k)) {
             throw Error(`The name ${k} is initialized to multiple variables/functions.`)
         }
@@ -339,18 +348,13 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
 
     switch (exp.root.kind) {
         case ASTKinds.name:
-            const name = scope.getKind(exp.root.name, "mut", "const", "global")
-            if (name === undefined) {
-                throw Error(`Unrecognized name ${exp.root.name}`)
-            }
+            const name = scope.getKind(exp.root.name, "mut", "const", "global object")
             
-            if (name !== "global" && name.kind === "const" && exp.methods.length === 0) {
+            if (name.kind !== "global object" && name.kind === "const" && exp.methods.length === 0) {
                 throw Error(`Attempting to overwrite constant variable ${exp.root.name}`)
             }
             
-            const root: Target["root"] = name === "global" ? 
-                {kind: "GlobalObject", name: exp.root.name} 
-                : {kind: "Saved", index: name.index}
+            const root: Target["root"] = name.kind === "global object" ? {kind: "GlobalObject", name: exp.root.name} : {kind: "Saved", index: name.index}
             
             const level: Target["level"] = exp.methods.map(m => {
                 switch (m.method.kind) {
@@ -461,12 +465,15 @@ function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
             
         
         case ASTKinds.name:
-            const name = scope.getKind(exp.root.name, "global", "const", "mut")
-            
-            if (name === "global") {
-                return method_to_node({kind: "GlobalObject", name: exp.root.name}, exp.methods, scope)
-            } else {
-                return method_to_node({kind: "Saved", index: name.index}, exp.methods, scope)
+            const name = scope.getKind(exp.root.name, "global object", "global str", "const", "mut")
+            switch (name.kind) {
+                case "global str":
+                    return method_to_node({kind: "String", value: name.value}, exp.methods, scope)
+                case "global object":
+                    return method_to_node({kind: "GlobalObject", name: exp.root.name}, exp.methods, scope)
+
+                default: 
+                    return method_to_node({kind: "Saved", index: name.index}, exp.methods, scope)
             }
         case ASTKinds.functionCall:
             const args = exp.root.args.lastArg ? [...exp.root.args.leadingArgs.map(a => a.value), exp.root.args.lastArg] : []
@@ -689,23 +696,28 @@ export function semantify(p: ParseResult, debug: boolean): Manifest & PrivateFun
                 if (g.value.mutability !== "const") {
                     throw Error(`Global variable ${name} must be const`)
                 }
+                if (g.value.value.methods.length > 0) {
+                    throw Error(`Globals must be literals`)
+                }
                 
                 switch (g.value.value.root.kind) {
-                    case ASTKinds.obj: 
+                    case ASTKinds.obj:
+                    
                         if (g.value.value.root.fields.data.length > 0) {
                             break
                         }
-                        if (g.value.value.methods.length > 0) {
-                            break
-                        }
-                        globalScope.set(name, "global")
+                        globalScope.set(name, {kind: "global object"})
+                        globs.set(name, {kind: "glob", name})
+                        return
+                    case ASTKinds.str:
+                        globalScope.set(name, {kind: "global str",value: g.value.value.root.value})
                         globs.set(name, {kind: "glob", name})
                         return
                     default: 
                         break
                 }
 
-                throw Error(`Global ${name} must be initialized as empty object`)
+                throw Error(`Global ${name} must be initialized as empty object or string`)
                 
             case ASTKinds.func: 
                 globalScope.set(name, "func")

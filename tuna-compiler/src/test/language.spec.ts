@@ -153,6 +153,19 @@ describe("language", () => {
         `
     ))
 
+    it("allows global strings", tunaTest(
+        "succeed",
+        `
+        const LOCK = 'some lock'
+        
+        func l() {
+            LOCK.lock()
+
+            LOCK.release()
+        }
+        `
+    ))
+
     it("allows string concat", tunaTest(
         "succeed",
         `
