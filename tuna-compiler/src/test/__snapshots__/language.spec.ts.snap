@@ -1154,6 +1154,82 @@ Map {
 }
 `;
 
+exports[`language allows global strings: OPS 1`] = `
+Object {
+  "funcs": Map {
+    "l" => Array [
+      Object {
+        "data": 0,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": "some lock",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "lock",
+      },
+      Object {
+        "data": "some lock",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "release",
+      },
+    ],
+  },
+  "globals": Map {
+    "LOCK" => Object {
+      "kind": "glob",
+      "name": "LOCK",
+    },
+  },
+}
+`;
+
+exports[`language allows global strings: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "l" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Lock",
+          "name": Object {
+            "kind": "String",
+            "value": "some lock",
+          },
+        },
+        Object {
+          "kind": "Release",
+          "name": Object {
+            "kind": "String",
+            "value": "some lock",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {
+    "LOCK" => Object {
+      "kind": "glob",
+      "name": "LOCK",
+    },
+  },
+  "privateFuncs": Set {
+    "l",
+  },
+}
+`;
+
+exports[`language allows global strings: locks 1`] = `
+Map {
+  "l" => Map {},
+}
+`;
+
 exports[`language allows indexing into keys results: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -1223,12 +1299,8 @@ Object {
             ],
             "root": Object {
               "from": Object {
-                "kind": "Selection",
-                "level": Array [],
-                "root": Object {
-                  "index": 0,
-                  "kind": "Saved",
-                },
+                "index": 0,
+                "kind": "Saved",
               },
               "kind": "Keys",
             },
@@ -1355,6 +1427,72 @@ Object {
 exports[`language allows keys on nested object: locks 1`] = `
 Map {
   "f" => Map {},
+}
+`;
+
+exports[`language allows locking of strings: OPS 1`] = `
+Object {
+  "funcs": Map {
+    "l" => Array [
+      Object {
+        "data": 0,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": "some string",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "lock",
+      },
+      Object {
+        "data": "some string",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "release",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language allows locking of strings: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "l" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Lock",
+          "name": Object {
+            "kind": "String",
+            "value": "some string",
+          },
+        },
+        Object {
+          "kind": "Release",
+          "name": Object {
+            "kind": "String",
+            "value": "some string",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+  "privateFuncs": Set {
+    "l",
+  },
+}
+`;
+
+exports[`language allows locking of strings: locks 1`] = `
+Map {
+  "l" => Map {},
 }
 `;
 
@@ -1512,6 +1650,88 @@ Map {
 }
 `;
 
+exports[`language allows string concat: OPS 1`] = `
+Object {
+  "funcs": Map {
+    "concat" => Array [
+      Object {
+        "data": 0,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": "a",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "moveStackTopToHeap",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": "b",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "plus",
+      },
+      Object {
+        "data": undefined,
+        "kind": "returnStackTop",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language allows string concat: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "concat" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Save",
+          "value": Object {
+            "kind": "String",
+            "value": "a",
+          },
+        },
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+            "right": Object {
+              "kind": "String",
+              "value": "b",
+            },
+            "sign": "+",
+          },
+        },
+      ],
+      "input": Array [],
+    },
+  },
+  "globals": Map {},
+  "privateFuncs": Set {
+    "concat",
+  },
+}
+`;
+
+exports[`language allows string concat: locks 1`] = `
+Map {
+  "concat" => Map {},
+}
+`;
+
 exports[`language allows users to call keys() on globals and locals: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -1551,16 +1771,64 @@ Object {
         "kind": "moveStackTopToHeap",
       },
       Object {
-        "data": "g",
-        "kind": "getAllFromStore",
+        "data": Array [],
+        "kind": "instantiate",
+      },
+      Object {
+        "data": Object {},
+        "kind": "instantiate",
+      },
+      Object {
+        "data": Array [
+          "g",
+          Object {
+            "_val": false,
+          },
+        ],
+        "kind": "queryStore",
       },
       Object {
         "data": undefined,
-        "kind": "repackageCollection",
+        "kind": "ndArrayLen",
+      },
+      Object {
+        "data": 0,
+        "kind": "instantiate",
       },
       Object {
         "data": undefined,
-        "kind": "getKeys",
+        "kind": "equal",
+      },
+      Object {
+        "data": 5,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": undefined,
+        "kind": "popArray",
+      },
+      Object {
+        "data": "_key",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 1,
+        "kind": "getField",
+      },
+      Object {
+        "data": 1,
+        "kind": "pArrayPush",
+      },
+      Object {
+        "data": Array [
+          8,
+          false,
+        ],
+        "kind": "offsetOpCursor",
+      },
+      Object {
+        "data": undefined,
+        "kind": "popStack",
       },
       Object {
         "data": undefined,
@@ -1586,12 +1854,8 @@ Object {
           "kind": "Save",
           "value": Object {
             "from": Object {
-              "kind": "Selection",
-              "level": Array [],
-              "root": Object {
-                "index": 0,
-                "kind": "Saved",
-              },
+              "index": 0,
+              "kind": "Saved",
             },
             "kind": "Keys",
           },
@@ -1600,12 +1864,8 @@ Object {
           "kind": "Save",
           "value": Object {
             "from": Object {
-              "kind": "Selection",
-              "level": Array [],
-              "root": Object {
-                "kind": "GlobalObject",
-                "name": "g",
-              },
+              "kind": "GlobalObject",
+              "name": "g",
             },
             "kind": "Keys",
           },
@@ -2093,7 +2353,7 @@ Map {
 }
 `;
 
-exports[`language globals must be empty objects 1`] = `"Global someVar must be initialized as empty object"`;
+exports[`language globals must be empty objects 1`] = `"Global someVar must be initialized as empty object or string"`;
 
 exports[`language ifs allows any number of else ifs: OPS 1`] = `
 Object {
@@ -3340,7 +3600,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": undefined,
@@ -3535,7 +3795,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": undefined,
@@ -3583,7 +3843,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": undefined,
@@ -4316,7 +4576,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": 2,
@@ -4614,7 +4874,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": undefined,
@@ -4999,7 +5259,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": undefined,
@@ -5101,7 +5361,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": undefined,
@@ -5198,7 +5458,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": 51,
@@ -5505,7 +5765,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": 10,
@@ -5513,7 +5773,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": 30,
@@ -5602,7 +5862,7 @@ Object {
       },
       Object {
         "data": undefined,
-        "kind": "nPlus",
+        "kind": "plus",
       },
       Object {
         "data": 3,

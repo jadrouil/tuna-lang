@@ -5,7 +5,8 @@ import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest, ValueNod
 import { AnySchemaInstance, schemaFactory } from 'conder_core/dist/src/main/ops';
 
 type ScopeMapEntry= "func" | 
-"global" | 
+{kind: "global object"} |
+{kind: "global str", value: string} |
 {kind: "const", index: number} |
 {kind: "mut", index: number} | 
 {kind: "typeAlias", value: AnySchemaInstance}
@@ -44,14 +45,22 @@ class ScopeMap extends Map<string, ScopeMapEntry>  {
                 }
                 break
         }
-        throw Error(`Expected one of ${kinds} but found ${JSON.stringify(obj)}`)
+        throw Error(`Expected one of ${kinds.join(", ")} but found ${JSON.stringify(obj)}`)
         
     }
 
     set(k: string, v: ScopeMapEntry): this {
-        if (v !== "global" && v !== "func" && v.kind !== "typeAlias") {
-            this.nextVar++
+        switch (v) {
+            case "func":
+                break
+            default: 
+                switch(v.kind) {
+                    case "const":
+                    case "mut":
+                        this.nextVar++
+                }                
         }
+
         if (this.has(k)) {
             throw Error(`The name ${k} is initialized to multiple variables/functions.`)
         }
@@ -116,6 +125,8 @@ function to_value_node(n: AnyNode): ValueNode {
         "Noop", 
         "Push",
         "Conditional",
+        "Lock",
+        "Release"
         )
 }
 
@@ -160,16 +171,41 @@ function literal_to_node(lit: literal, scope: ScopeMap): ValueNode {
 }
 
 type IsMutation = "Push" | "DeleteField"
-type BakedInMethods = PickNode<"Push" | "Keys" | "DeleteField">
+type LockMethod = "Lock" | "Release"
+type BakedInMethods = PickNode<"Push" | "Keys" | "DeleteField" |"Lock" | "Release">
 type MethodCompiler<P extends BakedInMethods["kind"]> = 
-    (current: PickNode<"Selection">, invoke: methodInvoke, scope: ScopeMap) => P extends IsMutation ? PickNode<"Update"> : PickNode<P>
+    (current: ValueNode, args: ValueNode[], scope: ScopeMap) => 
+        P extends IsMutation ? PickNode<"Update"> : 
+        PickNode<P>
 type MethodLookup = {
     [P in BakedInMethods["kind"]]: MethodCompiler<P>
 }
+type MutationTarget = {
+    root: PickNode<"Update">["root"]
+    level: PickNode<"Update">["level"]
+}
+
+function mutation_validator(current: ValueNode, args: ValueNode[]): MutationTarget {
+    
+    switch (current.kind) {
+        case "Selection":
+            if (current.root.kind === "GlobalObject" || current.root.kind === "Saved") {
+                return {root: current.root, level: current.level}
+            }
+            throw Error(`Mutations can only be performed against persisted data`)
+            
+        case "GlobalObject":
+        case "Saved":
+            return {root: current, level: []}
+
+        default:
+            throw Error(`Mutations cannot be performed against temporary variable`)
+    }
+}
 
 const baked_in_methods: MethodLookup = {
-    Keys: (current, invoke, scope) => {
-        if (invoke.args.lastArg|| invoke.args.leadingArgs.length > 0) {
+    Keys: (current, args, scope) => {
+        if (args.length > 0) {
             throw Error(`keys should be called with zero args.`)
         }
         return {
@@ -177,48 +213,60 @@ const baked_in_methods: MethodLookup = {
             from: current
         }
     },
-    Push: (current, invoke, scope) => {
-        if (invoke.args.lastArg == undefined) {
+    Push: (current, args, scope) => {
+        if (args.length === 0) {
             throw Error(`Push requires at least one argument`)
         }
-        if (current.root.kind !== "GlobalObject" && current.root.kind !== "Saved" ) {
-            throw Error(`Mutations cannot be performed against temporary variable`)
-        }
-
-        const args = [...invoke.args.leadingArgs.map(a => a.value), invoke.args.lastArg]
+        const target = mutation_validator(current, args)
         
         return {
             kind: "Update",
-            root: current.root,
-            level: current.level,
+            root: target.root,
+            level: target.level,
             operation: {
                 kind: "Push",
-                values: args.map(arg => complete_expression_to_node(arg, scope)).map(to_value_node)
+                values: args
             }
         }
         
     },
-    DeleteField: (current, invoke, scope) => {
-        if (invoke.args.lastArg) {
+    DeleteField: (current, args, scope) => {
+        if (args.length > 0) {
             throw Error(`Delete takes no arguments`)
         }
-        if (current.root.kind !== "GlobalObject" && current.root.kind !== "Saved" ) {
-            throw Error(`Mutations cannot be performed against temporary variable`)
-        }
-        if (current.level.length === 0) {
+        const target = mutation_validator(current, args)
+        if (target.level.length === 0) {
             throw Error(`Cannot delete whole objects`)
         }
         return {
             kind: "Update",
-            root: current.root,
-            level: current.level,
+            root: target.root,
+            level: target.level,
             operation: {kind: "DeleteField"}
+        }
+    },
+    Lock: (current, args, scope) => {
+        if (args.length > 0) {
+            throw Error(`Lock takes no arguments`)
+        }
+        return {
+            kind: "Lock",
+            name: current
+        }
+    },
+    Release: (current, args, scope) => {
+        if (args.length > 0) {
+            throw Error(`Release takes no args`)
+        }
+        return {
+            kind: "Release",
+            name: current
         }
     }
 }
 
 
-function method_to_node(target: PickNode<"Saved" | "GlobalObject" | "Call">, methods: expression["methods"], scope: ScopeMap): AnyNode {
+function method_to_node(target: ValueNode, methods: expression["methods"], scope: ScopeMap): AnyNode {
     if (methods.length === 0) {
         if (target.kind === "GlobalObject") {
             return {
@@ -240,9 +288,12 @@ function method_to_node(target: PickNode<"Saved" | "GlobalObject" | "Call">, met
                 {kind: "String", value: m.method.value.name} : 
                 to_value_node(complete_expression_to_node(m.method.value, scope))
                 
-                
-                if (current.kind === "Update") {
-                    throw Error(`Cannot index into update results`)
+                switch (current.kind) {
+                    case "Release":
+                    case "Lock":
+                    case "Update":
+                        throw Error(`Cannot index into ${current.kind} results`)
+
                 }
                 if (current.kind !== "Selection") {
                     current = {
@@ -258,19 +309,27 @@ function method_to_node(target: PickNode<"Saved" | "GlobalObject" | "Call">, met
             case ASTKinds.methodInvoke: 
                 const capitalized = `${m.method.name.name[0].toUpperCase()}${m.method.name.name.slice(1)}`
                 if (capitalized in baked_in_methods) {
-                    if (current.kind === "Update") {
-                        throw Error(`Mutations do not return results`)
+                    switch (current.kind) {
+                        case "Update":
+                        case "Lock":
+                        case "Release":
+                            throw Error(`Mutations do not return results`)
+
                     }
+                    const args = (
+                        m.method.args.lastArg ? [...m.method.args.leadingArgs.map(a => a.value), m.method.args.lastArg]
+                        : []).map(i => complete_expression_to_node(i, scope)).map(to_value_node)
                     switch (current.kind) {
                         case "Selection":
-                            current = baked_in_methods[capitalized as keyof MethodLookup](current, m.method, scope)
+                            current = baked_in_methods[capitalized as keyof MethodLookup](current, args, scope)
                             break
                         case "Saved":
                         case "GlobalObject":
-                            current = baked_in_methods[capitalized as keyof MethodLookup]({kind: "Selection", level: [], root: current}, m.method, scope)
+                            current = baked_in_methods[capitalized as keyof MethodLookup](current, args, scope)
                             break
                         default:
-                            throw Error(`Cannot perform updates on temporary data`)
+                            current = baked_in_methods[capitalized as keyof MethodLookup](current, args, scope)
+                            break
                     }
                 } else {
                     throw Error(`Unrecognized method ${m.method.name.name}`)
@@ -289,18 +348,13 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
 
     switch (exp.root.kind) {
         case ASTKinds.name:
-            const name = scope.getKind(exp.root.name, "mut", "const", "global")
-            if (name === undefined) {
-                throw Error(`Unrecognized name ${exp.root.name}`)
-            }
+            const name = scope.getKind(exp.root.name, "mut", "const", "global object")
             
-            if (name !== "global" && name.kind === "const" && exp.methods.length === 0) {
+            if (name.kind !== "global object" && name.kind === "const" && exp.methods.length === 0) {
                 throw Error(`Attempting to overwrite constant variable ${exp.root.name}`)
             }
             
-            const root: Target["root"] = name === "global" ? 
-                {kind: "GlobalObject", name: exp.root.name} 
-                : {kind: "Saved", index: name.index}
+            const root: Target["root"] = name.kind === "global object" ? {kind: "GlobalObject", name: exp.root.name} : {kind: "Saved", index: name.index}
             
             const level: Target["level"] = exp.methods.map(m => {
                 switch (m.method.kind) {
@@ -353,11 +407,14 @@ function get_all_infix(exp: expression): [AnyInfix, expression][]{
 function complete_expression_to_node(root_exp: expression, scope: ScopeMap): AnyNode {
     const infixes = get_all_infix(root_exp)
     const root = expression_to_node(root_exp, scope)
-    if (root.kind === "Update") {
-        if (infixes.length > 0) {
-            throw Error(`Mutations do not return any results`)
-        }
-        return root
+    switch (root.kind) {
+        case "Update":
+        case "Lock":
+        case "Release":
+            if (infixes.length > 0) {
+                throw Error(`${root.kind} does not return any results`)
+            }
+            return root
     }
     let entirity: MathExpression = new Ordering(to_value_node(root))
     infixes.forEach(([sign, exp]) => {
@@ -402,22 +459,25 @@ function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
         case ASTKinds.obj:
         case ASTKinds.none:
         case ASTKinds.array:
-            if (exp.methods.length > 0) {
-                throw Error(`Unexpected method on ${exp.root.kind} literal`)
-            }
-            return only(literal_to_node(exp.root, scope), "Bool", "Int", "String", "Object", "None", "ArrayLiteral")
+            
+            const node = only(literal_to_node(exp.root, scope), "Bool", "Int", "String", "Object", "None", "ArrayLiteral")
+            return method_to_node(node, exp.methods, scope)
             
         
         case ASTKinds.name:
-            const name = scope.getKind(exp.root.name, "global", "const", "mut")
-            
-            if (name === "global") {
-                return method_to_node({kind: "GlobalObject", name: exp.root.name}, exp.methods, scope)
-            } else {
-                return method_to_node({kind: "Saved", index: name.index}, exp.methods, scope)
+            const name = scope.getKind(exp.root.name, "global object", "global str", "const", "mut")
+            switch (name.kind) {
+                case "global str":
+                    return method_to_node({kind: "String", value: name.value}, exp.methods, scope)
+                case "global object":
+                    return method_to_node({kind: "GlobalObject", name: exp.root.name}, exp.methods, scope)
+
+                default: 
+                    return method_to_node({kind: "Saved", index: name.index}, exp.methods, scope)
             }
         case ASTKinds.functionCall:
             const args = exp.root.args.lastArg ? [...exp.root.args.leadingArgs.map(a => a.value), exp.root.args.lastArg] : []
+            scope.getKind(exp.root.name.name, "func")
             return method_to_node(
                 {kind: "Call", function_name: exp.root.name.name, args: args.map(a => 
                     to_value_node(complete_expression_to_node(a, scope))
@@ -430,7 +490,6 @@ function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
             const n: never = exp.root
     }
 }
-
 
 function to_computation(ex: executable, scope: ScopeMap): FunctionData["computation"] {
     const ret: FunctionDescription["computation"] = []
@@ -460,7 +519,14 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
                 break
             }
             case ASTKinds.expression: {
-                cbOnly(complete_expression_to_node(e.value, scope), (...items) => ret.push(...items), "Return", "If", "Save", "Update")
+                cbOnly(complete_expression_to_node(e.value, scope), (...items) => ret.push(...items), 
+                    "Return", 
+                    "If", 
+                    "Save", 
+                    "Update",
+                    "Lock",
+                    "Release"
+                )
                 
                 break
             }
@@ -630,23 +696,28 @@ export function semantify(p: ParseResult, debug: boolean): Manifest & PrivateFun
                 if (g.value.mutability !== "const") {
                     throw Error(`Global variable ${name} must be const`)
                 }
+                if (g.value.value.methods.length > 0) {
+                    throw Error(`Globals must be literals`)
+                }
                 
                 switch (g.value.value.root.kind) {
-                    case ASTKinds.obj: 
+                    case ASTKinds.obj:
+                    
                         if (g.value.value.root.fields.data.length > 0) {
                             break
                         }
-                        if (g.value.value.methods.length > 0) {
-                            break
-                        }
-                        globalScope.set(name, "global")
+                        globalScope.set(name, {kind: "global object"})
+                        globs.set(name, {kind: "glob", name})
+                        return
+                    case ASTKinds.str:
+                        globalScope.set(name, {kind: "global str",value: g.value.value.root.value})
                         globs.set(name, {kind: "glob", name})
                         return
                     default: 
                         break
                 }
 
-                throw Error(`Global ${name} must be initialized as empty object`)
+                throw Error(`Global ${name} must be initialized as empty object or string`)
                 
             case ASTKinds.func: 
                 globalScope.set(name, "func")
