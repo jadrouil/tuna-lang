@@ -1,13 +1,27 @@
 
 const users = {}
+const USER_LOCK = 'u'
 
 const chats = {}
+const CHAT_LOCK = 'c'
+
+func user_lock(name) {
+    return USER_LOCK + '-' + name
+}
+
+func chat_lock(name) {
+    return CHAT_LOCK + '-' + name
+}
 
 pub func create_user(name: string) {
+    const lock_name = user_lock(name)
+    lock_name.lock()
     if users[name] != none {
+        lock_name.release()
         return 'user already exists'
     }
     users[name] = {chats: []}
+    lock_name.release()
     return 'user created'
 }
 
@@ -19,13 +33,17 @@ pub func get_user(name: string) {
 }
 
 pub func create_chat_group(group_name: string, initial_users: string[]) {
+    const lock_name = chat_lock(group_name)
+    lock_name.lock()
     if chats[group_name] != none {
+        lock_name.release()
         return 'group already exists'
     }
 
     chats[group_name] = {
         msgs: []
     }
+    lock_name.release()
 
     for user in initial_users {
         users[user].chats.push(group_name)

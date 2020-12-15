@@ -33,7 +33,7 @@
     "etcd3": "^1.1.0",
     "gluegun": "latest",
     "mongodb": "^3.6.3",
-    "tuna-compiler": "^0.2.0"
+    "tuna-compiler": "^0.2.1"
   },
   "devDependencies": {
     "@types/node": "^12.7.11",

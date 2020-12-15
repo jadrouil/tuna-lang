@@ -477,6 +477,14 @@ describe("language", () => {
             }
             `
         ))
+        it("many concat", tunaTest(
+            "succeed",
+            `
+            pub func concat(a, b) {
+                return a + '-' + b
+            }
+            `
+        ))
 
         it("*", tunaTest(
             "succeed",
