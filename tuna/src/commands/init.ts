@@ -8,7 +8,7 @@ const command: GluegunCommand = {
   run: async toolbox => {
     const { print } = toolbox
     print.info("pulling necessary containers")
-    await toolbox.system.run(`docker pull ${CONDER_CNTR} && docker pull mongo:4.4`)
+    await toolbox.system.run(`docker pull ${CONDER_CNTR} && docker pull mongo:4.4 && docker pull bitnami/etcd`)
     print.info("done!")
   },
 }

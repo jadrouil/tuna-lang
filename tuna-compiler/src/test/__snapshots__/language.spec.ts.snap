@@ -5207,6 +5207,132 @@ Map {
 }
 `;
 
+exports[`language infix operators many concat: OPS 1`] = `
+Object {
+  "funcs": Map {
+    "concat" => Array [
+      Object {
+        "data": 2,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": Array [
+          0,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": Array [
+          1,
+          Object {
+            "data": undefined,
+            "kind": "Any",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": "-",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": undefined,
+        "kind": "plus",
+      },
+      Object {
+        "data": 1,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": undefined,
+        "kind": "plus",
+      },
+      Object {
+        "data": undefined,
+        "kind": "returnStackTop",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`language infix operators many concat: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "concat" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Math",
+            "left": Object {
+              "kind": "Math",
+              "left": Object {
+                "index": 0,
+                "kind": "Saved",
+              },
+              "right": Object {
+                "kind": "String",
+                "value": "-",
+              },
+              "sign": "+",
+            },
+            "right": Object {
+              "index": 1,
+              "kind": "Saved",
+            },
+            "sign": "+",
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+        Object {
+          "data": undefined,
+          "kind": "Any",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+  "privateFuncs": Set {},
+}
+`;
+
+exports[`language infix operators many concat: locks 1`] = `
+Map {
+  "concat" => Map {},
+}
+`;
+
 exports[`language infix operators math ordering: OPS 1`] = `
 Object {
   "funcs": Map {

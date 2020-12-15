@@ -30,9 +30,10 @@
   "license": "MIT",
   "dependencies": {
     "@types/mongodb": "^3.6.1",
+    "etcd3": "^1.1.0",
     "gluegun": "latest",
     "mongodb": "^3.6.3",
-    "tuna-compiler": "^0.1.2"
+    "tuna-compiler": "^0.2.1"
   },
   "devDependencies": {
     "@types/node": "^12.7.11",

@@ -57,6 +57,5 @@ Tuna is built on conder. Performance is/will be achieved by building on [conder]
 All of the following limitations are temporary:
 - No type inference or static type checking.
 - No object oriented programming concepts.
-- No locks
 
 
