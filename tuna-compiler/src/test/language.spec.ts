@@ -406,6 +406,20 @@ describe("language", () => {
             }
             `
         ))
+
+
+        it("allows locking of strings", tunaTest(
+            "succeed",
+            `
+
+            
+            func l() {
+                'some string'.lock()
+
+                'some string'.release()
+            }
+            `
+        ))
         
     })
 
