@@ -1,18 +1,6 @@
-# Welcome
+# Tuna
 
-Tuna is intended to be a cloud programming language. This entails that global state, whether it is locks, application data, is automatically shared across any number of replicated compute nodes. This is achieved by transparently using distributed lock managers and databases to manage application state.
-
-The goal of tuna lang is to make it easier to build horizontally scalable and performant systems.
-
-# Getting Started
-- The most exhaustive documentation of the syntax can be found in [the compiler tests](tuna-compiler/src/test/language.spec.ts).
-- The [cli](tuna/readme.md) has its own getting started.
-- The [demos](tuna/demos) provide example(s) of how to build and interact with systems.
-
-# Details
-
-## Semantics
-Here's a snippet of tuna:
+The tuna programming language is used to build scalable web services quickly. Unlike other programming languages, global state is persisted in a database, rather than held in memory. As a result, any service written in tuna is scalable from day one. Tuna's syntax is intended to be as simple as possible:
 
 ```
 const users = {}
@@ -22,7 +10,20 @@ pub func add_user(name) {
 }
 ```
 
-Going line by line, `const users = {}`, means there exists a global object called users. It is intitalized empty. Moving on: `pub func add_user(name) ...`. `Pub` in this context means that this function can be called by an external client. To see how functions are invoked, [see](tuna/demos/).
+These four lines mean: there is a users object which is persisted across requests, and a function called "add_user" that can be called by a client.
+
+
+# Getting Started
+
+## Installation
+`$npm i tuna-lang`
+`$tuna init`
+
+## Examples
+Examples can be found [demos](tuna/demos). This is a good place to get started to get a general sense of the syntax and how to interact with systems. You can run any of the demos using the command `$tuna run`.
+
+## Documentation
+
 
 ## Primitives
 
