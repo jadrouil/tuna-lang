@@ -1,6 +1,10 @@
 # Purpose
 
-The Tuna programming language is designed to make it easy as possible to build scalable web services. Consequently, there are a few notable differences between tuna and general purpose programming languages you may have used before. Unlike other programming languages, Tuna's global state is persisted in a database, rather than held in memory. Secondly, in Tuna, you describe which functions to expose over the network. Altogether, you can build stateful web services with zero dependencies in as little as four lines of code:
+The Tuna programming language is designed to make it easy as possible to build scalable web services. Consequently, there are a few notable differences between tuna and general purpose programming languages you may have used before: 
+1. Tuna's global state is persisted in a database, rather than held in memory.
+2. In Tuna, you describe which functions to expose over the network. 
+
+Altogether, you can build stateful web services with zero dependencies in as little as four lines of code:
 
 ```
 const users = {}
