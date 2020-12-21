@@ -1,6 +1,6 @@
 # Purpose
 
-The Tuna programming language is designed to make it easy as possible to build scalable web services. Consequently, there are a few notable differences between tuna and general purpose programming languages you may have used before. Unlike other programming languages, Tuna's global state is persisted in a database, rather than held in memory. Secondly, in Tuna, you describe which functions to expose over the network. Altogether, in Tuna, you can build stateful web services with zero dependencies in as little as four lines of code:
+The Tuna programming language is designed to make it easy as possible to build scalable web services. Consequently, there are a few notable differences between tuna and general purpose programming languages you may have used before. Unlike other programming languages, Tuna's global state is persisted in a database, rather than held in memory. Secondly, in Tuna, you describe which functions to expose over the network. Altogether, you can build stateful web services with zero dependencies in as little as four lines of code:
 
 ```
 const users = {}
@@ -10,7 +10,7 @@ pub func add_user(name) {
 }
 ```
 
-These four lines mean: there is a users object which is persisted across requests, and a function called "add_user" that is exposed over an http endpoint that can be called by anyone.
+These four lines mean: there is a users object which is persisted across requests, and a function called "add_user" that is exposed over an HTTP endpoint that can be called by anyone.
 
 # Getting Started
 
@@ -18,13 +18,12 @@ These four lines mean: there is a users object which is persisted across request
 
 1. You need to first install [docker](https://docs.docker.com/get-docker/) to run tuna locally.
 
-2. `npm i tuna-lang`
-   - If you don't have node installed, instructions are [here](https://nodejs.org/en/).
+2. `npm i -g tuna-lang`
 
 3. Pull containers: `tuna init`. When you run tuna, we use the containers pulled here.
 
 ## Learning
-- You can run any of the "main.tuna" file using the command `tuna run` in the same directory. Example projects can be found [demos](tuna/demos).
+- You can run any of the "main.tuna" files using the command `tuna run`. Example projects can be found in [demos](tuna/demos).
 - Questions can be asked in the [github discussions](https://github.com/Conder-Systems/tuna-lang/discussions).
 - Complete documentation on the syntax, capabilities, and road map can be found [here](./DOCUMENTATION.md).
 
