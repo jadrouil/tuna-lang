@@ -33,4 +33,4 @@ These four lines mean: there is a users object which is persisted across request
  - If you want to contribute, feel free to pick up an issue, and submit a pull request with your completed work.
 
 # Disclaimer
-Tuna is an experimental language and is missing notable features for performance, security, and developer productivity (e.g. OO concepts, IDE integrations).
+Tuna is an experimental language and is missing notable features for performance, security, verification, and developer productivity (e.g. OO concepts, IDE integrations).
