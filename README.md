@@ -18,13 +18,13 @@ These four lines mean: there is a users object which is persisted across request
 
 1. You need to first install [docker](https://docs.docker.com/get-docker/) to run tuna locally.
 
-2. `$ npm i tuna-lang`
+2. `npm i tuna-lang`
    - If you don't have node installed, instructions are [here](https://nodejs.org/en/).
 
-3. Pull containers: `$ tuna init`. When you run tuna, we use the containers pulled here.
+3. Pull containers: `tuna init`. When you run tuna, we use the containers pulled here.
 
 ## Learning
-- You can run any of the "main.tuna" file using the command `$tuna run` in the same directory. Example projects can be found [demos](tuna/demos).
+- You can run any of the "main.tuna" file using the command `tuna run` in the same directory. Example projects can be found [demos](tuna/demos).
 - Questions can be asked in the [github discussions](https://github.com/Conder-Systems/tuna-lang/discussions).
 - Complete documentation on the syntax, capabilities, and road map can be found [here](./DOCUMENTATION.md).
 
