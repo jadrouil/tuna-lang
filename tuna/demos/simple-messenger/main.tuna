@@ -1,20 +1,20 @@
 
 const users = {}
-const USER_LOCK = 'u'
+const USER_LOCK_PREFIX = 'u'
 
 const chats = {}
-const CHAT_LOCK = 'c'
+const CHAT_LOCK_PREFIX = 'c'
 
-func user_lock(name) {
-    return USER_LOCK + '-' + name
+func lock_name_for_user(name) {
+    return USER_LOCK_PREFIX + '-' + name
 }
 
-func chat_lock(name) {
-    return CHAT_LOCK + '-' + name
+func lock_for_chat_name(name) {
+    return CHAT_LOCK_PREFIX + '-' + name
 }
 
 pub func create_user(name: string) {
-    const lock_name = user_lock(name)
+    const lock_name = lock_name_for_user(name)
     lock_name.lock()
     if users[name] != none {
         lock_name.release()
@@ -33,7 +33,7 @@ pub func get_user(name: string) {
 }
 
 pub func create_chat_group(group_name: string, initial_users: string[]) {
-    const lock_name = chat_lock(group_name)
+    const lock_name = lock_for_chat_name(group_name)
     lock_name.lock()
     if chats[group_name] != none {
         lock_name.release()
