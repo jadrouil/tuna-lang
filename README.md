@@ -1,6 +1,6 @@
 # Purpose
 
-The Tuna programming language is designed to make it easy as possible to build scalable web services. Consequently, there are a few notable differences between tuna and general purpose programming languages you may have used before. Unlike other programming languages, global state is persisted in a database, rather than held in memory. As a result, any service written in Tuna is scalable from day one. Secondly, in Tuna, you describe which functions to expose over the network. Altogether, in Tuna, you can build a stateful, portable, and scalable web service with zero dependencies in four lines of code:
+The Tuna programming language is designed to make it easy as possible to build scalable web services. Consequently, there are a few notable differences between tuna and general purpose programming languages you may have used before. Unlike other programming languages, Tuna's global state is persisted in a database, rather than held in memory. Secondly, in Tuna, you describe which functions to expose over the network. Altogether, in Tuna, you can build stateful web services with zero dependencies in as little as four lines of code:
 
 ```
 const users = {}
@@ -10,7 +10,7 @@ pub func add_user(name) {
 }
 ```
 
-These four lines mean: there is a users object which is persisted across requests, and a function called "add_user" that can be called by anyone.
+These four lines mean: there is a users object which is persisted across requests, and a function called "add_user" that is exposed over an http endpoint that can be called by anyone.
 
 # Getting Started
 
@@ -31,3 +31,6 @@ These four lines mean: there is a users object which is persisted across request
 # Contributing
  - Feature requests are welcomed can be submitted as github issues.
  - If you want to contribute, feel free to pick up an issue, and submit a pull request with your completed work.
+
+# Disclaimer
+Tuna is an experimental language and is missing notable features for performance, security, and developer productivity (e.g. OO concepts, IDE integrations).
