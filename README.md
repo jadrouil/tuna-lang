@@ -28,8 +28,8 @@ These four lines mean: there is a users object which is persisted across request
 - Questions can be asked in the [github discussions](https://github.com/Conder-Systems/tuna-lang/discussions).
 - Complete documentation on the syntax, capabilities, and road map can be found [here](./DOCUMENTATION.md).
 
-# Contributing
- - Feature requests are welcomed can be submitted as github issues.
+## Contributing
+ - Feature requests are welcomed and may be submitted as github issues.
  - If you want to contribute, feel free to pick up an issue, and submit a pull request with your completed work.
 
 # Disclaimer
