@@ -1,5 +1,5 @@
 # Documentation
-
+Functionality may not be here but still exist. Check the [spec](https://github.com/Conder-Systems/tuna-lang/blob/main/tuna-compiler/src/test/language.spec.ts) for exhaustive documentation.
 ## Primitives
 
 - `int` and `double`. Infix operators: `+ - * /`.
