@@ -12,6 +12,7 @@ import {
 } from 'conder_core'
 // Need to export this
 import { LockRequirements } from 'conder_core/dist/src/main/abstract/mongo_logic/lock_calculation'
+import * as ed from 'noble-ed25519'
 
 import {Parser} from './parser'
 import {semantify, PrivateFuncs } from './semantics'
@@ -35,7 +36,7 @@ export const STRINGIFY_ENV: Transform<StrongServerEnv, Omit<ServerEnv, Var.MONGO
     return string_env as ServerEnv
 })
 
-export const TUNA_TO_ENV: Transform<string, StrongServerEnv> = TUNA_TO_MANIFEST
+export const TUNA_TO_ENV: Transform<string, Omit<StrongServerEnv, Var.PRIVATE_KEY | Var.PUBLIC_KEY>> = TUNA_TO_MANIFEST
 .then(new Transformer(man => {
     const manifest = OPSIFY_MANIFEST.run(man)
     return {
@@ -65,6 +66,5 @@ export const TUNA_TO_ENV: Transform<string, StrongServerEnv> = TUNA_TO_MANIFEST
         PRIVATE_PROCEDURES
     }
 }))
-
 
 export const TUNA_LOCAL_COMPILER = TUNA_TO_ENV.then(STRINGIFY_ENV)

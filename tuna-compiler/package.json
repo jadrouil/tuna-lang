@@ -20,7 +20,8 @@
     "typescript": "^4.0.0"
   },
   "dependencies": {
-    "conder_core": "https://github.com/Conder-Systems/conder/releases/download/v0.3.1/conder-api.tar.gz"
+    "conder_core": "https://github.com/Conder-Systems/conder/releases/download/v0.4.0/conder-api.tar.gz",
+    "noble-ed25519": "https://github.com/paulmillr/noble-ed25519/archive/1.0.2.tar.gz"
   },
   "jest": {
     "preset": "ts-jest",
