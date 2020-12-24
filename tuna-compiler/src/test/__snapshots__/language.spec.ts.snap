@@ -9047,6 +9047,95 @@ exports[`language shouldn't allow deleting of whole variables 1`] = `
 	Cannot delete whole objects"
 `;
 
+exports[`roles allows declaring stateless roles: OPS 1`] = `
+Object {
+  "funcs": Map {},
+  "globals": Map {},
+}
+`;
+
+exports[`roles allows declaring stateless roles: intermediate representation 1`] = `
+Object {
+  "funcs": Map {},
+  "globals": Map {},
+  "privateFuncs": Set {},
+}
+`;
+
+exports[`roles allows declaring stateless roles: locks 1`] = `Map {}`;
+
+exports[`roles roles can be associated with functions: OPS 1`] = `
+Object {
+  "funcs": Map {
+    "privleged_thing" => Array [
+      Object {
+        "data": 1,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": Array [
+          0,
+          Object {
+            "data": Array [
+              "admin",
+              Array [
+                Object {
+                  "data": Object {},
+                  "kind": "Object",
+                },
+              ],
+            ],
+            "kind": "Role",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`roles roles can be associated with functions: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "privleged_thing" => FunctionDescription {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": Array [
+            "admin",
+            Array [
+              Object {
+                "data": Object {},
+                "kind": "Object",
+              },
+            ],
+          ],
+          "kind": "Role",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+  "privateFuncs": Set {},
+}
+`;
+
+exports[`roles roles can be associated with functions: locks 1`] = `
+Map {
+  "privleged_thing" => Map {},
+}
+`;
+
 exports[`types allows explicitly saying a type is any: OPS 1`] = `
 Object {
   "funcs": Map {

@@ -811,3 +811,26 @@ pub func get_my_messages() {
     `
     ))
 })
+
+describe("roles", () => {
+
+    it("allows declaring stateless roles", 
+        tunaTest("succeed",        
+        `
+        role admin {}
+
+        `)
+    )
+
+    it('roles can be associated with functions',
+        tunaTest("succeed",        
+        `
+        role admin {}
+
+        admin func privleged_thing() {
+            
+        }
+        `)
+    
+    )
+})

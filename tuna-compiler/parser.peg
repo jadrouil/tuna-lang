@@ -1,9 +1,10 @@
-globals := {value={varDecl | func | typeDef} {ws+ | '$'}}*
+globals := {value={varDecl | func | typeDef | roleDef} {ws+ | '$'}}*
 
+roleDef := ws* 'role' ws+ name=name schema=object_t
 mutable := 'let'
 constant := 'const'
 varDecl := ws* mutability={ constant | mutable } ws+ name=name ws* equals ws* value=expression
-name := name='[a-zA-Z]+\w*'
+name := '(?!(let|const|func)\s+)' name='[a-zA-Z]+\w*'
 equals := '='
 ws := '\s'
 obj := '\{' ws* fields=fields ws* '\}'
@@ -47,8 +48,7 @@ forLoop := 'for' space+ rowVar=name space+ 'in' space+ value=expression do=scope
 
 objectIndex := obj=expression index={parameterIndex | literalIndex}
 ret := 'return(?=\s)' space* value={'(?<= )' exp=expression}?
-isPublic := 'pub' space+
-func := ws* pub={isPublic}? 'func' space+ name=name space* params=params body=scopedExecution
+func := ws* role={name=name ws+}? 'func' space+ name=name space* params=params body=scopedExecution
 params := '\(' ws* leadingParams={name=name schema={schema}? newLineOrComma ws*}* ws* lastParam={name=name schema={schema}?}? ws* '\)'
 args := '\(' ws* leadingArgs={value=expression newLineOrComma ws*}* ws* lastArg={expression}? ws* '\)'
 assignment := target=expression space* equals space* value=expression

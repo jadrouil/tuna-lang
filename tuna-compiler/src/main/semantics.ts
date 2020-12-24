@@ -2,14 +2,15 @@ import { MathExpression, MathInfix, Ordering, AnyInfix } from './math';
 import { ParseResult, executable, ASTKinds, func, expression, literal, infixOps_$0, methodInvoke, schema, someType, typePostfix } from "./parser";
 import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest, ValueNode, FunctionData} from "conder_core"
 // Export this at the root level
-import { AnySchemaInstance, schemaFactory } from 'conder_core/dist/src/main/ops';
+import { AnySchemaInstance, schemaFactory, SchemaInstance } from 'conder_core/dist/src/main/ops';
 
 type ScopeMapEntry= "func" | 
 {kind: "global object"} |
 {kind: "global str", value: string} |
 {kind: "const", index: number} |
 {kind: "mut", index: number} | 
-{kind: "typeAlias", value: AnySchemaInstance}
+{kind: "typeAlias", value: AnySchemaInstance} |
+{kind: "role", value: SchemaInstance<"Role">}
 
 type EntityKind = Extract<ScopeMapEntry, {kind: any}>["kind"] | Exclude<ScopeMapEntry, {kind: any}>
 type Entry<K extends EntityKind> = Extract<ScopeMapEntry, K> extends never ? Extract<ScopeMapEntry, {kind: K}> : K
@@ -645,6 +646,9 @@ function to_descr(f: func, scope: ScopeMap, debug: boolean): FunctionDescription
             argList.push({name: f.params.lastParam.name.name, schema: f.params.lastParam.schema})
         }
         const input: FunctionDescription["input"] = []
+        if (f.role && f.role.name.name !== "pub") {
+            input.push(scope.getKind(f.role.name.name, "role").value)
+        }
         argList.forEach((a, i) => {
             scope.set(a.name, {kind: "mut", index: i})
             if (a.schema) {
@@ -682,8 +686,21 @@ export function semantify(p: ParseResult, debug: boolean): Manifest & PrivateFun
 
     p.ast.forEach(g => {
         switch (g.value.kind) {
+            case ASTKinds.roleDef:
+                const role_name = g.value.name.name
+                const obj: Record<string, AnySchemaInstance> = {}
+                g.value.schema.fields.forEach(field => {
+                    obj[field.name.name] = parsed_to_schema(field.schema)
+                })
+                const inner = schemaFactory.Object(obj)
+                globalScope.set(role_name, {
+                    kind: "role", value: schemaFactory.Role(role_name, inner)
+                })                
+                break
+
             case ASTKinds.typeDef:
                 globalScope.set(g.value.name.name, {kind: "typeAlias", value: parsed_to_schema(g.value.def)})
+                break
         }
     })
 
@@ -721,13 +738,15 @@ export function semantify(p: ParseResult, debug: boolean): Manifest & PrivateFun
                 
             case ASTKinds.func: 
                 globalScope.set(name, "func")
-                if (!g.value.pub) {
+                
+                if (!g.value.role) {
                     privateFuncs.add(name)
                 }
                 aFunc.push(g.value)
                 break
             case ASTKinds.typeDef:
-                break
+            case ASTKinds.roleDef:
+                break            
             default: 
                 const ne: never = g.value
         }
