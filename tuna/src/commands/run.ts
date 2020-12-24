@@ -7,6 +7,7 @@ import { TUNA_LOCAL_COMPILER } from 'tuna-compiler'
 import * as mongodb from 'mongodb'
 import { Etcd3 } from 'etcd3';
 import * as etcd from 'etcd3'
+import * as ed25519 from 'noble-ed25519'
 
 const command: GluegunCommand = {
   name: 'run',
@@ -77,9 +78,14 @@ const command: GluegunCommand = {
         await (Promise.all(readiers).catch(e => {error(e); throw e}))
         const mongoAddress = child_process.execSync(`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${mongoname}`, {encoding: "utf-8"}).trim()
         const etcAddress = child_process.execSync(`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${etcname}`, {encoding: "utf-8"}).trim()
+        const private_key = ed25519.utils.randomPrivateKey()
+        const public_key = await ed25519.getPublicKey(private_key)
+        
         const string_env: ServerEnv = {
             MONGO_CONNECTION_URI: `mongodb://${mongoAddress}`,
             ETCD_URL: `http://${etcAddress}:${etcdPort}`,
+            PUBLIC_KEY: hex(public_key),
+            PRIVATE_KEY: hex(new Uint8Array([...private_key, ...public_key])),
             ...output
         };
         info("starting server...")
@@ -101,6 +107,25 @@ const command: GluegunCommand = {
     }
 
   }
+}
+
+const byteToHex: string[] = [];
+
+for (let n = 0; n <= 0xff; ++n)
+{
+    const hexOctet = n.toString(16).padStart(2, "0");
+    byteToHex.push(hexOctet);
+}
+
+function hex(arrayBuffer: ArrayBufferLike)
+{
+    const buff = new Uint8Array(arrayBuffer);
+    const hexOctets = []; // new Array(buff.length) is even faster (preallocates necessary array size), then use hexOctets[i] instead of .push()
+
+    for (let i = 0; i < buff.length; ++i)
+        hexOctets.push(byteToHex[buff[i]]);
+
+    return hexOctets.join(" ");
 }
 
 module.exports = command

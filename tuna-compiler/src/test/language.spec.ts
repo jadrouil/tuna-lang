@@ -811,3 +811,79 @@ pub func get_my_messages() {
     `
     ))
 })
+
+describe("roles", () => {
+
+    it("allows declaring stateless roles", 
+        tunaTest("succeed",        
+        `
+        role admin {}
+
+        `)
+    )
+
+    it('roles can be associated with functions',
+        tunaTest("succeed",        
+        `
+        role admin {}
+
+        admin func privleged_thing() {
+
+        }
+        `)
+    )
+
+    it('caller can be referenced when using roles',
+        tunaTest("succeed",        
+        `
+        role admin {
+            name: string
+        }
+
+        admin func privleged_thing() {
+            return caller.name
+        }
+        `)
+    )
+
+    it("caller state cannot be mutated", 
+        tunaTest("fail",
+        `
+        role user {
+            name: string
+        }
+
+        user func foo(a) {
+            caller.name = a
+        }
+        `
+        )
+    )
+
+    it("creating role instances",
+        tunaTest("succeed",
+        `
+
+        role user {
+            name: string
+        }
+
+        pub func get_user(name: string) {
+            return user {
+                name: name
+            }
+        }
+        `)
+    
+    )
+
+    it("caller cannot be referenced in pub scope",
+        tunaTest("fail",        
+        `
+        pub func bar() {
+            caller.something
+        }
+        `)
+    
+    )
+})

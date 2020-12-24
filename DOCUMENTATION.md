@@ -1,5 +1,24 @@
 # Documentation
 Functionality may not be here but still exist. Check the [spec](https://github.com/Conder-Systems/tuna-lang/blob/main/tuna-compiler/src/test/language.spec.ts) for exhaustive documentation.
+
+## Roles 
+Roles are unique data structure that are signed by the system. Using roles allows you to restrict who can call functions and gurantees that whatever state exists on the role has not been mutated.
+
+```
+role some_user {
+    name: string
+}
+
+some_user func foo() {
+    'within this scope, user the instance of some_user can be accessed by '
+    'the keyword "caller":'
+    caller.name
+}
+```
+The `caller` object is immutable within the scope of the function.
+
+To call the function foo above, you must provide a some_user role as the first argument. For further details, see the [demo](./demos/roles/).
+
 ## Primitives
 
 - `int` and `double`. Infix operators: `+ - * /`.
@@ -37,7 +56,6 @@ Tuna is built on conder. Performance is/will be achieved by building on [conder]
 All of the following limitations are temporary:
 - No type inference or static type checking.
 - No object oriented programming concepts.
-- No recommended way for securing systems 
 - Only support http
 
 
