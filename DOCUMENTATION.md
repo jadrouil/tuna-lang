@@ -10,7 +10,7 @@ role some_user {
 }
 
 some_user func foo() {
-    'within this scope, user the instance of some_user can be accessed by '
+    'within this scope, the instance of some_user can be accessed by '
     'the keyword "caller":'
     caller.name
 }
