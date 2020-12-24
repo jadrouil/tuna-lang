@@ -1,13 +1,13 @@
 {
   "name": "tuna-compiler",
-  "version": "0.2.2",
+  "version": "0.3.2",
   "scripts": {
     "compile": "tspeg parser.peg src/main/parser.ts && tsc -b",
     "pretest": "npm run compile",
     "prepublish": "npm run compile",
     "test": "jest --maxWorkers=50%"
   },
-  "author": "Conder Systems",  
+  "author": "Conder Systems",
   "license": "BSD-3-Clause",
   "devDependencies": {
     "@types/jest": "^26.0.8",
@@ -20,8 +20,7 @@
     "typescript": "^4.0.0"
   },
   "dependencies": {
-    "conder_core": "https://github.com/Conder-Systems/conder/releases/download/v0.4.0/conder-api.tar.gz",
-    "noble-ed25519": "https://github.com/paulmillr/noble-ed25519/archive/1.0.2.tar.gz"
+    "conder_core": "https://github.com/Conder-Systems/conder/releases/download/v0.4.0/conder-api.tar.gz"
   },
   "jest": {
     "preset": "ts-jest",

@@ -27,14 +27,15 @@
     "docs",
     "bin"
   ],
-  "author": "Conder Systems",  
+  "author": "Conder Systems",
   "license": "BSD-3-Clause",
   "dependencies": {
     "@types/mongodb": "^3.6.1",
     "etcd3": "^1.1.0",
     "gluegun": "latest",
     "mongodb": "^3.6.3",
-    "tuna-compiler": "^0.2.2"
+    "noble-ed25519": "https://github.com/paulmillr/noble-ed25519/archive/1.0.2.tar.gz",
+    "tuna-compiler": "^0.3.2"
   },
   "devDependencies": {
     "@types/node": "^12.7.11",
