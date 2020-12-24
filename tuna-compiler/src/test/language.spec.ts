@@ -845,4 +845,28 @@ describe("roles", () => {
         }
         `)
     )
+
+    it("caller state cannot be mutated", 
+        tunaTest("fail",
+        `
+        role user {
+            name: string
+        }
+
+        user func foo(a) {
+            caller.name = a
+        }
+        `
+        )
+    )
+
+    it("caller cannot be referenced in pub scope",
+        tunaTest("fail",        
+        `
+        pub func bar() {
+            caller.something
+        }
+        `)
+    
+    )
 })

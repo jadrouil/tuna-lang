@@ -9187,6 +9187,16 @@ Map {
 }
 `;
 
+exports[`roles caller cannot be referenced in pub scope 1`] = `
+"In function bar: 
+	No such entity in scope: caller"
+`;
+
+exports[`roles caller state cannot be mutated 1`] = `
+"In function foo: 
+	Cannot update caller"
+`;
+
 exports[`roles roles can be associated with functions: OPS 1`] = `
 Object {
   "funcs": Map {
