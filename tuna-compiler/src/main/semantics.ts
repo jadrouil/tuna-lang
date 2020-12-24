@@ -505,11 +505,30 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
         
         switch (e.value.kind) {
             case ASTKinds.ret:
-                ret.push({
-                    kind: "Return", 
-                    value: e.value.value !== null ? to_value_node(complete_expression_to_node(e.value.value.exp, scope)) : undefined
-                    }
-                )
+                if (e.value.value === null) {
+                    ret.push({kind: "Return"})
+                    break
+                }
+                const exp = e.value.value.exp
+                switch (exp.kind) {
+                    case ASTKinds.expression:
+                        ret.push({
+                            kind: "Return", 
+                            value: to_value_node(complete_expression_to_node(exp, scope))
+                            }
+                        )
+                        break
+                    case ASTKinds.roleInstance:
+                        ret.push({
+                            kind: "Return",
+                            value: {
+                                kind: 'RoleInstance',
+                                role: scope.getKind(exp.name.name, "role").value,
+                                state: only(literal_to_node(exp.data, scope), "Object")
+                            }
+                        })
+                }
+                
                 break
             
 

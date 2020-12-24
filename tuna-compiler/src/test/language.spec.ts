@@ -860,6 +860,23 @@ describe("roles", () => {
         )
     )
 
+    it("creating role instances",
+        tunaTest("succeed",
+        `
+
+        role user {
+            name: string
+        }
+
+        pub func get_user(name: string) {
+            return user {
+                name: name
+            }
+        }
+        `)
+    
+    )
+
     it("caller cannot be referenced in pub scope",
         tunaTest("fail",        
         `
