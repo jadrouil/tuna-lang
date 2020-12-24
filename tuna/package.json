@@ -27,7 +27,8 @@
     "docs",
     "bin"
   ],
-  "license": "MIT",
+  "author": "Conder Systems",  
+  "license": "BSD-3-Clause",
   "dependencies": {
     "@types/mongodb": "^3.6.1",
     "etcd3": "^1.1.0",

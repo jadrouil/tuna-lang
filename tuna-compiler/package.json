@@ -7,8 +7,8 @@
     "prepublish": "npm run compile",
     "test": "jest --maxWorkers=50%"
   },
-  "author": "Jeremy",
-  "license": "ISC",
+  "author": "Conder Systems",  
+  "license": "BSD-3-Clause",
   "devDependencies": {
     "@types/jest": "^26.0.8",
     "@types/mongodb": "^3.5.33",
