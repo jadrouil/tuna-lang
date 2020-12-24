@@ -7,8 +7,8 @@ import { AnySchemaInstance, schemaFactory, SchemaInstance } from 'conder_core/di
 type ScopeMapEntry= "func" | 
 {kind: "global object"} |
 {kind: "global str", value: string} |
-{kind: "const", index: number} |
-{kind: "mut", index: number} | 
+{kind: "const", value: PickNode<"Saved" | "Selection">} |
+{kind: "mut", value: PickNode<"Saved">} | 
 {kind: "typeAlias", value: AnySchemaInstance} |
 {kind: "role", value: SchemaInstance<"Role">}
 
@@ -355,7 +355,14 @@ function expression_to_update_target(exp: expression, scope: ScopeMap): Target {
                 throw Error(`Attempting to overwrite constant variable ${exp.root.name}`)
             }
             
-            const root: Target["root"] = name.kind === "global object" ? {kind: "GlobalObject", name: exp.root.name} : {kind: "Saved", index: name.index}
+            if (name.kind === "const" && name.value.kind === "Selection") {
+                throw Error(`Cannot update ${exp.root.name}`)
+            }
+            const pre: Target["root"] | PickNode<"Selection"> = name.kind === "global object" ? {kind: "GlobalObject", name: exp.root.name} : name.value
+            if (pre.kind === "Selection") {
+                throw Error(`Cannot mutate ${exp.root.name}`)
+            }
+            const root: Target["root"] = pre
             
             const level: Target["level"] = exp.methods.map(m => {
                 switch (m.method.kind) {
@@ -474,7 +481,7 @@ function expression_to_node(exp: expression, scope: ScopeMap): AnyNode {
                     return method_to_node({kind: "GlobalObject", name: exp.root.name}, exp.methods, scope)
 
                 default: 
-                    return method_to_node({kind: "Saved", index: name.index}, exp.methods, scope)
+                    return method_to_node(name.value, exp.methods, scope)
             }
         case ASTKinds.functionCall:
             const args = exp.root.args.lastArg ? [...exp.root.args.leadingArgs.map(a => a.value), exp.root.args.lastArg] : []
@@ -535,7 +542,7 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
             case ASTKinds.varDecl: 
                 const value = to_value_node(complete_expression_to_node(e.value.value, scope))
                 const index = scope.nextVariableIndex
-                scope.set(e.value.name.name, {kind: e.value.mutability === "const" ? "const" : "mut", index})
+                scope.set(e.value.name.name, {kind: e.value.mutability === "const" ? "const" : "mut", value: {kind: "Saved", index}})
                 ret.push({
                     kind: "Save",
                     value,
@@ -545,7 +552,7 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
             case ASTKinds.forLoop:
                 scope.pushScope()
                 const rowVar = scope.nextVariableIndex
-                scope.set(e.value.rowVar.name, {kind: "const", index: rowVar})
+                scope.set(e.value.rowVar.name, {kind: "const", value: {kind: "Saved", index: rowVar}})
                 const loopDo = to_computation(e.value.do.body, scope)
                 const target = to_value_node(complete_expression_to_node(e.value.value, scope))
                 ret.push({
@@ -646,11 +653,21 @@ function to_descr(f: func, scope: ScopeMap, debug: boolean): FunctionDescription
             argList.push({name: f.params.lastParam.name.name, schema: f.params.lastParam.schema})
         }
         const input: FunctionDescription["input"] = []
+        let arg_offset = 0
         if (f.role && f.role.name.name !== "pub") {
             input.push(scope.getKind(f.role.name.name, "role").value)
+            scope.set("caller", {
+                kind: "const", 
+                value: {
+                    kind: "Selection", 
+                    root: {kind: "Saved", index: 0},
+                    level: [{kind: "String", value: "_state"}]
+                }
+            })
+            arg_offset = 1
         }
         argList.forEach((a, i) => {
-            scope.set(a.name, {kind: "mut", index: i})
+            scope.set(a.name, {kind: "mut", value: {kind: 'Saved', index: i + arg_offset}})
             if (a.schema) {
                 const inner = a.schema.type.kind === ASTKinds.name ? 
                     scope.getKind(a.schema.type.name, "typeAlias").value :

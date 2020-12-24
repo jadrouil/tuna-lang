@@ -9064,6 +9064,129 @@ Object {
 
 exports[`roles allows declaring stateless roles: locks 1`] = `Map {}`;
 
+exports[`roles caller can be referenced when using roles: OPS 1`] = `
+Object {
+  "funcs": Map {
+    "privleged_thing" => Array [
+      Object {
+        "data": 1,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": Array [
+          0,
+          Object {
+            "data": Array [
+              "admin",
+              Array [
+                Object {
+                  "data": Object {
+                    "name": Object {
+                      "data": null,
+                      "kind": "string",
+                    },
+                  },
+                  "kind": "Object",
+                },
+              ],
+            ],
+            "kind": "Role",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+      Object {
+        "data": 0,
+        "kind": "copyFromHeap",
+      },
+      Object {
+        "data": "_state",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": "name",
+        "kind": "instantiate",
+      },
+      Object {
+        "data": 2,
+        "kind": "getField",
+      },
+      Object {
+        "data": undefined,
+        "kind": "returnStackTop",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`roles caller can be referenced when using roles: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "privleged_thing" => FunctionDescription {
+      "computation": Array [
+        Object {
+          "kind": "Return",
+          "value": Object {
+            "kind": "Selection",
+            "level": Array [
+              Object {
+                "kind": "String",
+                "value": "_state",
+              },
+              Object {
+                "kind": "String",
+                "value": "name",
+              },
+            ],
+            "root": Object {
+              "index": 0,
+              "kind": "Saved",
+            },
+          },
+        },
+      ],
+      "input": Array [
+        Object {
+          "data": Array [
+            "admin",
+            Array [
+              Object {
+                "data": Object {
+                  "name": Object {
+                    "data": null,
+                    "kind": "string",
+                  },
+                },
+                "kind": "Object",
+              },
+            ],
+          ],
+          "kind": "Role",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+  "privateFuncs": Set {},
+}
+`;
+
+exports[`roles caller can be referenced when using roles: locks 1`] = `
+Map {
+  "privleged_thing" => Map {},
+}
+`;
+
 exports[`roles roles can be associated with functions: OPS 1`] = `
 Object {
   "funcs": Map {

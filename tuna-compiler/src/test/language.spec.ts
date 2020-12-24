@@ -828,9 +828,21 @@ describe("roles", () => {
         role admin {}
 
         admin func privleged_thing() {
-            
+
         }
         `)
-    
+    )
+
+    it('caller can be referenced when using roles',
+        tunaTest("succeed",        
+        `
+        role admin {
+            name: string
+        }
+
+        admin func privleged_thing() {
+            return caller.name
+        }
+        `)
     )
 })
