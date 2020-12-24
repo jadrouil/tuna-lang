@@ -17,7 +17,7 @@ pub func add_user(name) {
 
 These four lines mean: there is a users object which is persisted across requests, and a function called "add_user" that is exposed over an HTTP endpoint that can be called by anyone.
 
-However, often in building webservices, it is undesirable to allow anyone to do everything. Enter roles:
+However, often in building web services, it is undesirable to allow anyone to do everything. Enter roles:
 
 ```
 role admin {}
