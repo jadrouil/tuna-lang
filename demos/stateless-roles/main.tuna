@@ -1,0 +1,16 @@
+
+
+role admin {}
+
+const PASSCODE = 'SOME SECRET KEY'
+pub func get_admin(key: string) {
+    if key == PASSCODE {
+        return admin {}
+    }
+
+    return none
+}
+
+admin func am_i_admin() {
+    return 'yes'
+}
