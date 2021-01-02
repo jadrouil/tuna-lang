@@ -1,6 +1,6 @@
 {
   "name": "tuna-lang",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "tuna CLI",
   "types": "build/types/types.d.ts",
   "bin": {
