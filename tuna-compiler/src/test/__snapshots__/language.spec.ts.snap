@@ -376,6 +376,7 @@ Object {
     },
   },
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -460,6 +461,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -544,6 +546,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -796,6 +799,7 @@ Object {
   "privateFuncs": Set {
     "test",
   },
+  "schemas": Object {},
 }
 `;
 
@@ -931,6 +935,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -1055,6 +1060,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -1145,6 +1151,7 @@ Object {
     },
   },
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -1221,6 +1228,7 @@ Object {
   "privateFuncs": Set {
     "l",
   },
+  "schemas": Object {},
 }
 `;
 
@@ -1317,6 +1325,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -1421,6 +1430,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -1487,6 +1497,7 @@ Object {
   "privateFuncs": Set {
     "l",
   },
+  "schemas": Object {},
 }
 `;
 
@@ -1560,6 +1571,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -1641,6 +1653,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -1723,6 +1736,7 @@ Object {
   "privateFuncs": Set {
     "concat",
   },
+  "schemas": Object {},
 }
 `;
 
@@ -1886,6 +1900,7 @@ Object {
     },
   },
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -2005,6 +2020,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -2082,6 +2098,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -2344,6 +2361,7 @@ Object {
     },
   },
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -2602,6 +2620,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -2722,6 +2741,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -3009,6 +3029,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -3152,6 +3173,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -3311,6 +3333,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -3420,6 +3443,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -3549,6 +3573,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -3662,6 +3687,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -3750,6 +3776,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -3919,6 +3946,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -4008,6 +4036,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -4344,6 +4373,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -4451,6 +4481,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -4699,6 +4730,7 @@ Object {
   "privateFuncs": Set {
     "fib",
   },
+  "schemas": Object {},
 }
 `;
 
@@ -4734,6 +4766,7 @@ Object {
   "privateFuncs": Set {
     "shh",
   },
+  "schemas": Object {},
 }
 `;
 
@@ -4831,6 +4864,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -4928,6 +4962,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -5025,6 +5060,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -5126,6 +5162,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -5198,6 +5235,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -5324,6 +5362,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -5444,6 +5483,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -5541,6 +5581,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -5654,6 +5695,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -5751,6 +5793,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -5864,6 +5907,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -5961,6 +6005,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -6058,6 +6103,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -6349,6 +6395,7 @@ Object {
     },
   },
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -6514,6 +6561,7 @@ Object {
     },
   },
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -6788,6 +6836,7 @@ Object {
     },
   },
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -6878,6 +6927,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -6966,6 +7016,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -7066,6 +7117,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -7097,6 +7149,7 @@ Object {
     },
   },
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -7142,6 +7195,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -7198,6 +7252,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -7231,6 +7286,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -7779,6 +7835,7 @@ Object {
     },
   },
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -7933,6 +7990,7 @@ Object {
     },
   },
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -8553,6 +8611,21 @@ Object {
     },
   },
   "privateFuncs": Set {},
+  "schemas": Object {
+    "msg": Object {
+      "data": Object {
+        "body": Object {
+          "data": null,
+          "kind": "string",
+        },
+        "from": Object {
+          "data": null,
+          "kind": "string",
+        },
+      },
+      "kind": "Object",
+    },
+  },
 }
 `;
 
@@ -8595,6 +8668,7 @@ Object {
     },
   },
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -8639,6 +8713,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -8680,6 +8755,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -9014,6 +9090,7 @@ Object {
     },
   },
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -9040,6 +9117,7 @@ Object {
   "funcs": Map {},
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -9159,6 +9237,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -9303,6 +9382,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -9375,6 +9455,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -9431,6 +9512,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -9553,6 +9635,7 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {},
 }
 `;
 
@@ -9609,6 +9692,12 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {
+    "MyType": Object {
+      "data": null,
+      "kind": "bool",
+    },
+  },
 }
 `;
 
@@ -9675,6 +9764,26 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {
+    "boolean": Object {
+      "data": null,
+      "kind": "bool",
+    },
+    "obj": Object {
+      "data": Object {
+        "o": Object {
+          "data": Array [
+            Object {
+              "data": null,
+              "kind": "int",
+            },
+          ],
+          "kind": "Array",
+        },
+      },
+      "kind": "Object",
+    },
+  },
 }
 `;
 
@@ -9731,6 +9840,21 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {
+    "someObj": Object {
+      "data": Object {
+        "a": Object {
+          "data": null,
+          "kind": "bool",
+        },
+        "b": Object {
+          "data": null,
+          "kind": "int",
+        },
+      },
+      "kind": "Object",
+    },
+  },
 }
 `;
 
@@ -9838,6 +9962,52 @@ Object {
   },
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {
+    "obj": Object {
+      "data": Object {
+        "b": Object {
+          "data": Array [
+            Object {
+              "data": null,
+              "kind": "double",
+            },
+            Object {
+              "data": null,
+              "kind": "none",
+            },
+          ],
+          "kind": "Union",
+        },
+        "c": Object {
+          "data": Array [
+            Object {
+              "data": null,
+              "kind": "string",
+            },
+            Object {
+              "data": null,
+              "kind": "none",
+            },
+          ],
+          "kind": "Union",
+        },
+      },
+      "kind": "Object",
+    },
+    "opt": Object {
+      "data": Array [
+        Object {
+          "data": null,
+          "kind": "bool",
+        },
+        Object {
+          "data": null,
+          "kind": "none",
+        },
+      ],
+      "kind": "Union",
+    },
+  },
 }
 `;
 
@@ -9860,7 +10030,156 @@ Object {
   "funcs": Map {},
   "globals": Map {},
   "privateFuncs": Set {},
+  "schemas": Object {
+    "Node": Object {
+      "data": Object {
+        "left": Object {
+          "data": Array [
+            Object {
+              "data": "Node",
+              "kind": "TypeAlias",
+            },
+            Object {
+              "data": null,
+              "kind": "none",
+            },
+          ],
+          "kind": "Union",
+        },
+        "right": Object {
+          "data": Array [
+            Object {
+              "data": "Node",
+              "kind": "TypeAlias",
+            },
+            Object {
+              "data": null,
+              "kind": "none",
+            },
+          ],
+          "kind": "Union",
+        },
+      },
+      "kind": "Object",
+    },
+  },
 }
 `;
 
 exports[`types should allow recursive types: locks 1`] = `Map {}`;
+
+exports[`types should allow union types: OPS 1`] = `
+Object {
+  "funcs": Map {
+    "test" => Array [
+      Object {
+        "data": 1,
+        "kind": "assertHeapLen",
+      },
+      Object {
+        "data": Array [
+          0,
+          Object {
+            "data": Array [
+              Object {
+                "data": "Biz",
+                "kind": "TypeAlias",
+              },
+              Object {
+                "data": null,
+                "kind": "double",
+              },
+            ],
+            "kind": "Union",
+          },
+        ],
+        "kind": "enforceSchemaInstanceOnHeap",
+      },
+      Object {
+        "data": 1,
+        "kind": "conditonallySkipXops",
+      },
+      Object {
+        "data": "invalid input",
+        "kind": "raiseError",
+      },
+    ],
+  },
+  "globals": Map {},
+}
+`;
+
+exports[`types should allow union types: intermediate representation 1`] = `
+Object {
+  "funcs": Map {
+    "test" => FunctionDescription {
+      "computation": Array [],
+      "input": Array [
+        Object {
+          "data": Array [
+            Object {
+              "data": "Biz",
+              "kind": "TypeAlias",
+            },
+            Object {
+              "data": null,
+              "kind": "double",
+            },
+          ],
+          "kind": "Union",
+        },
+      ],
+    },
+  },
+  "globals": Map {},
+  "privateFuncs": Set {},
+  "schemas": Object {
+    "Bar": Object {
+      "data": null,
+      "kind": "int",
+    },
+    "Biz": Object {
+      "data": Array [
+        Object {
+          "data": "Foo",
+          "kind": "TypeAlias",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "data": "Bar",
+              "kind": "TypeAlias",
+            },
+            Object {
+              "data": Array [
+                Object {
+                  "data": Object {
+                    "foobar": Object {
+                      "data": null,
+                      "kind": "int",
+                    },
+                  },
+                  "kind": "Object",
+                },
+              ],
+              "kind": "Array",
+            },
+          ],
+          "kind": "Union",
+        },
+      ],
+      "kind": "Union",
+    },
+    "Foo": Object {
+      "data": null,
+      "kind": "string",
+    },
+  },
+}
+`;
+
+exports[`types should allow union types: locks 1`] = `
+Map {
+  "test" => Map {},
+}
+`;
