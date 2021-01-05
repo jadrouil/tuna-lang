@@ -93,5 +93,5 @@ Another benefit of abstracting away query languages is that multiple underlying 
 
 ## Challenges
 
-As Tuna grows in complexity, the challenge will be achieving performance equivalent to that of one built by a developer making economical use of their query language. This challenge can be overcome by building a query planner into the compiler. Query planners exist in distributed query engines like Dremio or Presto. However, they are built to efficiently execute one query. The goal of the Tuna/Conder query planner would be to collapse actions against global state into the fewest number of requests possible. 
+As Tuna grows in complexity, the challenge will be achieving performance equivalent to systems built by a developer making economical use of their query language. This challenge can be overcome by building a query planner into the compiler. Query planners exist in distributed query engines like Dremio or Presto. However, they are built to efficiently execute one query. The goal of the Tuna/Conder query planner would be to collapse actions against global state into the fewest number of requests possible.
 
