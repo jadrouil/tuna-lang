@@ -7954,17 +7954,8 @@ Object {
         "data": Array [
           0,
           Object {
-            "data": Object {
-              "body": Object {
-                "data": null,
-                "kind": "string",
-              },
-              "from": Object {
-                "data": null,
-                "kind": "string",
-              },
-            },
-            "kind": "Object",
+            "data": "msg",
+            "kind": "TypeAlias",
           },
         ],
         "kind": "enforceSchemaInstanceOnHeap",
@@ -8480,17 +8471,8 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": Object {
-            "body": Object {
-              "data": null,
-              "kind": "string",
-            },
-            "from": Object {
-              "data": null,
-              "kind": "string",
-            },
-          },
-          "kind": "Object",
+          "data": "msg",
+          "kind": "TypeAlias",
         },
         Object {
           "data": undefined,
@@ -9592,8 +9574,8 @@ Object {
         "data": Array [
           0,
           Object {
-            "data": null,
-            "kind": "bool",
+            "data": "MyType",
+            "kind": "TypeAlias",
           },
         ],
         "kind": "enforceSchemaInstanceOnHeap",
@@ -9619,8 +9601,8 @@ Object {
       "computation": Array [],
       "input": Array [
         Object {
-          "data": null,
-          "kind": "bool",
+          "data": "MyType",
+          "kind": "TypeAlias",
         },
       ],
     },
@@ -9650,18 +9632,8 @@ Object {
           Object {
             "data": Array [
               Object {
-                "data": Object {
-                  "o": Object {
-                    "data": Array [
-                      Object {
-                        "data": null,
-                        "kind": "int",
-                      },
-                    ],
-                    "kind": "Array",
-                  },
-                },
-                "kind": "Object",
+                "data": "obj",
+                "kind": "TypeAlias",
               },
             ],
             "kind": "Array",
@@ -9692,18 +9664,8 @@ Object {
         Object {
           "data": Array [
             Object {
-              "data": Object {
-                "o": Object {
-                  "data": Array [
-                    Object {
-                      "data": null,
-                      "kind": "int",
-                    },
-                  ],
-                  "kind": "Array",
-                },
-              },
-              "kind": "Object",
+              "data": "obj",
+              "kind": "TypeAlias",
             },
           ],
           "kind": "Array",
@@ -9734,17 +9696,8 @@ Object {
         "data": Array [
           0,
           Object {
-            "data": Object {
-              "a": Object {
-                "data": null,
-                "kind": "bool",
-              },
-              "b": Object {
-                "data": null,
-                "kind": "int",
-              },
-            },
-            "kind": "Object",
+            "data": "someObj",
+            "kind": "TypeAlias",
           },
         ],
         "kind": "enforceSchemaInstanceOnHeap",
@@ -9770,17 +9723,8 @@ Object {
       "computation": Array [],
       "input": Array [
         Object {
-          "data": Object {
-            "a": Object {
-              "data": null,
-              "kind": "bool",
-            },
-            "b": Object {
-              "data": null,
-              "kind": "int",
-            },
-          },
-          "kind": "Object",
+          "data": "someObj",
+          "kind": "TypeAlias",
         },
       ],
     },
@@ -9841,35 +9785,8 @@ Object {
         "data": Array [
           0,
           Object {
-            "data": Object {
-              "b": Object {
-                "data": Array [
-                  Object {
-                    "data": null,
-                    "kind": "double",
-                  },
-                  Object {
-                    "data": null,
-                    "kind": "none",
-                  },
-                ],
-                "kind": "Union",
-              },
-              "c": Object {
-                "data": Array [
-                  Object {
-                    "data": null,
-                    "kind": "string",
-                  },
-                  Object {
-                    "data": null,
-                    "kind": "none",
-                  },
-                ],
-                "kind": "Union",
-              },
-            },
-            "kind": "Object",
+            "data": "obj",
+            "kind": "TypeAlias",
           },
         ],
         "kind": "enforceSchemaInstanceOnHeap",
@@ -9913,35 +9830,8 @@ Object {
       "computation": Array [],
       "input": Array [
         Object {
-          "data": Object {
-            "b": Object {
-              "data": Array [
-                Object {
-                  "data": null,
-                  "kind": "double",
-                },
-                Object {
-                  "data": null,
-                  "kind": "none",
-                },
-              ],
-              "kind": "Union",
-            },
-            "c": Object {
-              "data": Array [
-                Object {
-                  "data": null,
-                  "kind": "string",
-                },
-                Object {
-                  "data": null,
-                  "kind": "none",
-                },
-              ],
-              "kind": "Union",
-            },
-          },
-          "kind": "Object",
+          "data": "obj",
+          "kind": "TypeAlias",
         },
       ],
     },
@@ -9957,3 +9847,20 @@ Map {
   "q" => Map {},
 }
 `;
+
+exports[`types should allow recursive types: OPS 1`] = `
+Object {
+  "funcs": Map {},
+  "globals": Map {},
+}
+`;
+
+exports[`types should allow recursive types: intermediate representation 1`] = `
+Object {
+  "funcs": Map {},
+  "globals": Map {},
+  "privateFuncs": Set {},
+}
+`;
+
+exports[`types should allow recursive types: locks 1`] = `Map {}`;

@@ -641,6 +641,9 @@ function parsed_to_schema(schema: someType): AnySchemaInstance {
                     obj[field.name.name] = parsed_to_schema(field.schema)
                 })
                 return schemaFactory.Object(obj)
+
+            case ASTKinds.name:
+                return schemaFactory.TypeAlias(schema.type.name)
             default: const n: never = schema.type
         }
     }
@@ -688,10 +691,7 @@ function to_descr(f: func, scope: ScopeMap, debug: boolean): FunctionDescription
         argList.forEach((a, i) => {
             scope.set(a.name, {kind: "mut", value: {kind: 'Saved', index: i + arg_offset}})
             if (a.schema) {
-                const inner = a.schema.type.kind === ASTKinds.name ? 
-                    scope.getKind(a.schema.type.name, "typeAlias").value :
-                    parsed_to_schema(a.schema.type)
-                
+                const inner = parsed_to_schema(a.schema.type)                
                 input.push(apply_type_postfix(inner, a.schema.postfix))
                 
             } else {
