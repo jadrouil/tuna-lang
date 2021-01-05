@@ -9813,8 +9813,12 @@ Object {
                 "data": null,
                 "kind": "int",
               },
+              Object {
+                "data": null,
+                "kind": "none",
+              },
             ],
-            "kind": "Optional",
+            "kind": "Union",
           },
         ],
         "kind": "enforceSchemaInstanceOnHeap",
@@ -9844,8 +9848,12 @@ Object {
                     "data": null,
                     "kind": "double",
                   },
+                  Object {
+                    "data": null,
+                    "kind": "none",
+                  },
                 ],
-                "kind": "Optional",
+                "kind": "Union",
               },
               "c": Object {
                 "data": Array [
@@ -9853,8 +9861,12 @@ Object {
                     "data": null,
                     "kind": "string",
                   },
+                  Object {
+                    "data": null,
+                    "kind": "none",
+                  },
                 ],
-                "kind": "Optional",
+                "kind": "Union",
               },
             },
             "kind": "Object",
@@ -9888,8 +9900,12 @@ Object {
               "data": null,
               "kind": "int",
             },
+            Object {
+              "data": null,
+              "kind": "none",
+            },
           ],
-          "kind": "Optional",
+          "kind": "Union",
         },
       ],
     },
@@ -9904,8 +9920,12 @@ Object {
                   "data": null,
                   "kind": "double",
                 },
+                Object {
+                  "data": null,
+                  "kind": "none",
+                },
               ],
-              "kind": "Optional",
+              "kind": "Union",
             },
             "c": Object {
               "data": Array [
@@ -9913,8 +9933,12 @@ Object {
                   "data": null,
                   "kind": "string",
                 },
+                Object {
+                  "data": null,
+                  "kind": "none",
+                },
               ],
-              "kind": "Optional",
+              "kind": "Union",
             },
           },
           "kind": "Object",

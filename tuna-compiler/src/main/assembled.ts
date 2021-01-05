@@ -36,7 +36,7 @@ export const STRINGIFY_ENV: Transform<StrongServerEnv, Omit<ServerEnv, Var.MONGO
     return string_env as ServerEnv
 })
 
-export const TUNA_TO_ENV: Transform<string, Omit<StrongServerEnv, Var.PRIVATE_KEY | Var.PUBLIC_KEY>> = TUNA_TO_MANIFEST
+export const TUNA_TO_ENV: Transform<string, Omit<StrongServerEnv, Var.PRIVATE_KEY | Var.PUBLIC_KEY | Var.SCHEMAS>> = TUNA_TO_MANIFEST
 .then(new Transformer(man => {
     const manifest = OPSIFY_MANIFEST.run(man)
     return {
@@ -56,13 +56,11 @@ export const TUNA_TO_ENV: Transform<string, Omit<StrongServerEnv, Var.PRIVATE_KE
         
     })
 
-    const SCHEMAS: StrongServerEnv["SCHEMAS"] = []
     
     return {
         DEPLOYMENT_NAME: "local-run",
         STORES,
         PROCEDURES,
-        SCHEMAS,
         PRIVATE_PROCEDURES
     }
 }))

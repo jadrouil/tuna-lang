@@ -652,7 +652,7 @@ function apply_type_postfix(inner: AnySchemaInstance, post: typePostfix | undefi
     if (post) {
         switch (post.mod.kind) {
             case ASTKinds.optional_t:
-                return schemaFactory.Optional(inner)
+                return schemaFactory.Union([inner, schemaFactory.none])
             case ASTKinds.array_t:
                 return schemaFactory.Array(inner)
             default: const n: never = post.mod
