@@ -1,6 +1,6 @@
 # Purpose
 
-The Tuna programming language is designed to make it easy as possible to build scalable web services. Consequently, there are a few notable differences between tuna and general purpose programming languages you may have used before: 
+The Tuna programming language is used to rapidly develop microservices. Consequently, there are a few notable differences between tuna and general purpose programming languages you may have used before: 
 1. Tuna's global state is persisted in a database, rather than held in memory.
 2. In Tuna, you describe which functions to expose over the network. 
 3. Developers may define roles to limit access.
@@ -35,6 +35,8 @@ pub func get_admin_role(secret) {
 ```
 
 In order to call the `do_something_dangerous` function, a client must have an admin role granted. Roles can be stateful, and their state may be referenced in the receiving function. Check out the [demo on roles](./demos/roles).
+
+[Learn more about the future of Tuna and the motivations here.](MOTIVATION.md)
 
 # Getting Started
 
