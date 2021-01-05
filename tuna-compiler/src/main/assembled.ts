@@ -15,9 +15,9 @@ import { LockRequirements } from 'conder_core/dist/src/main/abstract/mongo_logic
 import * as ed from 'noble-ed25519'
 
 import {Parser} from './parser'
-import {semantify, PrivateFuncs } from './semantics'
+import {semantify, PrivateFuncs, Schemas } from './semantics'
 
-export const TUNA_TO_MANIFEST = new Transformer<string, Manifest & PrivateFuncs>(str => {
+export const TUNA_TO_MANIFEST = new Transformer<string, Manifest & PrivateFuncs & Schemas>(str => {
     const p = new Parser(str).parse()
     return semantify(p, false)
 })
@@ -36,12 +36,13 @@ export const STRINGIFY_ENV: Transform<StrongServerEnv, Omit<ServerEnv, Var.MONGO
     return string_env as ServerEnv
 })
 
-export const TUNA_TO_ENV: Transform<string, Omit<StrongServerEnv, Var.PRIVATE_KEY | Var.PUBLIC_KEY | Var.SCHEMAS>> = TUNA_TO_MANIFEST
+export const TUNA_TO_ENV: Transform<string, Omit<StrongServerEnv, Var.PRIVATE_KEY | Var.PUBLIC_KEY>> = TUNA_TO_MANIFEST
 .then(new Transformer(man => {
     const manifest = OPSIFY_MANIFEST.run(man)
     return {
         ...manifest,
-        privateFuncs: man.privateFuncs
+        privateFuncs: man.privateFuncs,
+        schemas: man.schemas
     }
 }))
 .then(new Transformer(man => {
@@ -61,7 +62,8 @@ export const TUNA_TO_ENV: Transform<string, Omit<StrongServerEnv, Var.PRIVATE_KE
         DEPLOYMENT_NAME: "local-run",
         STORES,
         PROCEDURES,
-        PRIVATE_PROCEDURES
+        PRIVATE_PROCEDURES,
+        SCHEMAS: man.schemas
     }
 }))
 
