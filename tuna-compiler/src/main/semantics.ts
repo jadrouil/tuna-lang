@@ -1,8 +1,8 @@
 import { MathExpression, MathInfix, Ordering, AnyInfix } from './math';
-import { ParseResult, executable, ASTKinds, func, expression, literal, infixOps_$0, methodInvoke, schema, someType, typePostfix } from "./parser";
+import { ParseResult, executable, ASTKinds, func, expression, literal, infixOps_$0, methodInvoke, schema, someType, typePostfix, union_t } from "./parser";
 import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest, ValueNode, FunctionData} from "conder_core"
 // Export this at the root level
-import { AnySchemaInstance, schemaFactory, SchemaInstance } from 'conder_core/dist/src/main/ops';
+import { AnySchemaInstance, schemaFactory, SchemaInstance, SchemaType } from 'conder_core/dist/src/main/ops';
 
 type ScopeMapEntry= "func" | 
 {kind: "global object"} |
@@ -641,10 +641,21 @@ function parsed_to_schema(schema: someType): AnySchemaInstance {
                     obj[field.name.name] = parsed_to_schema(field.schema)
                 })
                 return schemaFactory.Object(obj)
+
+            case ASTKinds.name:
+                return schemaFactory.TypeAlias(schema.type.name)
             default: const n: never = schema.type
         }
     }
-    return apply_type_postfix(getInner(), schema.postfix)
+    return with_union(apply_type_postfix(getInner(), schema.postfix), schema.union)
+}
+function with_union(left: AnySchemaInstance, union: union_t | undefined): AnySchemaInstance {
+    if (union) {
+        const right = parsed_to_schema(union.type)
+        return schemaFactory.Union([left, right])
+    } else {
+        return left
+    }
 }
 
 function apply_type_postfix(inner: AnySchemaInstance, post: typePostfix | undefined): AnySchemaInstance {
@@ -652,7 +663,7 @@ function apply_type_postfix(inner: AnySchemaInstance, post: typePostfix | undefi
     if (post) {
         switch (post.mod.kind) {
             case ASTKinds.optional_t:
-                return schemaFactory.Optional(inner)
+                return schemaFactory.Union([inner, schemaFactory.none])
             case ASTKinds.array_t:
                 return schemaFactory.Array(inner)
             default: const n: never = post.mod
@@ -688,11 +699,8 @@ function to_descr(f: func, scope: ScopeMap, debug: boolean): FunctionDescription
         argList.forEach((a, i) => {
             scope.set(a.name, {kind: "mut", value: {kind: 'Saved', index: i + arg_offset}})
             if (a.schema) {
-                const inner = a.schema.type.kind === ASTKinds.name ? 
-                    scope.getKind(a.schema.type.name, "typeAlias").value :
-                    parsed_to_schema(a.schema.type)
-                
-                input.push(apply_type_postfix(inner, a.schema.postfix))
+                const inner = parsed_to_schema(a.schema.type)                
+                input.push(inner)
                 
             } else {
                 input.push({kind: "Any", data: undefined})
@@ -709,13 +717,15 @@ function to_descr(f: func, scope: ScopeMap, debug: boolean): FunctionDescription
     
 }
 export type PrivateFuncs = {privateFuncs: Set<string>}
-export function semantify(p: ParseResult, debug: boolean): Manifest & PrivateFuncs {
+export type Schemas = {schemas: Record<string, AnySchemaInstance>}
+export function semantify(p: ParseResult, debug: boolean): Manifest & PrivateFuncs & Schemas {
     if (p.err) {
         throw Error(`Failure parsing: line ${p.err.pos.line} col ${p.err.pos.offset}: ${p.err.toString()}`)
     }
     const privateFuncs = new Set<string>()
     const globalScope = new ScopeMap()
     const aFunc: func[] = []
+    const schemas: Record<string, AnySchemaInstance> = {}
 
     const funcs: Map<string, FunctionDescription> = new Map()
     const globs: Map<string, GlobalObject> = new Map()
@@ -735,7 +745,9 @@ export function semantify(p: ParseResult, debug: boolean): Manifest & PrivateFun
                 break
 
             case ASTKinds.typeDef:
-                globalScope.set(g.value.name.name, {kind: "typeAlias", value: parsed_to_schema(g.value.def)})
+                const schema =parsed_to_schema(g.value.def)
+                globalScope.set(g.value.name.name, {kind: "typeAlias", value: schema})
+                schemas[g.value.name.name] = schema
                 break
         }
     })
@@ -798,7 +810,8 @@ export function semantify(p: ParseResult, debug: boolean): Manifest & PrivateFun
     return  {
         globals: globs,
         funcs,
-        privateFuncs
+        privateFuncs,
+        schemas
     }
 
 

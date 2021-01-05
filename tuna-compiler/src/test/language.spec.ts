@@ -758,6 +758,13 @@ describe("types", () => {
     }
     `
     ))
+    it("should allow recursive types", tunaTest("succeed",
+    `
+    type Node = {
+        left: Node?
+        right: Node?
+    }
+    `))
 
     it("should allow array types", tunaTest("succeed",
     `
@@ -786,6 +793,18 @@ describe("types", () => {
     `
     
     ))
+
+    it("should allow union types", tunaTest("succeed", 
+    `
+    type Foo = string
+    type Bar = int
+
+    type Biz = Foo or Bar or {foobar: int}[]
+
+    pub func test(input: Biz or double) {
+
+    }
+    `))
     
 })
 
