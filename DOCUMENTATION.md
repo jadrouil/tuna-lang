@@ -37,12 +37,14 @@ For example:
 pub func some_func(a: string, b: int, c: {some_field: b})
 ```
 
-When `some_func` is invoked by a client, we automatically validate the input match the type. Note, objects are not strictly typed, so if there are more fields required than specified, it will be acceptable. I intend to make this strictness configurable in the future.
+When `some_func` is invoked by a client, we automatically validate the input match the type. 
+
+### Union types
+Unions can be formed by using the keyword `or`: `type foo= string or int`.
 
 ### Type Aliases
 
 Type aliases can be defined like they are in typescript: `type my_type = string`.
-Note, type aliases may not refer to other type aliases. This is a temporary limitation.
 
 ## Locking
 
@@ -57,5 +59,6 @@ All of the following limitations are temporary:
 - No type inference or static type checking.
 - No object oriented programming concepts.
 - Only support http
+- Pass-by-value, not reference.
 
 
