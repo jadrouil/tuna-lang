@@ -7,7 +7,7 @@ If you've built an app from scratch, you've likely had to cobble together Docker
 
 While this looks simple on the surface, it frequently is not. Complexity creeps in many places (e.g securing the application & issuing requests to the database). 
 
-This is where Tuna comes in. The goal of Tuna is to make micro service development as simple as possible. Given this design goal, the following requirements emerge:
+This is where Tuna comes in. The goal of Tuna is to make microservice development as simple as possible. Given this goal, the following requirements emerge:
 - Persisted and shared global state.
 - NoQL: Users should not have to use any query language to work with global state. This eliminates the need for developers to learn a query language.
 - Easily define endpoints to expose business logic.
