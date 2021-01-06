@@ -1,6 +1,6 @@
 # Purpose
 
-The Tuna programming language is used to rapidly develop microservices. Consequently, there are a few notable differences between tuna and general purpose programming languages you may have used before: 
+The Tuna programming language is used to rapidly develop scalable web services. Consequently, there are a few notable differences between tuna and general purpose programming languages you may have used before: 
 1. Tuna's global state is persisted in a database, rather than held in memory.
 2. In Tuna, you describe which functions to expose over the network. 
 3. Developers may define roles to limit access.
