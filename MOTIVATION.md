@@ -63,7 +63,7 @@ Othertimes, we are definitely not. Consider:
 const payments = {}
 func process_payment(id) {
     const payment = payments[id]
-    if payment.pending {
+    if payments[id].pending {
         ..send money
         payments[id].pending = false
     }
