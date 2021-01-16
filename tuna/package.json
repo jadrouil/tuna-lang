@@ -35,7 +35,7 @@
     "gluegun": "latest",
     "mongodb": "^3.6.3",
     "noble-ed25519": "https://github.com/paulmillr/noble-ed25519/archive/1.0.2.tar.gz",
-    "tuna-compiler": "^0.4.0"
+    "tuna-compiler": "^0.4.1"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",
