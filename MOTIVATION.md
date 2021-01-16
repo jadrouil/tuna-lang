@@ -19,7 +19,7 @@ As a result, developing scalable services in tuna is dramatically simplified. De
 Looking ahead, a lot of exciting technical opportunities remain for Tuna:
 
 ### Static Analysis
-Static analysis of Tuna can provide many interesting summaries. Tuna may be easily statically analyzed because Tuna compiles to the [Conder Intermediate Representation](https://github.com/Conder-Systems/conder). The intermediate representation is essentially a way to describe computations against global state and local state. This intermediate representation doesn't leak extra information like connecting to a database and query languages and is just JSON, it can be summarized easily.
+Static analysis of Tuna can provide many interesting summaries. Tuna may be easily statically analyzed because Tuna compiles to the [Conder Intermediate Representation](https://github.com/Conder-Systems/conder). The intermediate representation is essentially a way to describe computations against global state and local state. This intermediate representation doesn't leak extra information like connecting to a database and query languages and is just JSON.
 
 #### Capability Summary
 Tuna can be reduced to a capability summary, a short description of what each role is capable of. Something like this is perfectly feasible:
@@ -63,7 +63,7 @@ Othertimes, we are definitely not. Consider:
 const payments = {}
 func process_payment(id) {
     const payment = payments[id]
-    if payment.pending {
+    if payments[id].pending {
         ..send money
         payments[id].pending = false
     }
