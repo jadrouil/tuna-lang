@@ -1,0 +1,3 @@
+name: gcp-cloud-run
+runtime: nodejs
+description: Example deployment of a tuna server on GCP
