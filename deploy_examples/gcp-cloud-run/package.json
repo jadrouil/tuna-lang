@@ -4,7 +4,8 @@
         "@types/node": "^10.0.0"
     },
     "dependencies": {
+        "@pulumi/gcp": "^4.0.0",
         "@pulumi/pulumi": "^2.0.0",
-        "@pulumi/gcp": "^4.0.0"
+        "noble-ed25519": "https://github.com/paulmillr/noble-ed25519/archive/1.0.2.tar.gz"
     }
 }
