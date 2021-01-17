@@ -53,6 +53,35 @@ Any string can be "locked." This essentially creates a mutex with the string val
 ## Architecture
 Tuna is built on conder. Performance is/will be achieved by building on [conder](https://github.com/Conder-Systems/conder). Conder is a compiler for abstract representations of functions that run mutations/queries against global and local state. Assuming you're running locally, when you compile a tuna program, your functions are reduced to op code that can run on the conder interpreter. The op code is provided to the conder [stored procedure server](https://hub.docker.com/r/condersystems/sps/tags?page=1&ordering=last_updated) and the stored procedure server is run locally. Your functions will be reachable behind an http endpoint. See the demos and cli instructions for more details. 
 
+### Invoking Tuna Code
+
+Tuna code is interpreted behind an HTTP web server. You can invoke your functions on this webserver in three ways.
+#### Verbose mode
+Verbose mode is used in all of the [demo tests](demos/simple-twitter/test.py).
+#### HTTP GET
+Consider issuing a get to /func_name?arg=1&foo=12. This would invoke func_name with the first argument being an object containing the query parameters in an object and all values as strings. In other words the object would look like this:
+```
+{
+    arg: "1",
+    foo: "12"
+}
+```
+If you intend to use gets, your function should only have one argument containing all the parameters.
+
+#### HTTP POST
+Posts work similarly to gets. However, no query params are supported. Instead, the JSON body is passed to the function named in the request path.
+
+## Deploying
+
+Example deployments are provided [here](./deploy_examples/). The examples use pulumi but you can use the tool of your choice.
+
+The general instructions:
+1. Run `tuna build` to get a main.can file.
+2. Make whatever modifications you need to the deployment script such as region, sizes, etc.
+   1. You must change the project to your project (i.e. don't use conder-systems gcp project).
+3. Initialize environment with mongo & gcp credentials. Pulumi will instruct you with whats missing if you don't have it.
+4. `pulumi up -y` to deploy. This will output a url for your cloud run service.
+
 
 # Limitation Summary
 All of the following limitations are temporary:
