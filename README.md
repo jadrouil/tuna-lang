@@ -1,11 +1,13 @@
 Table of Contents
 =================
 
+   * [Table of Contents](#table-of-contents)
    * [Purpose](#purpose)
    * [Getting Started](#getting-started)
       * [Installation](#installation)
       * [Learning](#learning)
    * [Show Me the Rust Code](#show-me-the-rust-code)
+      * [Rust code samples:](#rust-code-samples)
    * [Contributing](#contributing)
    * [Disclaimer](#disclaimer)
 
