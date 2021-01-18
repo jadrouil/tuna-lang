@@ -7,7 +7,6 @@ Table of Contents
       * [Installation](#installation)
       * [Learning](#learning)
    * [Show Me the Rust Code](#show-me-the-rust-code)
-      * [Rust code samples:](#rust-code-samples)
    * [Contributing](#contributing)
    * [Disclaimer](#disclaimer)
 
@@ -72,12 +71,12 @@ compiler is written in Typescript. The interpreter and webserver are in [Conder]
 Because the compiler and the interpreter are tightly coupled, a lot of the Rust code lives
 in Typescript strings and isn’t accurately reflected in the language stats for the repo.
 However, I intend to eventually refactor this code to move all Rust code out of Typescript
-and then write a Rust macro for generating the Typescript API for interpreter instructions(Issue is [here](https://github.com/Conder-Systems/conder/issues/68)).
+and then write a Rust macro for generating the Typescript API for interpreter instructions (Issue is [here](https://github.com/Conder-Systems/conder/issues/68)).
 
-## Rust code samples:
-- [Interpreter Instructions](https://github.com/Conder-Systems/conder/blob/master/conder_core/src/main/ops/interpreter/supported_op_definition.ts). Specifically, look at the "rustOpHandler" sections of the op definitions.
+Rust code samples can be found in the following places:
 - [Interpreter Structure and Schema Validation](https://github.com/Conder-Systems/conder/blob/master/conder_core/src/main/ops/interpreter/interpreter_writer.ts). 
-- Run `npm run gen` on the project to generate the rust code and examine it in the ops/rust/ folder. You'll likely want to fix whitespace.
+- [Interpreter Instructions](https://github.com/Conder-Systems/conder/blob/master/conder_core/src/main/ops/interpreter/supported_op_definition.ts). Specifically, look at the "rustOpHandler" sections of the op definitions.
+- Run `npm run gen` on the project to generate the rust code and examine it in the ops/rust/ folder. You'll likely want to fix whitespace before looking over this code.
 
 # Contributing
  - Feature requests are welcomed and may be submitted as github issues.
