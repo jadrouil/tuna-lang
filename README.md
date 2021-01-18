@@ -1,3 +1,14 @@
+Table of Contents
+=================
+
+   * [Purpose](#purpose)
+   * [Getting Started](#getting-started)
+      * [Installation](#installation)
+      * [Learning](#learning)
+   * [Show Me the Rust Code](#show-me-the-rust-code)
+   * [Contributing](#contributing)
+   * [Disclaimer](#disclaimer)
+
 # Purpose
 
 The Tuna programming language is used to rapidly develop scalable web services. Consequently, there are a few notable differences between tuna and general purpose programming languages you may have used before: 
@@ -53,7 +64,20 @@ In order to call the `do_something_dangerous` function, a client must have an ad
 - Questions can be asked in the [github discussions](https://github.com/Conder-Systems/tuna-lang/discussions).
 - Complete documentation on the syntax, capabilities, and road map can be found [here](./DOCUMENTATION.md).
 
-## Contributing
+# Show Me the Rust Code
+The interpreter and web server for Tuna code is all written in Rust. Only the Tuna
+compiler is written in Typescript. The interpreter and webserver are in [Conder](https://github.com/Conder-Systems/conder).
+Because the compiler and the interpreter are tightly coupled, a lot of the Rust code lives
+in Typescript strings and isn’t accurately reflected in the language stats for the repo.
+However, I intend to eventually refactor this code to move all Rust code out of Typescript
+and then write a Rust macro for generating the Typescript API for interpreter instructions(Issue is [here](https://github.com/Conder-Systems/conder/issues/68)).
+
+## Rust code samples:
+- [Interpreter Instructions](https://github.com/Conder-Systems/conder/blob/master/conder_core/src/main/ops/interpreter/supported_op_definition.ts). Specifically, look at the "rustOpHandler" sections of the op definitions.
+- [Interpreter Structure and Schema Validation](https://github.com/Conder-Systems/conder/blob/master/conder_core/src/main/ops/interpreter/interpreter_writer.ts). 
+- Run `npm run gen` on the project to generate the rust code and examine it in the ops/rust/ folder. You'll likely want to fix whitespace.
+
+# Contributing
  - Feature requests are welcomed and may be submitted as github issues.
  - If you want to contribute, feel free to pick up an issue, and submit a pull request with your completed work.
 
