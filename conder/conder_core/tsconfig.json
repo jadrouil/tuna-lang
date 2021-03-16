@@ -1,0 +1,21 @@
+{
+    "include": ["src/**/*", "index.ts"],
+    "compilerOptions": {
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "target": "ES2020",
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "baseUrl": ".",
+        "typeRoots": [ "node_modules/@types/", "src/" ],
+        "types": [
+            "jest",
+            "node",
+            "mongodb"
+        ],
+        "outDir": "dist",
+        "composite": true
+    },
+    "references": []
+}

@@ -1,0 +1,390 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic functionality allows deleting of fields on local objects: Required locks 1`] = `
+Map {
+  "delete" => Map {},
+}
+`;
+
+exports[`basic functionality allows deleting of nested fields on locals: Required locks 1`] = `
+Map {
+  "delete" => Map {},
+}
+`;
+
+exports[`basic functionality allows directly indexing into object keys: Required locks 1`] = `
+Map {
+  "getKeys" => Map {},
+}
+`;
+
+exports[`basic functionality allows else ifs: Required locks 1`] = `
+Map {
+  "elseIfs" => Map {},
+}
+`;
+
+exports[`basic functionality allows elses: Required locks 1`] = `
+Map {
+  "else" => Map {},
+}
+`;
+
+exports[`basic functionality allows gathering of keys on objects: Required locks 1`] = `
+Map {
+  "getKeys" => Map {},
+}
+`;
+
+exports[`basic functionality allows if statements: Required locks 1`] = `
+Map {
+  "ifTrue" => Map {},
+  "ifFalseNoFinally" => Map {},
+  "ifFalseFinally" => Map {},
+}
+`;
+
+exports[`basic functionality allows indexing into arrays with an int: Required locks 1`] = `
+Map {
+  "getFirst" => Map {},
+}
+`;
+
+exports[`basic functionality allows pushing to local arrays: Required locks 1`] = `
+Map {
+  "push" => Map {},
+}
+`;
+
+exports[`basic functionality allows pushing to nested local arrays: Required locks 1`] = `
+Map {
+  "push" => Map {},
+}
+`;
+
+exports[`basic functionality can compare numbers: Required locks 1`] = `
+Map {
+  "geq" => Map {},
+  "leq" => Map {},
+  "l" => Map {},
+  "g" => Map {},
+  "e" => Map {},
+  "ne" => Map {},
+}
+`;
+
+exports[`basic functionality can get nested field: Required locks 1`] = `
+Map {
+  "r" => Map {},
+}
+`;
+
+exports[`basic functionality can get type info: Required locks 1`] = `
+Map {
+  "whatType" => Map {},
+}
+`;
+
+exports[`basic functionality can handle boolean algebra: Required locks 1`] = `
+Map {
+  "trueNtrue" => Map {},
+  "falseNtrue" => Map {},
+  "trueNfalse" => Map {},
+  "trueOtrue" => Map {},
+  "falseOtrue" => Map {},
+  "trueOfalse" => Map {},
+  "falseOfalse" => Map {},
+}
+`;
+
+exports[`basic functionality can set double nested field: Required locks 1`] = `
+Map {
+  "r" => Map {},
+}
+`;
+
+exports[`basic functionality cleans up after for eachs: Required locks 1`] = `
+Map {
+  "forVars" => Map {},
+}
+`;
+
+exports[`basic functionality cleans up after ifs: Required locks 1`] = `
+Map {
+  "ifVars" => Map {},
+}
+`;
+
+exports[`basic functionality return node returns null: Required locks 1`] = `
+Map {
+  "r" => Map {},
+}
+`;
+
+exports[`basic functionality return node with value returns value: Required locks 1`] = `
+Map {
+  "r" => Map {},
+}
+`;
+
+exports[`basic functionality supports basic math: Required locks 1`] = `
+Map {
+  "minus" => Map {},
+}
+`;
+
+exports[`global objects Locks locks prevent progress if not held: Required locks 1`] = `
+Map {
+  "unsafeGet" => Map {},
+  "unsafeSet" => Map {},
+  "incr" => Map {},
+}
+`;
+
+exports[`global objects allows calling functions: Required locks 1`] = `
+Map {
+  "caller" => Map {},
+  "callee" => Map {},
+}
+`;
+
+exports[`global objects allows conditional updates: Required locks 1`] = `
+Map {
+  "maybeSet" => Map {},
+}
+`;
+
+exports[`global objects allows deleting of keys on global objects: Required locks 1`] = `
+Map {
+  "delete" => Map {},
+  "set" => Map {},
+  "get" => Map {},
+}
+`;
+
+exports[`global objects allows deleting of nested fields on globals: Required locks 1`] = `
+Map {
+  "delete" => Map {},
+  "set" => Map {},
+  "get" => Map {},
+}
+`;
+
+exports[`global objects allows getting a key with a number key: Required locks 1`] = `
+Map {
+  "get" => Map {},
+  "set" => Map {},
+}
+`;
+
+exports[`global objects can check existence of keys: Required locks 1`] = `
+Map {
+  "set" => Map {},
+  "checkL1" => Map {},
+}
+`;
+
+exports[`global objects can get keys from global objects: Required locks 1`] = `
+Map {
+  "getKeys" => Map {},
+  "setKeys" => Map {},
+}
+`;
+
+exports[`global objects can perform updates to objects within arrays: Required locks 1`] = `
+Map {
+  "init" => Map {},
+  "update" => Map {},
+}
+`;
+
+exports[`global objects can push to arrays in global objects: Required locks 1`] = `
+Map {
+  "init" => Map {},
+  "push" => Map {},
+  "get" => Map {},
+}
+`;
+
+exports[`global objects getting a key returns the value: Required locks 1`] = `
+Map {
+  "get" => Map {},
+  "set" => Map {},
+  "getWhole" => Map {},
+}
+`;
+
+exports[`global objects getting a non existent key returns null: Required locks 1`] = `
+Map {
+  "get" => Map {},
+}
+`;
+
+exports[`global objects getting a non existent nested field throws an error: Required locks 1`] = `
+Map {
+  "getNested" => Map {},
+}
+`;
+
+exports[`global objects race condition possible actions can perform updates that depend on global state - ifs: Required locks 1`] = `
+Map {
+  "get" => Map {},
+  "set" => Map {},
+  "setTo0If42" => Map {
+    "test" => "w",
+  },
+}
+`;
+
+exports[`global objects race condition possible actions can perform updates that depend on global state transitively: Required locks 1`] = `
+Map {
+  "get" => Map {},
+  "set" => Map {},
+  "setToSelfPlusOne" => Map {
+    "test" => "w",
+  },
+}
+`;
+
+exports[`global objects race condition possible actions can perform updates that depend on global state: Required locks 1`] = `
+Map {
+  "get" => Map {},
+  "set" => Map {},
+  "setToSelfPlusOne" => Map {
+    "test" => "w",
+  },
+}
+`;
+
+exports[`global objects race condition possible actions can perform updates that depend on some other global state: Required locks 1`] = `
+Map {
+  "get" => Map {},
+  "setOther" => Map {},
+  "setToOtherPlusOne" => Map {
+    "other" => "r",
+  },
+}
+`;
+
+exports[`global objects race condition possible actions global state taint is applied on partial updates to variables: Required locks 1`] = `
+Map {
+  "get" => Map {},
+  "set" => Map {},
+  "updateWithPartialState" => Map {
+    "test" => "w",
+  },
+}
+`;
+
+exports[`global objects race condition possible actions global state taint is applied on updates to variables: Required locks 1`] = `
+Map {
+  "get" => Map {},
+  "set" => Map {},
+  "setToSelfPlusOne" => Map {
+    "test" => "w",
+  },
+}
+`;
+
+exports[`global objects race condition possible actions global state taint is erased on overwrites: Required locks 1`] = `
+Map {
+  "get" => Map {},
+  "set" => Map {},
+  "updateWithOverwrittenState" => Map {},
+}
+`;
+
+exports[`global objects race condition possible actions global state taint is transitive through variables: Required locks 1`] = `
+Map {
+  "get" => Map {},
+  "set" => Map {},
+  "setToSelfPlusOne" => Map {
+    "test" => "w",
+  },
+}
+`;
+
+exports[`global objects race condition possible actions iterating over an array of globals while writing requires a lock: Required locks 1`] = `
+Map {
+  "get" => Map {},
+  "set" => Map {},
+  "setLookupKeys" => Map {},
+  "deleteLookupFields" => Map {
+    "test" => "w",
+  },
+}
+`;
+
+exports[`global objects race condition possible actions mutation conditional on same global state requires lock: Required locks 1`] = `
+Map {
+  "get" => Map {},
+  "set" => Map {},
+  "setTo0If42" => Map {
+    "test" => "w",
+  },
+}
+`;
+
+exports[`global objects race condition possible actions pushing then returning: Required locks 1`] = `
+Map {
+  "push" => Map {},
+}
+`;
+
+exports[`global objects race condition possible actions should allow checks of existence with comparisons to none: Required locks 1`] = `
+Map {
+  "get_user" => Map {},
+  "create_user" => Map {
+    "users" => "w",
+  },
+}
+`;
+
+exports[`global objects setting a nested key on a non existent object throws an error: Required locks 1`] = `
+Map {
+  "setNested" => Map {},
+  "get" => Map {},
+  "getNested" => Map {},
+}
+`;
+
+exports[`global objects setting a nested key on an existing object: Required locks 1`] = `
+Map {
+  "setNested" => Map {},
+  "set" => Map {},
+  "get" => Map {},
+  "getNested" => Map {},
+}
+`;
+
+exports[`global objects strings allows concatenation with some types: Required locks 1`] = `
+Map {
+  "add" => Map {},
+}
+`;
+
+exports[`roles allows use of stateful roles: Required locks 1`] = `
+Map {
+  "usersOnly" => Map {},
+  "getUser" => Map {},
+}
+`;
+
+exports[`roles functions can be guarded by roles: Required locks 1`] = `
+Map {
+  "adminsOnly" => Map {},
+  "getAdminId" => Map {},
+}
+`;
+
+exports[`with input check if field exists: Required locks 1`] = `
+Map {
+  "checksField" => Map {},
+}
+`;
+
+exports[`with input validates input: Required locks 1`] = `
+Map {
+  "accepts3any" => Map {},
+}
+`;
