@@ -19,7 +19,7 @@ As a result, developing scalable services in tuna is dramatically simplified. De
 Looking ahead, a lot of exciting technical opportunities remain for Tuna:
 
 ### Static Analysis
-Static analysis of Tuna can provide many interesting summaries. Tuna may be easily statically analyzed because Tuna compiles to the [Conder Intermediate Representation](https://github.com/Conder-Systems/conder). The intermediate representation is essentially a way to describe computations against global state and local state. This intermediate representation doesn't leak extra information like connecting to a database and query languages and is just JSON.
+Static analysis of Tuna can provide many interesting summaries. Tuna may be easily statically analyzed because Tuna compiles to the [Intermediate Representation](tuna-compiler/src/main/backend/abstract/IR.ts). The intermediate representation is essentially a way to describe computations against global state and local state. This intermediate representation doesn't leak extra information like connecting to a database and query languages and is just JSON.
 
 #### Capability Summary
 Tuna can be reduced to a capability summary, a short description of what each role is capable of. Something like this is perfectly feasible:
@@ -93,5 +93,5 @@ One benefit of abstracting away query languages is that multiple underlying data
 
 ## Challenges
 
-As Tuna grows in complexity, the challenge will be achieving performance equivalent to systems built by a developer making economical use of their query language. This challenge can be overcome by building a query planner into the compiler. Query planners exist in distributed query engines like Dremio or Presto. However, they are built to efficiently execute one query. The goal of the Tuna/Conder query planner would be to collapse actions against global state into the fewest number of requests possible.
+As Tuna grows in complexity, the challenge will be achieving performance equivalent to systems built by a developer making economical use of their query language. This challenge can be overcome by building a query planner into the compiler. Query planners exist in distributed query engines like Dremio or Presto. However, they are built to efficiently execute one query. The goal of the Tuna query planner would be to collapse actions against global state into the fewest number of requests possible.
 

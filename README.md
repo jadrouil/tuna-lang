@@ -6,7 +6,6 @@ Table of Contents
    * [Getting Started](#getting-started)
       * [Installation](#installation)
       * [Learning](#learning)
-   * [Show Me the Rust Code](#show-me-the-rust-code)
    * [Contributing](#contributing)
    * [Disclaimer](#disclaimer)
 
@@ -64,10 +63,6 @@ In order to call the `do_something_dangerous` function, a client must have an ad
 - You can run any of the "main.tuna" files using the command `tuna run`. Example projects can be found in [demos](./demos).
 - Questions can be asked in the [github discussions](https://github.com/Conder-Systems/tuna-lang/discussions).
 - Complete documentation on the syntax, capabilities, and road map can be found [here](./DOCUMENTATION.md).
-
-# Show Me the Rust Code
-The interpreter and web server for Tuna code is all written in Rust. Only the Tuna
-compiler is written in Typescript. The interpreter, webserver, and backend compiler are in [Conder](https://github.com/Conder-Systems/conder).
 
 # Contributing
  - Feature requests are welcomed and may be submitted as github issues.
