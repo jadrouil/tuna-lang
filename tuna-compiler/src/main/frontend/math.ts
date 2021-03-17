@@ -1,4 +1,4 @@
-import { PickNode, ValueNode } from "conder_core";
+import { PickNode, ValueNode } from "../backend/index";
 
 
 export type AnyInfix = MathInfix | CompInfix | BoolInfix

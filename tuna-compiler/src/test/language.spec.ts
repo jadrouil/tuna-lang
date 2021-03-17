@@ -1,4 +1,4 @@
-import { OPSIFY_MANIFEST, Transformer } from 'conder_core';
+import { OPSIFY_MANIFEST, Transformer } from '../main/backend/index';
 import { TUNA_TO_LOCKS, TUNA_TO_MANIFEST } from '../main/assembled';
 
 function tunaTest(maybeSucceed: "succeed" | "fail", code: string): jest.ProvidesCallback {

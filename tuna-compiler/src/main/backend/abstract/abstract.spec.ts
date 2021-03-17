@@ -3,8 +3,7 @@ import { Compiler } from './compilers';
 import { MONGO_COMPILER, MONGO_GLOBAL_ABSTRACTION_REMOVAL } from './globals/mongo';
 
 import {Op, StrongServerEnv, Test} from '../ops/index'
-import { AnyNode, RootNode } from 'src/main/abstract/IR'
-import {BaseNodeDefs, PickNode, toOps } from '../../../index'
+import { AnyNode, RootNode, BaseNodeDefs, PickNode, toOps } from '../index'
 import { MONGO_UNPROVIDED_LOCK_CALCULATOR } from './mongo_logic/main';
 import { FunctionData, FunctionDescription } from './function';
 import * as ed from 'noble-ed25519';

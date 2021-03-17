@@ -1,6 +1,6 @@
 #!/bin/zsh
 export CONDER_VERSION=0.5.2
-
+#THIS IS THE OLD RELEASE SCRIPT AND NEEDS TO BE UPDATED.
 cd conder_core/
 npm run compile
 cd src/main/ops/rust/

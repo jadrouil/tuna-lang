@@ -1,16 +1,16 @@
 import { MathExpression, MathInfix, Ordering, AnyInfix } from './math';
 import { ParseResult, executable, ASTKinds, func, expression, literal, infixOps_$0, methodInvoke, schema, someType, typePostfix, union_t } from "./parser";
-import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest, ValueNode, FunctionData} from "conder_core"
+import {AnyNode, PickNode, FunctionDescription, GlobalObject, Manifest, ValueNode, FunctionData} from "../backend/index"
 // Export this at the root level
-import { AnySchemaInstance, schemaFactory, SchemaInstance, SchemaType } from 'conder_core/dist/src/main/ops';
+import { Schema } from '../backend/ops/bindings';
 
 type ScopeMapEntry= "func" | 
 {kind: "global object"} |
 {kind: "global str", value: string} |
 {kind: "const", value: PickNode<"Saved" | "Selection">} |
 {kind: "mut", value: PickNode<"Saved">} | 
-{kind: "typeAlias", value: AnySchemaInstance} |
-{kind: "role", value: SchemaInstance<"Role">}
+{kind: "typeAlias", value: Schema} |
+{kind: "role", value: Extract<Schema, {kind: "Role"}>}
 
 type EntityKind = Extract<ScopeMapEntry, {kind: any}>["kind"] | Exclude<ScopeMapEntry, {kind: any}>
 type Entry<K extends EntityKind> = Extract<ScopeMapEntry, K> extends never ? Extract<ScopeMapEntry, {kind: K}> : K
@@ -622,50 +622,50 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
     return ret
 }
 
-function parsed_to_schema(schema: someType): AnySchemaInstance {
-    const getInner: () => AnySchemaInstance = () =>  {
+function parsed_to_schema(schema: someType): Schema {
+    const getInner: () => Schema = () =>  {
         switch(schema.type.kind) {
             case ASTKinds.str_t:
-                return schemaFactory.string
+                return {kind: "string", data: null}
             case ASTKinds.int_t:
-                return schemaFactory.int
+                return {kind: "int", data: null}
             case ASTKinds.double_t:
-                return schemaFactory.double
+                return {kind: "double", data: null}
             case ASTKinds.bool_t:
-                return schemaFactory.bool
+                return {kind: "bool", data: null}
             case ASTKinds.any_t:
-                return schemaFactory.Any
+                return {kind: "Any", data: null}
             case ASTKinds.object_t:
-                const obj: Record<string, AnySchemaInstance> = {}
+                const obj: Record<string, Schema> = {}
                 schema.type.fields.forEach(field => {
                     obj[field.name.name] = parsed_to_schema(field.schema)
                 })
-                return schemaFactory.Object(obj)
+                return {kind: "Object", data: obj}
 
             case ASTKinds.name:
-                return schemaFactory.TypeAlias(schema.type.name)
+                return {kind: "TypeAlias", data: schema.type.name}
             default: const n: never = schema.type
         }
     }
     return with_union(apply_type_postfix(getInner(), schema.postfix), schema.union)
 }
-function with_union(left: AnySchemaInstance, union: union_t | undefined): AnySchemaInstance {
+function with_union(left: Schema, union: union_t | undefined): Schema {
     if (union) {
         const right = parsed_to_schema(union.type)
-        return schemaFactory.Union([left, right])
+        return {kind: "Union", data: [left, right]}
     } else {
         return left
     }
 }
 
-function apply_type_postfix(inner: AnySchemaInstance, post: typePostfix | undefined): AnySchemaInstance {
+function apply_type_postfix(inner: Schema, post: typePostfix | undefined): Schema {
     
     if (post) {
         switch (post.mod.kind) {
             case ASTKinds.optional_t:
-                return schemaFactory.Union([inner, schemaFactory.none])
+                return {kind: "Union", data: [inner, {kind: "none", data: null}]}                
             case ASTKinds.array_t:
-                return schemaFactory.Array(inner)
+                return {kind: "Array", data: [inner]}
             default: const n: never = post.mod
         }
     } else {
@@ -717,7 +717,7 @@ function to_descr(f: func, scope: ScopeMap, debug: boolean): FunctionDescription
     
 }
 export type PrivateFuncs = {privateFuncs: Set<string>}
-export type Schemas = {schemas: Record<string, AnySchemaInstance>}
+export type Schemas = {schemas: Record<string, Schema>}
 export function semantify(p: ParseResult, debug: boolean): Manifest & PrivateFuncs & Schemas {
     if (p.err) {
         throw Error(`Failure parsing: line ${p.err.pos.line} col ${p.err.pos.offset}: ${p.err.toString()}`)
@@ -725,7 +725,7 @@ export function semantify(p: ParseResult, debug: boolean): Manifest & PrivateFun
     const privateFuncs = new Set<string>()
     const globalScope = new ScopeMap()
     const aFunc: func[] = []
-    const schemas: Record<string, AnySchemaInstance> = {}
+    const schemas: Record<string, Schema> = {}
 
     const funcs: Map<string, FunctionDescription> = new Map()
     const globs: Map<string, GlobalObject> = new Map()
@@ -734,13 +734,13 @@ export function semantify(p: ParseResult, debug: boolean): Manifest & PrivateFun
         switch (g.value.kind) {
             case ASTKinds.roleDef:
                 const role_name = g.value.name.name
-                const obj: Record<string, AnySchemaInstance> = {}
+                const obj: Record<string, Schema> = {}
                 g.value.schema.fields.forEach(field => {
                     obj[field.name.name] = parsed_to_schema(field.schema)
                 })
-                const inner = schemaFactory.Object(obj)
+                const inner: Extract<Schema, {kind: "Object"}> = {kind: "Object", data: obj}
                 globalScope.set(role_name, {
-                    kind: "role", value: schemaFactory.Role(role_name, inner)
+                    kind: "role", value: {kind: "Role", data: [role_name, [inner]]}
                 })                
                 break
 

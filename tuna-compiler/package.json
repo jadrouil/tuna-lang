@@ -2,10 +2,13 @@
   "name": "tuna-compiler",
   "version": "0.4.1",
   "scripts": {
-    "compile": "tspeg parser.peg src/main/parser.ts && tsc -b",
+    "bgen": "cd src/main/backend/ops/rust && cargo build && cargo test && cat ops.ts > ../bindings.ts && cat schemas.ts >> ../bindings.ts && cat data.ts >> ../bindings.ts",
+    "postbgen": "cd src/main/backend/ops/rust && rm ops.ts schemas.ts data.ts",
+    "fgen": "tspeg parser.peg src/main/frontend/parser.ts",
+    "compile": "npm run bgen && npm run fgen && tsc -b",
     "pretest": "npm run compile",
     "prepublish": "npm run compile",
-    "test": "jest --maxWorkers=50%"
+    "test": "jest --runInBand"
   },
   "author": "Conder Systems",
   "license": "BSD-3-Clause",
@@ -13,14 +16,16 @@
     "@types/jest": "^26.0.8",
     "@types/mongodb": "^3.5.33",
     "etcd3": "^1.1.0",
+    "isomorphic-fetch": "^3.0.0",
     "jest": "^26.2.2",
+    "mongodb": "^3.6.5",
     "prettier": "^2.0.5",
     "ts-jest": "^26.1.4",
     "tspeg": "^2.1.0",
     "typescript": "^4.0.0"
   },
   "dependencies": {
-    "conder_core": "https://github.com/Conder-Systems/conder/releases/download/v0.5.2/conder-api.tar.gz"
+    "noble-ed25519": "https://github.com/paulmillr/noble-ed25519/archive/1.0.2.tar.gz"
   },
   "jest": {
     "preset": "ts-jest",

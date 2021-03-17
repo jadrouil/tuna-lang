@@ -9,4 +9,4 @@ build
 bin/
 node_modules/
 dist/
-tuna-compiler/src/main/parser.ts
+tuna-compiler/src/main/frontend/parser.ts

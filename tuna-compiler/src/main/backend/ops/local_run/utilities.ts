@@ -58,7 +58,7 @@ export namespace Test {
             
           }
           this.process = child_process.exec(`./app ${this.port}`, {
-            cwd: `./src/main/ops/rust/target/debug`,
+            cwd: `./src/main/backend/ops/rust/target/debug`,
             env: string_env,
           });
           this.process.stdout.pipe(process.stdout);

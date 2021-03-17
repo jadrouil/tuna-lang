@@ -1,4 +1,4 @@
-import { MONGO_GLOBAL_ABSTRACTION_REMOVAL, AnyNode, AbstractNodes } from "../../../../index"
+import { MONGO_GLOBAL_ABSTRACTION_REMOVAL, AnyNode, AbstractNodes } from "../../index"
 import { FunctionDescription } from "../function"
 
 

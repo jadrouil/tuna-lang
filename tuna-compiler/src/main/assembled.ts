@@ -6,16 +6,13 @@ import {
     MONGO_GLOBAL_ABSTRACTION_REMOVAL, 
     MONGO_UNPROVIDED_LOCK_CALCULATOR, 
     StrongServerEnv,
-    Var,
     ServerEnv,
-    schemaFactory
-} from 'conder_core'
-// Need to export this
-import { LockRequirements } from 'conder_core/dist/src/main/abstract/mongo_logic/lock_calculation'
+} from './backend/index'
+import { LockRequirements } from './backend/abstract/mongo_logic/lock_calculation'
 import * as ed from 'noble-ed25519'
 
-import {Parser} from './parser'
-import {semantify, PrivateFuncs, Schemas } from './semantics'
+import {Parser} from './frontend/parser'
+import {semantify, PrivateFuncs, Schemas } from './frontend/semantics'
 
 export const TUNA_TO_MANIFEST = new Transformer<string, Manifest & PrivateFuncs & Schemas>(str => {
     const p = new Parser(str).parse()
@@ -26,7 +23,7 @@ export const TUNA_TO_LOCKS: Transform<string, Map<string, LockRequirements>> = T
     return MONGO_GLOBAL_ABSTRACTION_REMOVAL.run(man.funcs)
 })).then(MONGO_UNPROVIDED_LOCK_CALCULATOR)
 
-export const STRINGIFY_ENV: Transform<StrongServerEnv, Omit<ServerEnv, Var.MONGO_CONNECTION_URI>> = new Transformer(env => {
+export const STRINGIFY_ENV: Transform<StrongServerEnv, Omit<ServerEnv, "MONGO_CONNECTION_URI">> = new Transformer(env => {
     
     const string_env: Partial<ServerEnv> = {};
     for (const key in env) {
@@ -36,7 +33,7 @@ export const STRINGIFY_ENV: Transform<StrongServerEnv, Omit<ServerEnv, Var.MONGO
     return string_env as ServerEnv
 })
 
-export const TUNA_TO_ENV: Transform<string, Omit<StrongServerEnv, Var.PRIVATE_KEY | Var.PUBLIC_KEY>> = TUNA_TO_MANIFEST
+export const TUNA_TO_ENV: Transform<string, Omit<StrongServerEnv, "PRIVATE_KEY" | "PUBLIC_KEY">> = TUNA_TO_MANIFEST
 .then(new Transformer(man => {
     const manifest = OPSIFY_MANIFEST.run(man)
     return {
@@ -47,7 +44,7 @@ export const TUNA_TO_ENV: Transform<string, Omit<StrongServerEnv, Var.PRIVATE_KE
 }))
 .then(new Transformer(man => {
     const STORES: StrongServerEnv["STORES"] = {}
-    man.globals.forEach((v, k) => STORES[k] = schemaFactory.Any)
+    man.globals.forEach((v, k) => STORES[k] = {kind: "Any", data: null})
 
     const PROCEDURES: StrongServerEnv["PROCEDURES"] = {}
     const PRIVATE_PROCEDURES: StrongServerEnv["PRIVATE_PROCEDURES"] = [...man.privateFuncs.values()]
