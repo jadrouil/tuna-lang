@@ -133,14 +133,6 @@ Map {
 }
 `;
 
-exports[`global objects Locks locks prevent progress if not held: Required locks 1`] = `
-Map {
-  "unsafeGet" => Map {},
-  "unsafeSet" => Map {},
-  "incr" => Map {},
-}
-`;
-
 exports[`global objects allows calling functions: Required locks 1`] = `
 Map {
   "caller" => Map {},

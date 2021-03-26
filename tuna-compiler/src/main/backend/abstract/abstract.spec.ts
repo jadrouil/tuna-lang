@@ -1757,7 +1757,7 @@ describe("global objects", () => {
         }
         ))
     })
-    describe("Locks", () => {
+    describe.skip("Locks", () => {
         it("locks prevent progress if not held", withInputHarness(
             ["storage", "locks"],
             {

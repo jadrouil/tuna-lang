@@ -846,7 +846,7 @@ describe("conduit kernel", () => {
       }
     );
 
-    describe("locks", () => {
+    describe.skip("locks", () => {
       function lockTest(
         test: (server: Test.Server) => Promise<void>,
         envOverride: Partial<StrongServerEnv> = {},
