@@ -22,10 +22,6 @@ class ScopeMap extends Map<string, ScopeMapEntry>  {
     private nextVar: number = 0
     private scopes: Set<string>[] = [new Set()]
     
-    public get nextVariableIndex(): number {
-        return this.nextVar
-    }
-
     getKind<S extends EntityKind>(key: string, ...kinds: S[]): PickEnt<S> {
         const obj = this.get(key)
         if (obj === undefined) {
@@ -560,23 +556,23 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
 
             case ASTKinds.varDecl: 
                 const value = to_value_node(complete_expression_to_node(e.value.value, scope))
-                const index = scope.nextVariableIndex
-                scope.set(e.value.name.name, {kind: e.value.mutability === "const" ? "const" : "mut", value: {kind: "Saved", index}})
+                scope.set(e.value.name.name, {kind: e.value.mutability === "const" ? "const" : "mut", value: {kind: "Saved", arg: e.value.name.name}})
                 ret.push({
                     kind: "Save",
+                    name: e.value.name.name,
                     value,
                 })
                 break
 
             case ASTKinds.forLoop:
                 scope.pushScope()
-                const rowVar = scope.nextVariableIndex
-                scope.set(e.value.rowVar.name, {kind: "const", value: {kind: "Saved", index: rowVar}})
+                scope.set(e.value.rowVar.name, {kind: "const", value: {kind: "Saved", arg: e.value.rowVar.name}})
                 const loopDo = to_computation(e.value.do.body, scope)
                 const target = to_value_node(complete_expression_to_node(e.value.value, scope))
                 ret.push({
                     kind: 'ArrayForEach',
                     do: loopDo,
+                    arg: e.value.rowVar.name,
                     target
                 })
                 scope.popScope()
@@ -685,25 +681,25 @@ function to_descr(f: func, scope: ScopeMap, debug: boolean): FunctionDescription
         const input: FunctionDescription["input"] = []
         let arg_offset = 0
         if (f.role && f.role.name.name !== "pub") {
-            input.push(scope.getKind(f.role.name.name, "role").value)
+            input.push({type: scope.getKind(f.role.name.name, "role").value, name: "caller"})
             scope.set("caller", {
                 kind: "const", 
                 value: {
                     kind: "Selection", 
-                    root: {kind: "Saved", index: 0},
+                    root: {kind: "Saved", arg: "caller"},
                     level: [{kind: "String", value: "_state"}]
                 }
             })
             arg_offset = 1
         }
         argList.forEach((a, i) => {
-            scope.set(a.name, {kind: "mut", value: {kind: 'Saved', index: i + arg_offset}})
+            scope.set(a.name, {kind: "mut", value: {kind: 'Saved', arg: a.name}})
             if (a.schema) {
-                const inner = parsed_to_schema(a.schema.type)                
-                input.push(inner)
+                const type = parsed_to_schema(a.schema.type)                
+                input.push({type, name: a.name})
                 
             } else {
-                input.push({kind: "Any", data: undefined})
+                input.push({type: {kind: "Any", data: undefined}, name: a.name})
             }
         })
         
@@ -794,7 +790,7 @@ export function semantify(p: ParseResult, debug: boolean): Manifest & PrivateFun
                 break
             case ASTKinds.typeDef:
             case ASTKinds.roleDef:
-                break            
+                break
             default: 
                 const ne: never = g.value
         }

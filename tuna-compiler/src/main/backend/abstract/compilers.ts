@@ -2,6 +2,7 @@ import { Op } from '../ops/bindings';
 import { ow, Utils } from '../ops/index';
 import { FunctionDescription } from './function';
 import { BaseNodesFromTargetSet, PickNode, PickTargetNode, TargetNodeSet } from './IR';
+import { IVariableResolver } from './variable_resolution';
 
 export type Transform<I, O> = {
     then<N>(t: Transform<O, N>): Transform<I, N>
@@ -12,8 +13,6 @@ export type Transform<I, O> = {
 
 export type MapTransform<I, O> = Transform<Map<string, I>, Map<string, O>>
 export type Compiler<FROM> = Transform<Map<string, FunctionDescription<FROM>>, Map<string, FunctionDescription<Op>>>
-
-
 
 export class Transformer<I, O> implements Transform<I, O> {
     readonly f: (i: I) => O
@@ -124,8 +123,7 @@ function create_well_formed_branch(n: PickTargetNode<{}, "If">): PickTargetNode<
     return wellFormed
 
 }
-
-export function base_compiler(n: BaseNodesFromTargetSet<{}>, full_compiler: (a: TargetNodeSet<{}>) => Op[]): Op[] {
+export function base_compiler(n: BaseNodesFromTargetSet<{}>, full_compiler: (a: TargetNodeSet<{}>, args: IVariableResolver) => Op[], context: IVariableResolver): Op[] {
     switch (n.kind) {
         case "Bool":
         case "Int":
@@ -135,60 +133,61 @@ export function base_compiler(n: BaseNodesFromTargetSet<{}>, full_compiler: (a: 
 
         case "Math":
             return [
-                ...full_compiler(n.left),
-                ...full_compiler(n.right),
+                ...full_compiler(n.left, context),
+                ...full_compiler(n.right, context),
                 ...mathLookup[n.sign]
             ]
 
         case "BoolAlg":
             return [
-                ...full_compiler(n.left),
-                ...full_compiler(n.right),
+                ...full_compiler(n.left, context),
+                ...full_compiler(n.right, context),
                 ...boolAlg[n.sign]
             ]
 
         case "Comparison":
             return [
-                ...full_compiler(n.left),
-                ...full_compiler(n.right),
+                ...full_compiler(n.left, context),
+                ...full_compiler(n.right, context),
                 ...comparisonLookup[n.sign]
             ]
         case "FieldExists":
             
             return [
-                ...full_compiler(n.value),
-                ...full_compiler(n.field),
+                ...full_compiler(n.value, context),
+                ...full_compiler(n.field, context),
                 ow.fieldExists
             ]
 
         case "Object":
             return [
                 ow.instantiate({}),
-                ...n.fields.flatMap(full_compiler)
+                ...n.fields.flatMap((node) => full_compiler(node, context))
             ]
 
         case "Return":
             return n.value ? [
-                ...full_compiler(n.value),
+                ...full_compiler(n.value, context),
                 ow.returnStackTop
             ] : [
                 ow.returnVoid
             ]
         case "Call":       
             return [
-                ...n.args.flatMap(full_compiler),
+                ...n.args.flatMap(node => full_compiler(node, context)),
                 ow.invoke({name: n.function_name, args: n.args.length})
             ]
         
         case "Save":
-            return [...full_compiler(n.value), ow.moveStackTopToHeap]
+            context.add(n.name)
+            return [...full_compiler(n.value, context), ow.moveStackTopToHeap]
         case "Saved":
-            return [ow.copyFromHeap(n.index)]
+            return [ow.copyFromHeap(context.get(n.arg))]
         
         case "Field":
             return [
-                ...full_compiler(n.key),                
-                ...full_compiler(n.value),
+                ...full_compiler(n.key, context),                
+                ...full_compiler(n.value, context),
                 ow.setField({field_depth: 1})
             ]
 
@@ -198,17 +197,17 @@ export function base_compiler(n: BaseNodesFromTargetSet<{}>, full_compiler: (a: 
                 case "Push": 
                     if (n.level.length > 0) {
                         return [
-                            ...n.level.flatMap(full_compiler),
+                            ...n.level.flatMap(node => full_compiler(node, context)),
                             ow.instantiate([]),
-                            ...n.operation.values.flatMap(v => [...full_compiler(v), ow.arrayPush]),
-                            ow.pushSavedField({field_depth: n.level.length, index: n.root.index})
+                            ...n.operation.values.flatMap(v => [...full_compiler(v, context), ow.arrayPush]),
+                            ow.pushSavedField({field_depth: n.level.length, index: context.get(n.root.arg)})
                         ]
 
                     } else {
                         return n.operation.values.flatMap(v => {
                             return [
-                                ...full_compiler(v),
-                                ow.moveStackToHeapArray(n.root.index)
+                                ...full_compiler(v, context),
+                                ow.moveStackToHeapArray(context.get(n.root.arg))
                             ]
                         })
                     }
@@ -216,37 +215,38 @@ export function base_compiler(n: BaseNodesFromTargetSet<{}>, full_compiler: (a: 
                 case "DeleteField":
                     
                     return [
-                        ...n.level.flatMap(full_compiler),
-                        ow.deleteSavedField({field_depth: n.level.length, index: n.root.index}),
+                        ...n.level.flatMap(node => full_compiler(node, context)),
+                        ow.deleteSavedField({field_depth: n.level.length, index: context.get(n.root.arg)}),
                     ]
                     
                 default:
                     if (n.level.length === 0) {
                         return [
-                            ...full_compiler(n.operation),
-                            ow.overwriteHeap(n.root.index)
+                            ...full_compiler(n.operation, context),
+                            ow.overwriteHeap(context.get(n.root.arg))
                         ]
                     }
                     return [
-                        ...n.level.flatMap(full_compiler),
-                        ...full_compiler(n.operation),                        
-                        ow.setSavedField({field_depth: n.level.length, index: n.root.index}),
+                        ...n.level.flatMap(node => full_compiler(node, context)),
+                        ...full_compiler(n.operation, context),                        
+                        ow.setSavedField({field_depth: n.level.length, index: context.get(n.root.arg)}),
                     ]
             }
         case "Selection":
             if (n.level.length > 0) {
                 return [
-                    ...full_compiler(n.root),
-                    ...n.level.flatMap(l => full_compiler(l)),
+                    ...full_compiler(n.root, context),
+                    ...n.level.flatMap(node => full_compiler(node, context)),
                     ow.getField({field_depth: n.level.length})
                 ]
             } else {
-                return full_compiler(n.root)
+                return full_compiler(n.root, context)
             }
             
         case "If":{
+            context.push()
             const wellFormed = create_well_formed_branch(n)
-            const fin = wellFormed.pop().do.flatMap(full_compiler)
+            const fin = wellFormed.pop().do.flatMap(node => full_compiler(node, context))
             const first_to_last = wellFormed.reverse()
             const conditionals: (Op | "skip to finally")[] = []
             while (first_to_last.length > 0) {
@@ -255,7 +255,7 @@ export function base_compiler(n: BaseNodesFromTargetSet<{}>, full_compiler: (a: 
                 const drop_vars = num_vars_in_branch > 0 ? [ow.truncateHeap(num_vars_in_branch)] : []
 
                 const this_branch_ops: (Op | "skip to finally")[] = [
-                    ...this_branch.do.flatMap(full_compiler), // do this
+                    ...this_branch.do.flatMap(node => full_compiler(node, context)), // do this
                     ...drop_vars,
                     "skip to finally" // then skip to finally,
                 ]
@@ -266,7 +266,7 @@ export function base_compiler(n: BaseNodesFromTargetSet<{}>, full_compiler: (a: 
                         break
                     case "Conditional":
                         conditionals.push(
-                            ...full_compiler(this_branch.cond),
+                            ...full_compiler(this_branch.cond, context),
                             ow.negatePrev,
                             ow.conditonallySkipXops(this_branch_ops.length), // Skip to next condition
                             ...this_branch_ops,                            
@@ -275,9 +275,7 @@ export function base_compiler(n: BaseNodesFromTargetSet<{}>, full_compiler: (a: 
                         break
                 }
             }
-            
-            
-            return [
+            const res = [
                 ...conditionals.map((op, index) => {
                     if (op === "skip to finally") {
                         return ow.offsetOpCursor({offset: conditionals.length - index, fwd: true})
@@ -287,6 +285,8 @@ export function base_compiler(n: BaseNodesFromTargetSet<{}>, full_compiler: (a: 
                 }),
                 ...fin
             ]
+            context.pop()
+            return res
         }
 
         case "Noop": 
@@ -296,16 +296,17 @@ export function base_compiler(n: BaseNodesFromTargetSet<{}>, full_compiler: (a: 
 
         case "ArrayForEach":
             // Row variable is saved as well
-            const num_vars = n.do.filter(d => d.kind === "Save").length + 1
+            context.push()
+            context.add(n.arg)
             const loop: Op[] = [
                 ow.popArray,
                 ow.moveStackTopToHeap,
-                ...n.do.flatMap(full_compiler),
-                ow.truncateHeap(num_vars),
+                ...n.do.flatMap(node => full_compiler(node, context)),
+                ow.truncateHeap(context.pop()),
             ]
             loop.push(ow.offsetOpCursor({offset: loop.length + 4, fwd: false}))
-            return[
-                ...full_compiler(n.target),
+            return [
+                ...full_compiler(n.target, context),
                 ow.ndArrayLen,
                 ow.instantiate(0),
                 ow.equal,
@@ -320,31 +321,31 @@ export function base_compiler(n: BaseNodesFromTargetSet<{}>, full_compiler: (a: 
             ]
             n.values.forEach(v => {
                 arr.push(
-                    ...full_compiler(v),
+                    ...full_compiler(v, context),
                     ow.arrayPush
                 )
             })
             return arr
         case "Lock":
             return [
-                ...full_compiler(n.name),
+                ...full_compiler(n.name, context),
                 ow.lock
             ]
         case "Release":
             return [
-                ...full_compiler(n.name),
+                ...full_compiler(n.name, context),
                 ow.release
             ]
 
         case "Keys":
             return [
-                ...full_compiler(n.from),
+                ...full_compiler(n.from, context),
                 ow.getKeys
             ]
 
         case "GetType":
             return [
-                ...full_compiler(n.value),
+                ...full_compiler(n.value, context),
                 ow.getType
             ]
 
@@ -356,7 +357,7 @@ export function base_compiler(n: BaseNodesFromTargetSet<{}>, full_compiler: (a: 
                         _name
                     }),
                     ow.instantiate("_state"),
-                    ...full_compiler(n.state),
+                    ...full_compiler(n.state, context),
                     ow.setField({field_depth: 1}),
                     ow.signRole
                 ]
@@ -370,12 +371,12 @@ export function base_compiler(n: BaseNodesFromTargetSet<{}>, full_compiler: (a: 
             }
         case "Not":
             return [
-                ...full_compiler(n.value),
+                ...full_compiler(n.value, context),
                 ow.negatePrev
             ]
         case "Is":
             return [
-                ...full_compiler(n.value),
+                ...full_compiler(n.value, context),
                 ow.stackTopMatches({schema: n.type})
             ]
         case "Push":

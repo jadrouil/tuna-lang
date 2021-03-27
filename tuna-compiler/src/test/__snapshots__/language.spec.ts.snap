@@ -305,6 +305,7 @@ Object {
               "do": Array [
                 Object {
                   "kind": "Save",
+                  "name": "my_chats",
                   "value": Object {
                     "kind": "Selection",
                     "level": Array [
@@ -321,18 +322,20 @@ Object {
                 },
                 Object {
                   "kind": "Save",
+                  "name": "msgs",
                   "value": Object {
                     "fields": Array [],
                     "kind": "Object",
                   },
                 },
                 Object {
+                  "arg": "chat",
                   "do": Array [
                     Object {
                       "kind": "Update",
                       "level": Array [
                         Object {
-                          "index": 2,
+                          "arg": "chat",
                           "kind": "Saved",
                         },
                       ],
@@ -340,7 +343,7 @@ Object {
                         "kind": "Selection",
                         "level": Array [
                           Object {
-                            "index": 2,
+                            "arg": "chat",
                             "kind": "Saved",
                           },
                         ],
@@ -350,14 +353,14 @@ Object {
                         },
                       },
                       "root": Object {
-                        "index": 1,
+                        "arg": "msgs",
                         "kind": "Saved",
                       },
                     },
                   ],
                   "kind": "ArrayForEach",
                   "target": Object {
-                    "index": 0,
+                    "arg": "my_chats",
                     "kind": "Saved",
                   },
                 },
@@ -383,12 +386,6 @@ Object {
   },
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`demo apps can be used to create a messenger: locks 1`] = `
-Map {
-  "get_my_messages" => Map {},
 }
 `;
 
@@ -452,15 +449,18 @@ Object {
             "kind": "DeleteField",
           },
           "root": Object {
-            "index": 0,
+            "arg": "b",
             "kind": "Saved",
           },
         },
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "b",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -468,12 +468,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language allows deleting of array fields even though it produces a runtime error: locks 1`] = `
-Map {
-  "f" => Map {},
 }
 `;
 
@@ -537,15 +531,18 @@ Object {
             "kind": "DeleteField",
           },
           "root": Object {
-            "index": 0,
+            "arg": "a",
             "kind": "Saved",
           },
         },
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -553,12 +550,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language allows deleting of keys in objects: locks 1`] = `
-Map {
-  "f" => Map {},
 }
 `;
 
@@ -725,7 +716,7 @@ Object {
                     },
                   ],
                   "root": Object {
-                    "index": 0,
+                    "arg": "a",
                     "kind": "Saved",
                   },
                 },
@@ -788,7 +779,7 @@ Object {
                           },
                         ],
                         "root": Object {
-                          "index": 0,
+                          "arg": "a",
                           "kind": "Saved",
                         },
                       },
@@ -805,8 +796,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -816,12 +810,6 @@ Object {
     "test",
   },
   "schemas": Object {},
-}
-`;
-
-exports[`language allows directly indexing into function results: locks 1`] = `
-Map {
-  "test" => Map {},
 }
 `;
 
@@ -917,7 +905,7 @@ Object {
                 },
                 "kind": "Field",
                 "value": Object {
-                  "index": 0,
+                  "arg": "b",
                   "kind": "Saved",
                 },
               },
@@ -930,7 +918,7 @@ Object {
                 "value": Object {
                   "kind": "Comparison",
                   "left": Object {
-                    "index": 0,
+                    "arg": "b",
                     "kind": "Saved",
                   },
                   "right": Object {
@@ -947,8 +935,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "b",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -956,12 +947,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language allows expressions in object literals: locks 1`] = `
-Map {
-  "a" => Map {},
 }
 `;
 
@@ -1054,26 +1039,30 @@ Object {
     "loop" => FunctionDescription {
       "computation": Array [
         Object {
+          "arg": "row",
           "do": Array [
             Object {
               "kind": "Return",
               "value": Object {
-                "index": 1,
+                "arg": "row",
                 "kind": "Saved",
               },
             },
           ],
           "kind": "ArrayForEach",
           "target": Object {
-            "index": 0,
+            "arg": "arr",
             "kind": "Saved",
           },
         },
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "arr",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -1081,12 +1070,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language allows for loops: locks 1`] = `
-Map {
-  "loop" => Map {},
 }
 `;
 
@@ -1158,8 +1141,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -1172,12 +1158,6 @@ Object {
   },
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language allows getting of whole globals: locks 1`] = `
-Map {
-  "f" => Map {},
 }
 `;
 
@@ -1252,12 +1232,6 @@ Object {
 }
 `;
 
-exports[`language allows global strings: locks 1`] = `
-Map {
-  "l" => Map {},
-}
-`;
-
 exports[`language allows indexing into keys results: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -1329,7 +1303,7 @@ Object {
             ],
             "root": Object {
               "from": Object {
-                "index": 0,
+                "arg": "a",
                 "kind": "Saved",
               },
               "kind": "Keys",
@@ -1339,8 +1313,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -1348,12 +1325,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language allows indexing into keys results: locks 1`] = `
-Map {
-  "f" => Map {},
 }
 `;
 
@@ -1436,7 +1407,7 @@ Object {
                 },
               ],
               "root": Object {
-                "index": 0,
+                "arg": "a",
                 "kind": "Saved",
               },
             },
@@ -1446,8 +1417,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -1455,12 +1429,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language allows keys on nested object: locks 1`] = `
-Map {
-  "f" => Map {},
 }
 `;
 
@@ -1522,12 +1490,6 @@ Object {
     "l",
   },
   "schemas": Object {},
-}
-`;
-
-exports[`language allows locking of strings: locks 1`] = `
-Map {
-  "l" => Map {},
 }
 `;
 
@@ -1601,12 +1563,6 @@ Object {
 }
 `;
 
-exports[`language allows object literals: locks 1`] = `
-Map {
-  "a" => Map {},
-}
-`;
-
 exports[`language allows overwriting of some level of constants: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -1651,6 +1607,7 @@ Object {
       "computation": Array [
         Object {
           "kind": "Save",
+          "name": "a",
           "value": Object {
             "fields": Array [],
             "kind": "Object",
@@ -1669,7 +1626,7 @@ Object {
             "value": 10,
           },
           "root": Object {
-            "index": 0,
+            "arg": "a",
             "kind": "Saved",
           },
         },
@@ -1680,12 +1637,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language allows overwriting of some level of constants: locks 1`] = `
-Map {
-  "b" => Map {},
 }
 `;
 
@@ -1734,6 +1685,7 @@ Object {
       "computation": Array [
         Object {
           "kind": "Save",
+          "name": "a",
           "value": Object {
             "kind": "String",
             "value": "a",
@@ -1744,7 +1696,7 @@ Object {
           "value": Object {
             "kind": "Math",
             "left": Object {
-              "index": 0,
+              "arg": "a",
               "kind": "Saved",
             },
             "right": Object {
@@ -1763,12 +1715,6 @@ Object {
     "concat",
   },
   "schemas": Object {},
-}
-`;
-
-exports[`language allows string concat: locks 1`] = `
-Map {
-  "concat" => Map {},
 }
 `;
 
@@ -1896,9 +1842,10 @@ Object {
       "computation": Array [
         Object {
           "kind": "Save",
+          "name": "b",
           "value": Object {
             "from": Object {
-              "index": 0,
+              "arg": "a",
               "kind": "Saved",
             },
             "kind": "Keys",
@@ -1906,6 +1853,7 @@ Object {
         },
         Object {
           "kind": "Save",
+          "name": "gk",
           "value": Object {
             "from": Object {
               "kind": "GlobalObject",
@@ -1917,8 +1865,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -1931,12 +1882,6 @@ Object {
   },
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language allows users to call keys() on globals and locals: locks 1`] = `
-Map {
-  "f" => Map {},
 }
 `;
 
@@ -2013,6 +1958,7 @@ Object {
       "computation": Array [
         Object {
           "kind": "Save",
+          "name": "b",
           "value": Object {
             "kind": "Bool",
             "value": true,
@@ -2020,6 +1966,7 @@ Object {
         },
         Object {
           "kind": "Save",
+          "name": "c",
           "value": Object {
             "kind": "Bool",
             "value": false,
@@ -2027,16 +1974,17 @@ Object {
         },
         Object {
           "kind": "Save",
+          "name": "d",
           "value": Object {
             "kind": "Selection",
             "level": Array [
               Object {
-                "index": 1,
+                "arg": "b",
                 "kind": "Saved",
               },
             ],
             "root": Object {
-              "index": 0,
+              "arg": "a",
               "kind": "Saved",
             },
           },
@@ -2044,8 +1992,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -2053,12 +2004,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language can declare temp variables: locks 1`] = `
-Map {
-  "fff" => Map {},
 }
 `;
 
@@ -2115,15 +2060,18 @@ Object {
             "value": false,
           },
           "root": Object {
-            "index": 0,
+            "arg": "a",
             "kind": "Saved",
           },
         },
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -2131,12 +2079,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language can overwrite inputs: locks 1`] = `
-Map {
-  "fff" => Map {},
 }
 `;
 
@@ -2339,11 +2281,13 @@ Object {
     "loop" => FunctionDescription {
       "computation": Array [
         Object {
+          "arg": "row",
           "do": Array [
             Object {
               "kind": "Save",
+              "name": "some_scoped_var",
               "value": Object {
-                "index": 0,
+                "arg": "row",
                 "kind": "Saved",
               },
             },
@@ -2365,6 +2309,7 @@ Object {
         },
         Object {
           "kind": "Save",
+          "name": "should_be_at_index_0",
           "value": Object {
             "kind": "Selection",
             "level": Array [
@@ -2382,7 +2327,7 @@ Object {
         Object {
           "kind": "Return",
           "value": Object {
-            "index": 0,
+            "arg": "should_be_at_index_0",
             "kind": "Saved",
           },
         },
@@ -2398,12 +2343,6 @@ Object {
   },
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language ensure variables declared in for loop are cleaned up: locks 1`] = `
-Map {
-  "loop" => Map {},
 }
 `;
 
@@ -2570,7 +2509,7 @@ Object {
           "conditionally": Array [
             Object {
               "cond": Object {
-                "index": 0,
+                "arg": "a",
                 "kind": "Saved",
               },
               "do": Array [
@@ -2594,7 +2533,7 @@ Object {
                   },
                 ],
                 "root": Object {
-                  "index": 0,
+                  "arg": "a",
                   "kind": "Saved",
                 },
               },
@@ -2619,7 +2558,7 @@ Object {
                   },
                 ],
                 "root": Object {
-                  "index": 0,
+                  "arg": "a",
                   "kind": "Saved",
                 },
               },
@@ -2652,8 +2591,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -2661,12 +2603,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language ifs allows any number of else ifs: locks 1`] = `
-Map {
-  "maybe" => Map {},
 }
 `;
 
@@ -2749,7 +2685,7 @@ Object {
           "conditionally": Array [
             Object {
               "cond": Object {
-                "index": 0,
+                "arg": "a",
                 "kind": "Saved",
               },
               "do": Array [],
@@ -2760,7 +2696,7 @@ Object {
                 Object {
                   "kind": "Return",
                   "value": Object {
-                    "index": 0,
+                    "arg": "a",
                     "kind": "Saved",
                   },
                 },
@@ -2773,8 +2709,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -2782,12 +2721,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language ifs allows elses: locks 1`] = `
-Map {
-  "maybe" => Map {},
 }
 `;
 
@@ -2976,14 +2909,15 @@ Object {
           "conditionally": Array [
             Object {
               "cond": Object {
-                "index": 0,
+                "arg": "a",
                 "kind": "Saved",
               },
               "do": Array [
                 Object {
                   "kind": "Save",
+                  "name": "b",
                   "value": Object {
-                    "index": 0,
+                    "arg": "a",
                     "kind": "Saved",
                   },
                 },
@@ -3000,15 +2934,16 @@ Object {
                   },
                 ],
                 "root": Object {
-                  "index": 0,
+                  "arg": "a",
                   "kind": "Saved",
                 },
               },
               "do": Array [
                 Object {
                   "kind": "Save",
+                  "name": "b",
                   "value": Object {
-                    "index": 0,
+                    "arg": "a",
                     "kind": "Saved",
                   },
                 },
@@ -3025,15 +2960,16 @@ Object {
                   },
                 ],
                 "root": Object {
-                  "index": 0,
+                  "arg": "a",
                   "kind": "Saved",
                 },
               },
               "do": Array [
                 Object {
                   "kind": "Save",
+                  "name": "b",
                   "value": Object {
-                    "index": 0,
+                    "arg": "a",
                     "kind": "Saved",
                   },
                 },
@@ -3044,8 +2980,9 @@ Object {
               "do": Array [
                 Object {
                   "kind": "Save",
+                  "name": "b",
                   "value": Object {
-                    "index": 0,
+                    "arg": "a",
                     "kind": "Saved",
                   },
                 },
@@ -3057,16 +2994,20 @@ Object {
         },
         Object {
           "kind": "Save",
+          "name": "b",
           "value": Object {
-            "index": 0,
+            "arg": "a",
             "kind": "Saved",
           },
         },
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -3074,12 +3015,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language ifs cleans up variables across else ifs: locks 1`] = `
-Map {
-  "maybe" => Map {},
 }
 `;
 
@@ -3175,14 +3110,15 @@ Object {
           "conditionally": Array [
             Object {
               "cond": Object {
-                "index": 0,
+                "arg": "a",
                 "kind": "Saved",
               },
               "do": Array [
                 Object {
                   "kind": "Save",
+                  "name": "b",
                   "value": Object {
-                    "index": 0,
+                    "arg": "a",
                     "kind": "Saved",
                   },
                 },
@@ -3194,23 +3130,27 @@ Object {
         },
         Object {
           "kind": "Save",
+          "name": "b",
           "value": Object {
-            "index": 0,
+            "arg": "a",
             "kind": "Saved",
           },
         },
         Object {
           "kind": "Return",
           "value": Object {
-            "index": 1,
+            "arg": "b",
             "kind": "Saved",
           },
         },
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -3218,12 +3158,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language ifs cleans up variables in ifs: locks 1`] = `
-Map {
-  "maybe" => Map {},
 }
 `;
 
@@ -3330,14 +3264,15 @@ Object {
           "conditionally": Array [
             Object {
               "cond": Object {
-                "index": 0,
+                "arg": "a",
                 "kind": "Saved",
               },
               "do": Array [
                 Object {
                   "kind": "Save",
+                  "name": "b",
                   "value": Object {
-                    "index": 0,
+                    "arg": "a",
                     "kind": "Saved",
                   },
                 },
@@ -3348,8 +3283,9 @@ Object {
               "do": Array [
                 Object {
                   "kind": "Save",
+                  "name": "b",
                   "value": Object {
-                    "index": 0,
+                    "arg": "a",
                     "kind": "Saved",
                   },
                 },
@@ -3361,16 +3297,20 @@ Object {
         },
         Object {
           "kind": "Save",
+          "name": "b",
           "value": Object {
-            "index": 0,
+            "arg": "a",
             "kind": "Saved",
           },
         },
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -3378,12 +3318,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language ifs else scope is cleaned up after each block: locks 1`] = `
-Map {
-  "maybe" => Map {},
 }
 `;
 
@@ -3459,14 +3393,14 @@ Object {
           "conditionally": Array [
             Object {
               "cond": Object {
-                "index": 0,
+                "arg": "a",
                 "kind": "Saved",
               },
               "do": Array [
                 Object {
                   "kind": "Return",
                   "value": Object {
-                    "index": 0,
+                    "arg": "a",
                     "kind": "Saved",
                   },
                 },
@@ -3479,8 +3413,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -3488,12 +3425,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language ifs single simple if: locks 1`] = `
-Map {
-  "maybe" => Map {},
 }
 `;
 
@@ -3621,12 +3552,6 @@ Object {
 }
 `;
 
-exports[`language infix operators * / * / * : locks 1`] = `
-Map {
-  "f" => Map {},
-}
-`;
-
 exports[`language infix operators * / priority: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -3735,12 +3660,6 @@ Object {
 }
 `;
 
-exports[`language infix operators * / priority: locks 1`] = `
-Map {
-  "test" => Map {},
-}
-`;
-
 exports[`language infix operators *: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -3799,11 +3718,11 @@ Object {
           "value": Object {
             "kind": "Math",
             "left": Object {
-              "index": 0,
+              "arg": "a",
               "kind": "Saved",
             },
             "right": Object {
-              "index": 0,
+              "arg": "a",
               "kind": "Saved",
             },
             "sign": "*",
@@ -3812,8 +3731,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -3821,12 +3743,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language infix operators *: locks 1`] = `
-Map {
-  "exponent" => Map {},
 }
 `;
 
@@ -3936,11 +3852,11 @@ Object {
           "value": Object {
             "kind": "Math",
             "left": Object {
-              "index": 0,
+              "arg": "a",
               "kind": "Saved",
             },
             "right": Object {
-              "index": 0,
+              "arg": "a",
               "kind": "Saved",
             },
             "sign": "+",
@@ -3949,8 +3865,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -3961,13 +3880,13 @@ Object {
           "value": Object {
             "kind": "Math",
             "left": Object {
-              "index": 0,
+              "arg": "a",
               "kind": "Saved",
             },
             "right": Object {
               "kind": "Math",
               "left": Object {
-                "index": 0,
+                "arg": "a",
                 "kind": "Saved",
               },
               "right": Object {
@@ -3982,8 +3901,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -3991,13 +3913,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language infix operators +: locks 1`] = `
-Map {
-  "double" => Map {},
-  "zero" => Map {},
 }
 `;
 
@@ -4059,7 +3974,7 @@ Object {
           "value": Object {
             "kind": "Math",
             "left": Object {
-              "index": 0,
+              "arg": "a",
               "kind": "Saved",
             },
             "right": Object {
@@ -4072,8 +3987,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -4081,12 +3999,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language infix operators /: locks 1`] = `
-Map {
-  "half" => Map {},
 }
 `;
 
@@ -4311,7 +4223,7 @@ Object {
               "cond": Object {
                 "kind": "Comparison",
                 "left": Object {
-                  "index": 0,
+                  "arg": "a",
                   "kind": "Saved",
                 },
                 "right": Object {
@@ -4327,7 +4239,7 @@ Object {
               "cond": Object {
                 "kind": "Comparison",
                 "left": Object {
-                  "index": 0,
+                  "arg": "a",
                   "kind": "Saved",
                 },
                 "right": Object {
@@ -4343,7 +4255,7 @@ Object {
               "cond": Object {
                 "kind": "Comparison",
                 "left": Object {
-                  "index": 0,
+                  "arg": "a",
                   "kind": "Saved",
                 },
                 "right": Object {
@@ -4359,7 +4271,7 @@ Object {
               "cond": Object {
                 "kind": "Comparison",
                 "left": Object {
-                  "index": 0,
+                  "arg": "a",
                   "kind": "Saved",
                 },
                 "right": Object {
@@ -4375,7 +4287,7 @@ Object {
               "cond": Object {
                 "kind": "Comparison",
                 "left": Object {
-                  "index": 0,
+                  "arg": "a",
                   "kind": "Saved",
                 },
                 "right": Object {
@@ -4391,7 +4303,7 @@ Object {
               "cond": Object {
                 "kind": "Comparison",
                 "left": Object {
-                  "index": 0,
+                  "arg": "a",
                   "kind": "Saved",
                 },
                 "right": Object {
@@ -4409,8 +4321,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -4418,12 +4333,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language infix operators ==: locks 1`] = `
-Map {
-  "comps" => Map {},
 }
 `;
 
@@ -4526,13 +4435,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language infix operators allows ands and or: locks 1`] = `
-Map {
-  "t" => Map {},
-  "f" => Map {},
 }
 `;
 
@@ -4693,7 +4595,7 @@ Object {
               "cond": Object {
                 "kind": "Comparison",
                 "left": Object {
-                  "index": 2,
+                  "arg": "depth",
                   "kind": "Saved",
                 },
                 "right": Object {
@@ -4706,7 +4608,7 @@ Object {
                 Object {
                   "kind": "Return",
                   "value": Object {
-                    "index": 1,
+                    "arg": "right",
                     "kind": "Saved",
                   },
                 },
@@ -4721,17 +4623,17 @@ Object {
           "value": Object {
             "args": Array [
               Object {
-                "index": 1,
+                "arg": "right",
                 "kind": "Saved",
               },
               Object {
                 "kind": "Math",
                 "left": Object {
-                  "index": 0,
+                  "arg": "left",
                   "kind": "Saved",
                 },
                 "right": Object {
-                  "index": 1,
+                  "arg": "right",
                   "kind": "Saved",
                 },
                 "sign": "+",
@@ -4739,7 +4641,7 @@ Object {
               Object {
                 "kind": "Math",
                 "left": Object {
-                  "index": 2,
+                  "arg": "depth",
                   "kind": "Saved",
                 },
                 "right": Object {
@@ -4756,16 +4658,25 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "left",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "right",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "depth",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -4775,12 +4686,6 @@ Object {
     "fib",
   },
   "schemas": Object {},
-}
-`;
-
-exports[`language infix operators allows functions to invoke other functions: locks 1`] = `
-Map {
-  "fib" => Map {},
 }
 `;
 
@@ -4811,12 +4716,6 @@ Object {
     "shh",
   },
   "schemas": Object {},
-}
-`;
-
-exports[`language infix operators allows private functions: locks 1`] = `
-Map {
-  "shh" => Map {},
 }
 `;
 
@@ -4912,12 +4811,6 @@ Object {
 }
 `;
 
-exports[`language infix operators divide divide then multiply: locks 1`] = `
-Map {
-  "t" => Map {},
-}
-`;
-
 exports[`language infix operators divide divide: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -5010,12 +4903,6 @@ Object {
 }
 `;
 
-exports[`language infix operators divide divide: locks 1`] = `
-Map {
-  "t" => Map {},
-}
-`;
-
 exports[`language infix operators divide multiply divide: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -5105,12 +4992,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language infix operators divide multiply divide: locks 1`] = `
-Map {
-  "t" => Map {},
 }
 `;
 
@@ -5210,12 +5091,6 @@ Object {
 }
 `;
 
-exports[`language infix operators infers intent when mixing comparisons and boolean expressions: locks 1`] = `
-Map {
-  "test" => Map {},
-}
-`;
-
 exports[`language infix operators make sure and suffixes on names aren't mistaken for infixes: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -5264,15 +5139,18 @@ Object {
         Object {
           "kind": "Return",
           "value": Object {
-            "index": 0,
+            "arg": "wand",
             "kind": "Saved",
           },
         },
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "wand",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -5280,12 +5158,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language infix operators make sure and suffixes on names aren't mistaken for infixes: locks 1`] = `
-Map {
-  "test" => Map {},
 }
 `;
 
@@ -5375,7 +5247,7 @@ Object {
             "left": Object {
               "kind": "Math",
               "left": Object {
-                "index": 0,
+                "arg": "a",
                 "kind": "Saved",
               },
               "right": Object {
@@ -5385,7 +5257,7 @@ Object {
               "sign": "+",
             },
             "right": Object {
-              "index": 1,
+              "arg": "b",
               "kind": "Saved",
             },
             "sign": "+",
@@ -5394,12 +5266,18 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "b",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -5407,12 +5285,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language infix operators many concat: locks 1`] = `
-Map {
-  "concat" => Map {},
 }
 `;
 
@@ -5498,11 +5370,11 @@ Object {
               "right": Object {
                 "kind": "Math",
                 "left": Object {
-                  "index": 0,
+                  "arg": "a",
                   "kind": "Saved",
                 },
                 "right": Object {
-                  "index": 0,
+                  "arg": "a",
                   "kind": "Saved",
                 },
                 "sign": "*",
@@ -5519,8 +5391,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -5528,12 +5403,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language infix operators math ordering: locks 1`] = `
-Map {
-  "check_ordering" => Map {},
 }
 `;
 
@@ -5626,12 +5495,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language infix operators minus minus plus: locks 1`] = `
-Map {
-  "f" => Map {},
 }
 `;
 
@@ -5743,12 +5606,6 @@ Object {
 }
 `;
 
-exports[`language infix operators multiple parts summed: locks 1`] = `
-Map {
-  "t" => Map {},
-}
-`;
-
 exports[`language infix operators multiply divide divide: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -5838,12 +5695,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language infix operators multiply divide divide: locks 1`] = `
-Map {
-  "f" => Map {},
 }
 `;
 
@@ -5955,12 +5806,6 @@ Object {
 }
 `;
 
-exports[`language infix operators multiply multiply divide multiply: locks 1`] = `
-Map {
-  "f" => Map {},
-}
-`;
-
 exports[`language infix operators plus plus minus: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -6053,12 +5898,6 @@ Object {
 }
 `;
 
-exports[`language infix operators plus plus minus: locks 1`] = `
-Map {
-  "f" => Map {},
-}
-`;
-
 exports[`language infix operators should allow mixing of comparisons and math: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -6148,12 +5987,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language infix operators should allow mixing of comparisons and math: locks 1`] = `
-Map {
-  "t" => Map {},
 }
 `;
 
@@ -6391,7 +6224,7 @@ Object {
             ],
           },
           "root": Object {
-            "index": 0,
+            "arg": "a",
             "kind": "Saved",
           },
         },
@@ -6399,7 +6232,7 @@ Object {
           "kind": "Update",
           "level": Array [
             Object {
-              "index": 0,
+              "arg": "a",
               "kind": "Saved",
             },
             Object {
@@ -6432,8 +6265,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -6446,12 +6282,6 @@ Object {
   },
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language mutations push against globals and locals: locks 1`] = `
-Map {
-  "pushes" => Map {},
 }
 `;
 
@@ -6587,7 +6417,7 @@ Object {
               "value": "c",
             },
             Object {
-              "index": 0,
+              "arg": "a",
               "kind": "Saved",
             },
           ],
@@ -6602,8 +6432,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -6616,12 +6449,6 @@ Object {
   },
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language mutations should allow delete at any level: locks 1`] = `
-Map {
-  "dd" => Map {},
 }
 `;
 
@@ -6840,7 +6667,7 @@ Object {
           "kind": "Update",
           "level": Array [
             Object {
-              "index": 0,
+              "arg": "a",
               "kind": "Saved",
             },
           ],
@@ -6885,8 +6712,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -6899,12 +6729,6 @@ Object {
   },
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language mutations should allow overwrites at a parameterized level: locks 1`] = `
-Map {
-  "param" => Map {},
 }
 `;
 
@@ -6968,7 +6792,7 @@ Object {
           "value": Object {
             "kind": "Math",
             "left": Object {
-              "index": 0,
+              "arg": "a",
               "kind": "Saved",
             },
             "right": Object {
@@ -6981,8 +6805,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -6990,12 +6817,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language prefix operators - is shorthand for * -1: locks 1`] = `
-Map {
-  "min" => Map {},
 }
 `;
 
@@ -7057,7 +6878,7 @@ Object {
           "value": Object {
             "kind": "Comparison",
             "left": Object {
-              "index": 0,
+              "arg": "a",
               "kind": "Saved",
             },
             "right": Object {
@@ -7070,8 +6891,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -7079,12 +6903,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language prefix operators can 'not' values: locks 1`] = `
-Map {
-  "negate" => Map {},
 }
 `;
 
@@ -7163,16 +6981,25 @@ Object {
       "computation": Array [],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "b",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "c",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -7180,12 +7007,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language should allow a fixed number of args in functions: locks 1`] = `
-Map {
-  "argy" => Map {},
 }
 `;
 
@@ -7214,8 +7035,6 @@ Object {
   "schemas": Object {},
 }
 `;
-
-exports[`language should allow a global object: locks 1`] = `Map {}`;
 
 exports[`language should allow array literals: OPS 1`] = `
 Object {
@@ -7261,12 +7080,6 @@ Object {
 }
 `;
 
-exports[`language should allow array literals: locks 1`] = `
-Map {
-  "a" => Map {},
-}
-`;
-
 exports[`language should allow bools, numbers, and strings: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -7306,8 +7119,11 @@ Object {
       "computation": Array [],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -7315,12 +7131,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language should allow bools, numbers, and strings: locks 1`] = `
-Map {
-  "fff" => Map {},
 }
 `;
 
@@ -7349,12 +7159,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language should allow empty pub funcs: locks 1`] = `
-Map {
-  "doSomething" => Map {},
 }
 `;
 
@@ -7764,7 +7568,7 @@ Object {
                   "kind": "Selection",
                   "level": Array [
                     Object {
-                      "index": 0,
+                      "arg": "name",
                       "kind": "Saved",
                     },
                   ],
@@ -7796,7 +7600,7 @@ Object {
           "kind": "Update",
           "level": Array [
             Object {
-              "index": 0,
+              "arg": "name",
               "kind": "Saved",
             },
           ],
@@ -7831,8 +7635,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": null,
-          "kind": "string",
+          "name": "name",
+          "type": Object {
+            "data": null,
+            "kind": "string",
+          },
         },
       ],
     },
@@ -7854,7 +7661,7 @@ Object {
                     "kind": "Selection",
                     "level": Array [
                       Object {
-                        "index": 0,
+                        "arg": "name",
                         "kind": "Saved",
                       },
                     ],
@@ -7879,7 +7686,7 @@ Object {
                   "kind": "Selection",
                   "level": Array [
                     Object {
-                      "index": 0,
+                      "arg": "name",
                       "kind": "Saved",
                     },
                   ],
@@ -7896,8 +7703,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": null,
-          "kind": "string",
+          "name": "name",
+          "type": Object {
+            "data": null,
+            "kind": "string",
+          },
         },
       ],
     },
@@ -7914,15 +7724,6 @@ Object {
   },
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language should allow existence checking: locks 1`] = `
-Map {
-  "create_user" => Map {
-    "users" => "w",
-  },
-  "get_user" => Map {},
 }
 `;
 
@@ -8042,7 +7843,7 @@ Object {
             "kind": "Selection",
             "level": Array [
               Object {
-                "index": 0,
+                "arg": "a",
                 "kind": "Saved",
               },
               Object {
@@ -8059,8 +7860,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -8073,12 +7877,6 @@ Object {
   },
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language should allow getting of nested keys: locks 1`] = `
-Map {
-  "fff" => Map {},
 }
 `;
 
@@ -8563,7 +8361,7 @@ Object {
                   "kind": "Selection",
                   "level": Array [
                     Object {
-                      "index": 1,
+                      "arg": "group",
                       "kind": "Saved",
                     },
                   ],
@@ -8582,7 +8380,7 @@ Object {
                   "kind": "Update",
                   "level": Array [
                     Object {
-                      "index": 1,
+                      "arg": "group",
                       "kind": "Saved",
                     },
                     Object {
@@ -8594,7 +8392,7 @@ Object {
                     "kind": "Push",
                     "values": Array [
                       Object {
-                        "index": 0,
+                        "arg": "m",
                         "kind": "Saved",
                       },
                     ],
@@ -8625,24 +8423,31 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": "msg",
-          "kind": "TypeAlias",
+          "name": "m",
+          "type": Object {
+            "data": "msg",
+            "kind": "TypeAlias",
+          },
         },
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "group",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
     "create_chat_group" => FunctionDescription {
       "computation": Array [
         Object {
+          "arg": "user",
           "do": Array [
             Object {
               "kind": "Update",
               "level": Array [
                 Object {
-                  "index": 2,
+                  "arg": "user",
                   "kind": "Saved",
                 },
                 Object {
@@ -8654,7 +8459,7 @@ Object {
                 "kind": "Push",
                 "values": Array [
                   Object {
-                    "index": 0,
+                    "arg": "group_name",
                     "kind": "Saved",
                   },
                 ],
@@ -8667,7 +8472,7 @@ Object {
           ],
           "kind": "ArrayForEach",
           "target": Object {
-            "index": 1,
+            "arg": "initial_users",
             "kind": "Saved",
           },
         },
@@ -8681,17 +8486,23 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": null,
-          "kind": "string",
+          "name": "group_name",
+          "type": Object {
+            "data": null,
+            "kind": "string",
+          },
         },
         Object {
-          "data": Array [
-            Object {
-              "data": null,
-              "kind": "string",
-            },
-          ],
-          "kind": "Array",
+          "name": "initial_users",
+          "type": Object {
+            "data": Array [
+              Object {
+                "data": null,
+                "kind": "string",
+              },
+            ],
+            "kind": "Array",
+          },
         },
       ],
     },
@@ -8722,15 +8533,6 @@ Object {
       "kind": "Object",
     },
   },
-}
-`;
-
-exports[`language should allow loops over inputs: locks 1`] = `
-Map {
-  "send_message" => Map {
-    "chats" => "w",
-  },
-  "create_chat_group" => Map {},
 }
 `;
 
@@ -8767,8 +8569,6 @@ Object {
   "schemas": Object {},
 }
 `;
-
-exports[`language should allow many global objects: locks 1`] = `Map {}`;
 
 exports[`language should allow none: OPS 1`] = `
 Object {
@@ -8813,12 +8613,6 @@ Object {
 }
 `;
 
-exports[`language should allow none: locks 1`] = `
-Map {
-  "a" => Map {},
-}
-`;
-
 exports[`language should allow return statements within functions: OPS 1`] = `
 Object {
   "funcs": Map {
@@ -8852,12 +8646,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language should allow return statements within functions: locks 1`] = `
-Map {
-  "returny" => Map {},
 }
 `;
 
@@ -9140,7 +8928,7 @@ Object {
             },
           ],
           "operation": Object {
-            "index": 0,
+            "arg": "a",
             "kind": "Saved",
           },
           "root": Object {
@@ -9152,12 +8940,12 @@ Object {
           "kind": "Update",
           "level": Array [
             Object {
-              "index": 0,
+              "arg": "a",
               "kind": "Saved",
             },
           ],
           "operation": Object {
-            "index": 0,
+            "arg": "a",
             "kind": "Saved",
           },
           "root": Object {
@@ -9174,7 +8962,7 @@ Object {
             },
           ],
           "operation": Object {
-            "index": 0,
+            "arg": "a",
             "kind": "Saved",
           },
           "root": Object {
@@ -9185,8 +8973,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": undefined,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": undefined,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -9199,12 +8990,6 @@ Object {
   },
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`language should allow setting of keys on a global object: locks 1`] = `
-Map {
-  "fff" => Map {},
 }
 `;
 
@@ -9228,8 +9013,6 @@ Object {
   "schemas": Object {},
 }
 `;
-
-exports[`roles allows declaring stateless roles: locks 1`] = `Map {}`;
 
 exports[`roles caller can be referenced when using roles: OPS 1`] = `
 Object {
@@ -9318,7 +9101,7 @@ Object {
               },
             ],
             "root": Object {
-              "index": 0,
+              "arg": "caller",
               "kind": "Saved",
             },
           },
@@ -9326,21 +9109,24 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": Array [
-            "admin",
-            Array [
-              Object {
-                "data": Object {
-                  "name": Object {
-                    "data": null,
-                    "kind": "string",
+          "name": "caller",
+          "type": Object {
+            "data": Array [
+              "admin",
+              Array [
+                Object {
+                  "data": Object {
+                    "name": Object {
+                      "data": null,
+                      "kind": "string",
+                    },
                   },
+                  "kind": "Object",
                 },
-                "kind": "Object",
-              },
+              ],
             ],
-          ],
-          "kind": "Role",
+            "kind": "Role",
+          },
         },
       ],
     },
@@ -9348,12 +9134,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`roles caller can be referenced when using roles: locks 1`] = `
-Map {
-  "privleged_thing" => Map {},
 }
 `;
 
@@ -9476,7 +9256,7 @@ Object {
                   },
                   "kind": "Field",
                   "value": Object {
-                    "index": 0,
+                    "arg": "name",
                     "kind": "Saved",
                   },
                 },
@@ -9488,8 +9268,11 @@ Object {
       ],
       "input": Array [
         Object {
-          "data": null,
-          "kind": "string",
+          "name": "name",
+          "type": Object {
+            "data": null,
+            "kind": "string",
+          },
         },
       ],
     },
@@ -9497,12 +9280,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`roles creating role instances: locks 1`] = `
-Map {
-  "get_user" => Map {},
 }
 `;
 
@@ -9553,16 +9330,19 @@ Object {
       "computation": Array [],
       "input": Array [
         Object {
-          "data": Array [
-            "admin",
-            Array [
-              Object {
-                "data": Object {},
-                "kind": "Object",
-              },
+          "name": "caller",
+          "type": Object {
+            "data": Array [
+              "admin",
+              Array [
+                Object {
+                  "data": Object {},
+                  "kind": "Object",
+                },
+              ],
             ],
-          ],
-          "kind": "Role",
+            "kind": "Role",
+          },
         },
       ],
     },
@@ -9570,12 +9350,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`roles roles can be associated with functions: locks 1`] = `
-Map {
-  "privleged_thing" => Map {},
 }
 `;
 
@@ -9618,8 +9392,11 @@ Object {
       "computation": Array [],
       "input": Array [
         Object {
-          "data": null,
-          "kind": "Any",
+          "name": "a",
+          "type": Object {
+            "data": null,
+            "kind": "Any",
+          },
         },
       ],
     },
@@ -9627,12 +9404,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`types allows explicitly saying a type is any: locks 1`] = `
-Map {
-  "t" => Map {},
 }
 `;
 
@@ -9729,20 +9500,32 @@ Object {
       "computation": Array [],
       "input": Array [
         Object {
-          "data": null,
-          "kind": "string",
+          "name": "a",
+          "type": Object {
+            "data": null,
+            "kind": "string",
+          },
         },
         Object {
-          "data": null,
-          "kind": "int",
+          "name": "b",
+          "type": Object {
+            "data": null,
+            "kind": "int",
+          },
         },
         Object {
-          "data": null,
-          "kind": "double",
+          "name": "c",
+          "type": Object {
+            "data": null,
+            "kind": "double",
+          },
         },
         Object {
-          "data": null,
-          "kind": "bool",
+          "name": "d",
+          "type": Object {
+            "data": null,
+            "kind": "bool",
+          },
         },
       ],
     },
@@ -9750,12 +9533,6 @@ Object {
   "globals": Map {},
   "privateFuncs": Set {},
   "schemas": Object {},
-}
-`;
-
-exports[`types allows requiring inputs as primitives: locks 1`] = `
-Map {
-  "test" => Map {},
 }
 `;
 
@@ -9798,8 +9575,11 @@ Object {
       "computation": Array [],
       "input": Array [
         Object {
-          "data": "MyType",
-          "kind": "TypeAlias",
+          "name": "input",
+          "type": Object {
+            "data": "MyType",
+            "kind": "TypeAlias",
+          },
         },
       ],
     },
@@ -9812,12 +9592,6 @@ Object {
       "kind": "bool",
     },
   },
-}
-`;
-
-exports[`types allows type aliases: locks 1`] = `
-Map {
-  "a" => Map {},
 }
 `;
 
@@ -9865,13 +9639,16 @@ Object {
       "computation": Array [],
       "input": Array [
         Object {
-          "data": Array [
-            Object {
-              "data": "obj",
-              "kind": "TypeAlias",
-            },
-          ],
-          "kind": "Array",
+          "name": "i",
+          "type": Object {
+            "data": Array [
+              Object {
+                "data": "obj",
+                "kind": "TypeAlias",
+              },
+            ],
+            "kind": "Array",
+          },
         },
       ],
     },
@@ -9898,12 +9675,6 @@ Object {
       "kind": "Object",
     },
   },
-}
-`;
-
-exports[`types should allow array types: locks 1`] = `
-Map {
-  "a" => Map {},
 }
 `;
 
@@ -9946,8 +9717,11 @@ Object {
       "computation": Array [],
       "input": Array [
         Object {
-          "data": "someObj",
-          "kind": "TypeAlias",
+          "name": "input",
+          "type": Object {
+            "data": "someObj",
+            "kind": "TypeAlias",
+          },
         },
       ],
     },
@@ -9969,12 +9743,6 @@ Object {
       "kind": "Object",
     },
   },
-}
-`;
-
-exports[`types should allow object types: locks 1`] = `
-Map {
-  "a" => Map {},
 }
 `;
 
@@ -10050,17 +9818,20 @@ Object {
       "computation": Array [],
       "input": Array [
         Object {
-          "data": Array [
-            Object {
-              "data": null,
-              "kind": "int",
-            },
-            Object {
-              "data": null,
-              "kind": "none",
-            },
-          ],
-          "kind": "Union",
+          "name": "i",
+          "type": Object {
+            "data": Array [
+              Object {
+                "data": null,
+                "kind": "int",
+              },
+              Object {
+                "data": null,
+                "kind": "none",
+              },
+            ],
+            "kind": "Union",
+          },
         },
       ],
     },
@@ -10068,8 +9839,11 @@ Object {
       "computation": Array [],
       "input": Array [
         Object {
-          "data": "obj",
-          "kind": "TypeAlias",
+          "name": "i",
+          "type": Object {
+            "data": "obj",
+            "kind": "TypeAlias",
+          },
         },
       ],
     },
@@ -10125,13 +9899,6 @@ Object {
 }
 `;
 
-exports[`types should allow optional types: locks 1`] = `
-Map {
-  "a" => Map {},
-  "q" => Map {},
-}
-`;
-
 exports[`types should allow recursive types: OPS 1`] = `
 Object {
   "funcs": Map {},
@@ -10179,8 +9946,6 @@ Object {
   },
 }
 `;
-
-exports[`types should allow recursive types: locks 1`] = `Map {}`;
 
 exports[`types should allow union types: OPS 1`] = `
 Object {
@@ -10230,17 +9995,20 @@ Object {
       "computation": Array [],
       "input": Array [
         Object {
-          "data": Array [
-            Object {
-              "data": "Biz",
-              "kind": "TypeAlias",
-            },
-            Object {
-              "data": null,
-              "kind": "double",
-            },
-          ],
-          "kind": "Union",
+          "name": "input",
+          "type": Object {
+            "data": Array [
+              Object {
+                "data": "Biz",
+                "kind": "TypeAlias",
+              },
+              Object {
+                "data": null,
+                "kind": "double",
+              },
+            ],
+            "kind": "Union",
+          },
         },
       ],
     },
@@ -10289,11 +10057,5 @@ Object {
       "kind": "string",
     },
   },
-}
-`;
-
-exports[`types should allow union types: locks 1`] = `
-Map {
-  "test" => Map {},
 }
 `;

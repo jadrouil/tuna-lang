@@ -4,19 +4,18 @@ import { MONGO_COMPILER, MONGO_GLOBAL_ABSTRACTION_REMOVAL } from './globals/mong
 
 import {Op, StrongServerEnv, Test} from '../ops/index'
 import { AnyNode, RootNode, BaseNodeDefs, PickNode, toOps } from '../index'
-import { MONGO_UNPROVIDED_LOCK_CALCULATOR } from './mongo_logic/main';
 import { FunctionData, FunctionDescription } from './function';
 import * as ed from 'noble-ed25519';
+import { ValueNode } from './IR';
 
 type DagServer = Record<string, (...arg: any[]) => Promise<any>>
 const TEST_STORE = "test"
 const GLOBAL: PickNode<"GlobalObject"> = {kind: "GlobalObject", name: TEST_STORE}
-const testCompiler: Compiler<RootNode> =  MONGO_GLOBAL_ABSTRACTION_REMOVAL
-    .tap((nonAbstractRepresentation) => {
-        const locks = MONGO_UNPROVIDED_LOCK_CALCULATOR.run(nonAbstractRepresentation)
-        expect(locks).toMatchSnapshot(`Required locks`)
-    })
-    .then(MONGO_COMPILER)
+const ARG: (n: number) => PickNode<"Saved"> = (n) => ({kind: "Saved", arg: "a" + n})
+const PARAMS: (...schemas: Schema[]) => FunctionData["input"] = (...s) => s.map((type, index) => ({type, name: "a" + index}))
+const SAVE: (name: string, value: ValueNode) => PickNode<"Save"> = (name, value) => ({kind: "Save", name, value})
+const SAVED: (name: string) => PickNode<"Saved"> = (arg) => ({kind: "Saved", arg})
+const testCompiler: Compiler<RootNode> =  MONGO_GLOBAL_ABSTRACTION_REMOVAL.then(MONGO_COMPILER)
 
 class TestHarness {
     private serverEnv: StrongServerEnv
@@ -142,30 +141,28 @@ describe("basic functionality", () => {
             expect(await server.r()).toEqual({some_field: false})
         })
     )
-
+    
     it("can set double nested field",
         noInputHarness({
-            r: [{
-                    kind: "Save", 
-                    value: {
-                        kind: "Object", 
-                        fields: [{
-                            kind: "Field",
-                            key: {kind: "String", value: "nested"}, 
-                            value: {
-                                kind: "Object", 
-                                fields: []
-                            }
-                        }]
-                    }
-                },
+            r: [
+                SAVE("a", {
+                    kind: "Object", 
+                    fields: [{
+                        kind: "Field",
+                        key: {kind: "String", value: "nested"}, 
+                        value: {
+                            kind: "Object", 
+                            fields: []
+                        }
+                    }]
+                }),
                 {
                     kind: "Update",
-                    root: {kind: "Saved", index: 0},
+                    root: SAVED("a"),
                     level: [{kind: "String", value: "nested"}, {kind: "String", value: "inside"}],
                     operation: { kind: "String", value: "hello world"}
                 },
-                {kind: "Return", value: {kind: "Saved", index: 0}}
+                {kind: "Return", value: SAVED("a")}
             ]
         }, async (server) => {
             expect(await server.r()).toEqual({nested: {inside: "hello world"}})
@@ -175,10 +172,10 @@ describe("basic functionality", () => {
     it("can get type info",
         withInputHarness([], {
             whatType: {
-                input: [{kind: "Any", data: null}],
+                input: PARAMS({kind: "Any", data: null}),
                 computation: [{
                     kind: "Return",
-                    value: {kind: "GetType", value: {kind: 'Saved', index: 0}}
+                    value: {kind: "GetType", value: ARG(0)}
                 }]
             }
         },
@@ -198,17 +195,17 @@ describe("basic functionality", () => {
             [], 
             {
                 delete: {
-                    input: [{kind: "Any", data: null}], 
+                    input: PARAMS({kind: "Any", data: null}),
                     computation: [
                         {
                             kind: "Update", 
-                            root:{kind: "Saved", index: 0},
+                            root: ARG(0),
                             level: [{kind: "String", value: "some_key"}],
                             operation: {kind: "DeleteField"}
                         },
                         {
                             kind: "Return",
-                            value: {kind: "Saved", index: 0}
+                            value: ARG(0)
                         }
                     ]}},
             async server => {
@@ -223,11 +220,11 @@ describe("basic functionality", () => {
                 [],
                 {
                     getKeys: {
-                        input: [{kind: "Object", data: {a: {kind: "Any", data: null}}}],
+                        input: PARAMS({kind: "Object", data: {a: {kind: "Any", data: null}}}),
                         computation: [
                             {kind: "Return", value: {
                                 kind: 'Keys',
-                                from: {kind: "Saved", index: 0}
+                                from: ARG(0)
                             }}
                         ]
                     }
@@ -243,13 +240,13 @@ describe("basic functionality", () => {
                 [],
                 {
                     getKeys: {
-                        input: [{kind: "Object", data: {a: {kind: "Any", data: null}}}],
+                        input: PARAMS({kind: "Object", data: {a: {kind: "Any", data: null}}}),
                         computation: [
                             {
                                 kind: "Return", 
                                 value: {
                                     kind: "Selection",
-                                    root: {kind: "Keys", from: {kind: "Saved", index: 0}},
+                                    root: {kind: "Keys", from: ARG(0)},
                                     level: [{kind: "Int", value: 0}]
                                 }
                             }
@@ -267,17 +264,17 @@ describe("basic functionality", () => {
             [], 
             {
                 delete: {
-                    input: [{kind: "Any", data: null}], 
+                    input: PARAMS({kind: "Any", data: null}), 
                     computation: [
                         {
                             kind: "Update", 
-                            root: {kind: "Saved", index: 0},
+                            root: ARG(0),
                             level: [{kind: "String", value: "l1"}, {kind: "String", value: "l2"}],
                             operation: {kind: "DeleteField"}
                         },
                         {
                             kind: "Return",
-                            value: {kind: "Saved", index: 0}
+                            value: ARG(0)
                         }
                     ]}},
             async server => {
@@ -289,30 +286,28 @@ describe("basic functionality", () => {
 
     it("can get nested field",
         noInputHarness({
-            r: [{
-                    kind: "Save", 
-                    value: {
-                        kind: "Object", 
-                        fields: [{
-                            kind: "Field", 
-                            key: {kind: "String", value: "l1"}, 
-                            value: {
-                                kind: "Object", 
-                                fields: []
-                            }
-                        }]
-                    }
-                },
+            r: [
+                SAVE("a", {
+                    kind: "Object", 
+                    fields: [{
+                        kind: "Field", 
+                        key: {kind: "String", value: "l1"}, 
+                        value: {
+                            kind: "Object", 
+                            fields: []
+                        }
+                    }]
+                }),
                 {
                     kind: "Update",
-                    root: {kind: "Saved", index: 0},
+                    root: SAVED("a"),
                     level: [{kind: "String", value: "l1"}, {kind: "String", value: "l2"}],
                     operation: { kind: "String", value: "hello world"}
                 },
                 {kind: "Return", value: {
                     kind: "Selection", 
                     level: [{kind: "String", value: "l1"}, {kind: "String", value: "l2"}],
-                    root: {kind: "Saved", index: 0}
+                    root: SAVED("a")
                 }}
             ]
         }, async (server) => {
@@ -322,13 +317,13 @@ describe("basic functionality", () => {
 
     function nComp(sign: PickNode<"Comparison">["sign"], right: number): FunctionData {
         return {
-            input: [{kind: "int", data: null}],
+            input: PARAMS({kind: "int", data: null}),
             computation: [{
             kind: "Return",
             value: {
                 kind: "Comparison",
                 sign,
-                left: {kind: "Saved", index: 0},
+                left: ARG(0),
                 right: {kind: "Int", value: right}
             }
         }]}
@@ -493,15 +488,14 @@ describe("basic functionality", () => {
                 conditionally: [
                     {kind: "Conditional", 
                     cond: {kind: "Bool", value: true}, 
-                    do: [{kind: "Save", value: {kind: "Int", value: -1}}]},
+                    do: [
+                        SAVE("a", {kind: "Int", value: -1})
+                    ]},
                 ]
             },
+            SAVE("a", {kind: "Int", value: 2}),
             {
-                kind: "Save",
-                value: {kind: "Int", value: 2}
-            },
-            {
-                kind: "Return", value: {kind: "Saved", index: 0}
+                kind: "Return", value: SAVED("a")
             }
     ] 
     },
@@ -514,15 +508,13 @@ describe("basic functionality", () => {
         forVars: [
             {
                 kind: "ArrayForEach",
+                arg: "loopVar",
                 target: {kind: "ArrayLiteral", values: [{kind: "Bool", value: true}]},
-                do: [{kind: "Save", value: {kind: "Int", value: -1}}],
+                do: [SAVE("a", {kind: "Int", value: -1})],
             },
+            SAVE("a", {kind: "Int", value: 2}),
             {
-                kind: "Save",
-                value: {kind: "Int", value: 2}
-            },
-            {
-                kind: "Return", value: {kind: "Saved", index: 0}
+                kind: "Return", value: SAVED("a")
             }
     ] 
     },
@@ -535,11 +527,11 @@ describe("basic functionality", () => {
         [],
         {
             push: {
-                input: [{kind: "Array", data: [{kind: "Any", data: null}]}],
+                input: PARAMS({kind: "Array", data: [{kind: "Any", data: null}]}),
                 computation: [
                     {
                         kind: "Update",
-                        root: {kind: "Saved", index: 0},
+                        root: ARG(0),
                         level: [],
                         operation: {
                             kind: "Push", 
@@ -549,7 +541,7 @@ describe("basic functionality", () => {
                             ]
                         }
                     },
-                    {kind: "Return", value: {kind: "Saved", index: 0}}
+                    {kind: "Return", value: ARG(0)}
                 ],
             }
         },
@@ -562,11 +554,11 @@ describe("basic functionality", () => {
         [],
         {
             push: {
-                input: [{kind: "Any", data: null}],
+                input: PARAMS({kind: "Any", data: null}),
                 computation: [
                     {
                         kind: "Update",
-                        root: {kind: "Saved", index: 0},
+                        root: ARG(0),
                         level: [{kind: "String", value: "array"}],
                         operation: {
                             kind: "Push", 
@@ -580,7 +572,7 @@ describe("basic functionality", () => {
                         kind: "Return", 
                         value: {
                             kind: 'Selection',
-                            root: {kind: "Saved", index: 0},
+                            root: ARG(0),
                             level: [{kind: "String", value: "array"}]
                         }
                     }
@@ -596,13 +588,13 @@ describe("basic functionality", () => {
         ["storage"],
         {
             getFirst: {
-                input: [{kind: "Array", data: [{kind: "Any", data: null}]}],
+                input: PARAMS({kind: "Array", data: [{kind: "Any", data: null}]}),
                 computation: [
                     {
                         kind: "Return",
                         value: {
                             kind: "Selection",
-                            root: {kind: "Saved", index:0},
+                            root: ARG(0),
                             level: [{kind: "Int", value: 0}]
                         }
                     }
@@ -618,7 +610,7 @@ describe("basic functionality", () => {
 describe("roles", () => {
     it("functions can be guarded by roles", withInputHarness([], {
         adminsOnly: {
-            input: [{kind: "Role", data: ["admin", [{kind: "Object", data: {}}]]}],
+            input: PARAMS({kind: "Role", data: ["admin", [{kind: "Object", data: {}}]]}),
             computation: [
                 {kind: "Return", value: {kind: "String", value: "success"}}
             ]
@@ -639,17 +631,17 @@ describe("roles", () => {
     it("allows use of stateful roles", 
         withInputHarness([], {
             usersOnly: {
-                input: [user_role],
+                input: PARAMS(user_role),
                 computation: [
                     {kind: 'Return', value: {
                         kind: "Selection", 
-                        root: {kind: "Saved", index: 0}, 
+                        root: ARG(0), 
                         level: [{kind: "String", value: "_state"}, {kind: "String", value: "name"}]}
                     }
                 ]
             },
             getUser: {
-                input: [{kind: "string", data: null}],
+                input: PARAMS({kind: "string", data: null}),
                 computation: [
                     {
                         kind: "Return",
@@ -662,7 +654,7 @@ describe("roles", () => {
                                     {
                                         kind: "Field",
                                         key: {kind: "String", value: "name"},
-                                        value: {kind: "Saved", index: 0}
+                                        value: ARG(0)
                                     }
                                 ]
                             }
@@ -681,17 +673,14 @@ describe("roles", () => {
 describe("with input", () => {
     it("validates input", withInputHarness([],{
         accepts3any: {
-            input: [
+            input: PARAMS(
                 {kind: "Any", data: null},
                 {kind: "Any", data: null},
                 {kind: "Any", data: null}
-            ],
+            ),
             computation: [{
                 kind: "Return",
-                value: {
-                    kind: "Saved",
-                    index: 2
-                }
+                value: ARG(2)
             }]
         }
     }, async server => {
@@ -702,15 +691,13 @@ describe("with input", () => {
 
     it("check if field exists", withInputHarness([],{
         checksField: {
-            input: [
-                {kind: "Any", data: null}
-            ],
+            input: PARAMS({kind: "Any", data: null}),
             computation: [{
                 kind: "Return",
                 value: {
                     kind: "FieldExists",
                     field: {kind: "String", value: "test"},
-                    value: {kind: "Saved", index: 0}
+                    value: ARG(0)
                 }
             }]
         }
@@ -807,13 +794,13 @@ describe("global objects", () => {
                     sign: "!="
                 },
                 do: [
-                    {kind: "Save", value: {kind: "Selection", root: GLOBAL, level: [{kind: "String", value: "k"}]}},
-                    {kind: "Save", value: {kind: "Object", fields: []}},
-                    {kind: "ArrayForEach", target: {kind: "Saved", index: 0}, do: [
+                    SAVE("a", {kind: "Selection", root: GLOBAL, level: [{kind: "String", value: "k"}]}),
+                    SAVE("b", {kind: "Object", fields: []}),                    
+                    {kind: "ArrayForEach", arg: "loopVar", target: SAVED("a"), do: [
                         {
                             kind: "Update",
-                            root: {kind: "Saved", index: 1}, level: [{kind: "Saved", index: 2}],
-                            operation: {kind: "Selection", root: GLOBAL, level: [{kind: "Saved", index: 2}]}
+                            root: SAVED("b"), level: [SAVED("loopVar")],
+                            operation: {kind: "Selection", root: GLOBAL, level: [SAVED("loopVar")]}
                         }
                     ]}
                 ]
@@ -1053,24 +1040,25 @@ describe("global objects", () => {
                 ],
                 get: [
                     {
-                        kind: "Save", value: {kind: "Object", fields: []}
+                        kind: "Save", name: "obj", value: {kind: "Object", fields: []}
                     },
                     {
                         kind: "ArrayForEach",
+                        arg: "loopVar",
                         target:{kind: "Keys", from: GLOBAL},
                         do: [
                             {
                                 kind: "Update", 
-                                root: {kind: "Saved", index: 0},
-                                level: [{kind: "Saved", index: 1}],
-                                operation: {kind: "Selection", root: GLOBAL, level: [{kind: "Saved", index: 1}
+                                root: SAVED("obj"),
+                                level: [SAVED("loopVar")],
+                                operation: {kind: "Selection", root: GLOBAL, level: [SAVED("loopVar")
                                 ]}
                             }
                         ]
                     },
                     {
                         kind: "Return",
-                        value: {kind: 'Saved', index: 0}
+                        value: SAVED("obj")
                     }
                 ]
             }, 
@@ -1137,31 +1125,29 @@ describe("global objects", () => {
                 [],
                 {
                     sum: {
-                        input: [{kind: "Array", data: [{kind: "double", data: null}]}],
+                        input: PARAMS({kind: "Array", data: [{kind: "double", data: null}]}),
                         computation: [
-                            {
-                                kind: "Save",
-                                value: {kind: "Int", value: 0},
-                            },
+                            SAVE("temp",{kind: "Int", value: 0}),
                             {
                                 kind: "ArrayForEach", 
-                                target: {kind: "Saved", index: 0},
+                                target: ARG(0),
+                                arg: "loopVar",
                                 do: [
                                     {
                                         kind: "Update",
                                         operation: {
                                             kind: "Math", 
                                             sign: "+", 
-                                            left: {kind: "Saved", index: 1},
-                                            right: {kind: "Saved", index: 2}
+                                            left: SAVED("temp"),
+                                            right: SAVED("loopVar")
                                         },
                                         level: [],
-                                        root: {kind: "Saved", index: 1}
+                                        root: SAVED("temp")
                                     }
                                 ]
                             },
                             {
-                                kind: "Return", value: {kind: "Saved", index: 1}
+                                kind: "Return", value: SAVED("temp")
                             }
                         ]
                     }
@@ -1173,568 +1159,18 @@ describe("global objects", () => {
         })
     })
 
-    
-
-    describe("race condition possible actions", () => {
-        it("can perform updates that depend on global state", noInputHarness(
-            {
-                get, 
-                set,
-                setToSelfPlusOne: [{
-                    kind: "Update",
-                    root: GLOBAL,
-                    level: [{kind: "String", value: "l1"}, {kind: "String", value: "l2"}],
-                    operation: {
-                        kind: "Math",
-                        left: {
-                            kind: "Selection", 
-                            root: GLOBAL,
-                            level: [{kind: "String", value: "l1"}, {kind: "String", value: "l2"}]
-                        },
-                        right: {kind: "Int", value: 1},
-                        sign: "+"
-                    }
-                }]
-            },
-            async server => {
-                expect(await server.set()).toBeNull()
-                expect(await server.setToSelfPlusOne()).toBeNull()
-                expect(await server.get()).toEqual({l2: 43})
-            }, ["storage"])
-        )
-
-        it("can perform updates that depend on global state - ifs", noInputHarness(
-            {
-                get, 
-                set,
-                setTo0If42: [
-                    {
-                        kind: "If",
-                        conditionally: [
-                            {
-                                kind: "Conditional",
-                                cond: {kind: "FieldExists", field: {kind: "String", value: "l1"}, value: GLOBAL},
-                                do: [{
-                                    kind: "Update",
-                                    root: GLOBAL,
-                                    level: [{kind: "String", value: "l1"}, {kind: "String", value: "l2"}],
-                                    operation: {kind: "Int", value: 0}
-                                }]
-                            }
-                        ]
-                    }
-                ]
-            },
-            async server => {
-                expect(await server.set()).toBeNull()
-                expect(await server.setTo0If42()).toBeNull()
-                expect(await server.get()).toEqual({l2: 0})
-            }, ["storage"])
-        )
-
-        it("mutation conditional on same global state requires lock", noInputHarness(
-            {
-                get, 
-                set,
-                setTo0If42: [
-                    {
-                        kind: "If",
-                        conditionally: [
-                            {
-                                kind: "Conditional",
-                                cond: {
-                                    kind:  "BoolAlg", sign: "and", 
-                                    left: {kind: "FieldExists", field: {kind: "String", value: "l1"}, value: GLOBAL},
-                                    right: {kind: "Bool", value: false}
-                                },
-                                do: [{kind: "Return"}]
-                            },
-                            {
-                                kind: "Finally",
-                                do: [{
-                                    kind: "Update",
-                                    root: GLOBAL,
-                                    level: [{kind: "String", value: "l1"}, {kind: "String", value: "l2"}],
-                                    operation: {kind: "Int", value: 0}
-                                }]
-                            }
-                        ]
-                    }
-                ]
-            },
-            async server => {
-                expect(await server.set()).toBeNull()
-                expect(await server.setTo0If42()).toBeNull()
-                expect(await server.get()).toEqual({l2: 0})
-            }, ["storage"])
-        )
-
-        it("can perform updates that depend on some other global state", noInputHarness(
-            {
-                get, 
-                setOther: [{
-                    kind: "Update", 
-                    root: {kind: "GlobalObject", name: "other"}, 
-                    level: [{kind: "String", value: "l1"}],
-                    operation: {kind: "Int", value: 734}
-                }],
-                setToOtherPlusOne: [{
-                    kind: "Update",
-                    root: GLOBAL,
-                    level: [{kind: "String", value: "l1"}],
-                    operation: {
-                        kind: "Math",
-                        left: {
-                            kind: "Selection", 
-                            root: {kind: "GlobalObject", name: "other"},
-                            level: [{kind: "String", value: "l1"}]
-                        },
-                        right: {kind: "Int", value: 1},
-                        sign: "+"
-                    }
-                }]
-            },
-            async server => {
-                expect(await server.setOther()).toBeNull()
-                expect(await server.setToOtherPlusOne()).toBeNull()
-                expect(await server.get()).toBe(735)
-            }, ["storage"])
-        )
-
-
-        it("can perform updates that depend on global state transitively", noInputHarness(
-            {
-                get, 
-                set,
-                setToSelfPlusOne: [
-                    {
-                        kind: "Save",
-                        value: {
-                            kind: "Selection", 
-                            root: GLOBAL,
-                            level: [{kind: "String", value: "l1"}, {kind: "String", value: "l2"}]
-                        }
-                    },
-                    {
-                    kind: "Update",
-                    root: GLOBAL,
-                    level: [{kind: "String", value: "l1"}, {kind: "String", value: "l2"}],
-                    operation: {
-                        kind: "Math",
-                        left: {kind: "Saved", index: 0},
-                        right: {kind: "Int", value: 1},
-                        sign: "+"
-                    }
-                }]
-            },
-            async server => {
-                expect(await server.set()).toBeNull()
-                expect(await server.setToSelfPlusOne()).toBeNull()
-                expect(await server.get()).toEqual({l2: 43})
-            }, ["storage"])
-        )
-
-        it("global state taint is transitive through variables", noInputHarness(
-            {
-                get, 
-                set,
-                setToSelfPlusOne: [
-                    {
-                        kind: "Save",
-                        value: {
-                            kind: "Selection", 
-                            root: GLOBAL,
-                            level: [{kind: "String", value: "l1"}, {kind: "String", value: "l2"}]
-                        }
-                    },
-                    {
-                        kind: "Save",
-                        value: {kind: "Saved", index: 0}
-                    },
-                    {
-                    kind: "Update",
-                    root: GLOBAL,
-                    level: [{kind: "String", value: "l1"}, {kind: "String", value: "l2"}],
-                    operation: {
-                        kind: "Math",
-                        left: {kind: "Saved", index: 1},
-                        right: {kind: "Int", value: 1},
-                        sign: "+"
-                    }
-                }]
-            },
-            async server => {
-                expect(await server.set()).toBeNull()
-                expect(await server.setToSelfPlusOne()).toBeNull()
-                expect(await server.get()).toEqual({l2: 43})
-            }, ["storage"])
-        )
-
-        it("global state taint is applied on updates to variables", noInputHarness(
-            {
-                get, 
-                set,
-                setToSelfPlusOne: [
-                    {
-                        kind: "Save",
-                        value: {kind: "Int", value: 0}
-                    },
-                    {
-                        kind: "Update", 
-                        root: {kind: "Saved", index: 0},
-                        level: [],
-                        operation: {
-                            kind: "Selection", 
-                            root: GLOBAL,
-                            level: [{kind: "String", value: "l1"}, {kind: "String", value: "l2"}]
-                        },
-                    },
-                    {
-                    kind: "Update",
-                    root: GLOBAL,
-                    level: [{kind: "String", value: "l1"}, {kind: "String", value: "l2"}],
-                    operation: {
-                        kind: "Math",
-                        left: {kind: "Saved", index: 0},
-                        right: {kind: "Int", value: 1},
-                        sign: "+"
-                    }
-                }]
-            },
-            async server => {
-                expect(await server.set()).toBeNull()
-                expect(await server.setToSelfPlusOne()).toBeNull()
-                expect(await server.get()).toEqual({l2: 43})
-            }, ["storage"])
-        )
-
-        it("iterating over an array of globals while writing requires a lock", noInputHarness({
-            get,
-            set,
-            setLookupKeys: [
-                {
-                    kind: "Update",
-                    level: [{kind: "String", value: "arr"}],
-                    operation: {kind: "ArrayLiteral", values: [{kind: "String", value: "l1"}]},
-                    root: GLOBAL
-                }
-            ],
-            deleteLookupFields: [
-                {
-                    kind: "ArrayForEach",
-                    target: {
-                        kind: "Selection", 
-                        root: GLOBAL,
-                        level: [{kind: "String", value: "arr"}]
-                    },
-                    do: [
-                        {
-                            kind: "Update", 
-                            root: GLOBAL,
-                            level: [{kind: "String", value: "l1"}],
-                            operation: {kind: "DeleteField"}
-                        }
-                    ]
-                }
-            ]
-        },
-        async server => {
-            expect(await server.set()).toBeNull()
-            expect(await server.setLookupKeys()).toBeNull()
-            expect(await server.deleteLookupFields()).toBeNull()
-            expect(await server.get()).toBeNull()
-        }, ["storage"])
-        )
-        
-        const create_user: FunctionData = {
-            "computation": [
-                {
-                    "conditionally": [
-                        {
-                            "cond": {
-                                "kind": "Comparison",
-                                "left": {
-                                    "kind": "Selection",
-                                    "level": [
-                                        {
-                                            "index": 0,
-                                            "kind": "Saved"
-                                        }
-                                    ],
-                                    "root": {
-                                        "kind": "GlobalObject",
-                                        "name": "users"
-                                    }
-                                },
-                                "right": {
-                                    "kind": "None"
-                                },
-                                "sign": "!="
-                            },
-                            "do": [
-                                {
-                                    "kind": "Return",
-                                    "value": {
-                                        "kind": "String",
-                                        "value": "user already exists"
-                                    }
-                                }
-                            ],
-                            "kind": "Conditional"
-                        }
-                    ],
-                    "kind": "If"
-                },
-                {
-                    "kind": "Update",
-                    "level": [
-                        {
-                            "index": 0,
-                            "kind": "Saved"
-                        }
-                    ],
-                    "operation": {
-                        "fields": [
-                            {
-                                "key": {
-                                    "kind": "String",
-                                    "value": "chats"
-                                },
-                                "kind": "Field",
-                                "value": {
-                                    "kind": "ArrayLiteral",
-                                    "values": []
-                                }
-                            }
-                        ],
-                        "kind": "Object"
-                    },
-                    "root": {
-                        "kind": "GlobalObject",
-                        "name": "users"
-                    }
-                },
-                {
-                    "kind": "Return",
-                    "value": {
-                        "kind": "String",
-                        "value": "user created"
-                    }
-                }
-            ],
-            "input": [
-                {
-                    "data": null,
-                    "kind": "string"
-                }
-            ]
-        }
-
-        const get_user: FunctionData = {
-            "computation": [
-                {
-                    "kind": "Return",
-                    "value": {
-                        "fields": [
-                            {
-                                "key": {
-                                    "kind": "String",
-                                    "value": "exists"
-                                },
-                                "kind": "Field",
-                                "value": {
-                                    "kind": "Comparison",
-                                    "left": {
-                                        "kind": "Selection",
-                                        "level": [
-                                            {
-                                                "index": 0,
-                                                "kind": "Saved"
-                                            }
-                                        ],
-                                        "root": {
-                                            "kind": "GlobalObject",
-                                            "name": "users"
-                                        }
-                                    },
-                                    "right": {
-                                        "kind": "None"
-                                    },
-                                    "sign": "!="
-                                }
-                            },
-                            {
-                                "key": {
-                                    "kind": "String",
-                                    "value": "val"
-                                },
-                                "kind": "Field",
-                                "value": {
-                                    "kind": "Selection",
-                                    "level": [
-                                        {
-                                            "index": 0,
-                                            "kind": "Saved"
-                                        }
-                                    ],
-                                    "root": {
-                                        "kind": "GlobalObject",
-                                        "name": "users"
-                                    }
-                                }
-                            }
-                        ],
-                        "kind": "Object"
-                    }
-                }
-            ],
-            "input": [
-                {
-                    "data": null,
-                    "kind": "string"
-                }
-            ]
-        }
-        
-
-        it("should allow checks of existence with comparisons to none", withInputHarness(["storage"],
-        {
-            get_user,
-            create_user            
-        },
-        
-        async server => {
-            expect(await server.get_user("me")).toEqual({exists: false, val: null})
-            expect(await server.create_user("me")).toEqual("user created")
-            expect(await server.create_user("me")).toEqual("user already exists")
-            expect(await server.get_user("me")).toEqual({exists: true, val: {chats: []}})
-        }))
-
-        it("pushing then returning", withInputHarness(["storage"], 
-        {
-            push: {
-                input: [{kind: "string", data: null}, {kind: "Any", data: null}],
-
-                computation: [
-                    {
-                        kind: "Update", 
-                        root: GLOBAL, 
-                        level: [{kind:"Saved",index: 0}], 
-                        operation: {kind: "Object", fields: [{kind: "Field", key: {kind: "String", value: "k1"}, value: {kind: "ArrayLiteral", values: []}}]}
-                    },
-                    {
-                        kind: "ArrayForEach",
-                        target: {kind: "Saved", index: 1},
-                        do: [
-                            {
-                                kind: "Update", 
-                                root: GLOBAL, 
-                                level: [{kind:"Saved",index: 2}, {kind: "String", value: "k1"}], 
-                                operation: {kind: "Push", values: [
-                                    {kind: "Saved", index: 0}
-                                ]}
-                            },        
-                        ]
-                    },
-                    {
-                        kind: "Return", value: {kind: "String", value: "done"}
-                    }
-                ]
-            }
-
-        },
-        async server => {
-            expect(await server.push("key1", ["key1"])).toEqual("done")
-        }))
-
-        it("global state taint is applied on partial updates to variables", noInputHarness(
-            {
-                get, 
-                set,
-                updateWithPartialState: [
-                    {
-                        kind: "Save",
-                        value: {kind: "Object", fields: [{
-                            kind: "Field",
-                            value: {
-                                kind: "Selection", 
-                                root: GLOBAL,
-                                level: [{kind: "String", value: "l1"}]
-                            },
-                            key: {kind: "String", value: "global_origin"}
-                        }]}
-                    },
-                    {
-                        kind: "Update", 
-                        root: {kind: "Saved", index: 0},
-                        level: [{kind: "String",value: "clean"}],
-                        operation: {kind: "Int", value: 12},
-                    },
-                    {
-                        kind: "Update",
-                        root: GLOBAL,
-                        level: [{kind: "String", value: "l1"}],
-                        operation: {kind: "Saved", index: 0}
-                    }
-                ]
-            },
-            async server => {
-                expect(await server.set()).toBeNull()
-                expect(await server.updateWithPartialState()).toBeNull()
-                expect(await server.get()).toEqual({clean: 12, global_origin: {l2: 42}})
-            }, ["storage"])
-        )
-
-        it("global state taint is erased on overwrites", noInputHarness(
-            {
-                get, 
-                set,
-                updateWithOverwrittenState: [
-                    {
-                        kind: "Save",
-                        value: {kind: "Object", fields: [{
-                            kind: "Field",
-                            value: {
-                                kind: "Selection", 
-                                root: GLOBAL,
-                                level: [{kind: "String", value: "l1"}]
-                            },
-                            key: {kind: "String", value: "global_origin"}
-                        }]}
-                    },
-                    {
-                        kind: "Update", 
-                        root: {kind: "Saved", index: 0},
-                        level: [],
-                        operation: {kind: "Int", value: 0},
-                    },
-                    {
-                        kind: "Update",
-                        root: GLOBAL,
-                        level: [{kind: "String", value: "l1"}],
-                        operation: {kind: "Saved", index: 0}
-                }]
-            },
-            async server => {
-                expect(await server.set()).toBeNull()
-                expect(await server.updateWithOverwrittenState()).toBeNull()
-                expect(await server.get()).toEqual(0)
-            }, ["storage"])
-        )
-    })
-
     describe("strings", () => {
         it("allows concatenation with some types", withInputHarness([],
         {
             add: {
-                input: [{kind: "Any", data: null}, {kind: "Any", data: null}],
+                input: PARAMS({kind: "Any", data: null}, {kind: "Any", data: null}),
                 computation: [
                     {
                         kind: "Return",
                         value: {
                             kind: 'Math',
-                            left: {kind: "Saved", index: 0},
-                            right: {kind: 'Saved', index: 1},
+                            left: ARG(0),
+                            right: ARG(1),
                             sign: "+"
                         }
                     }
@@ -1777,10 +1213,10 @@ describe("global objects", () => {
                             kind: "Update",
                             root: GLOBAL,
                             level: [{kind: "String", value: "data"}],
-                            operation: {kind: "Saved", index: 0}
+                            operation: ARG(0)
                         },
                     ],
-                    input: [{kind: "int", data: null}]
+                    input: PARAMS({kind: "int", data: null})
                 },
                 incr: {
                     computation: [

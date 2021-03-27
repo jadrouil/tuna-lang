@@ -64,11 +64,11 @@ export type BaseNodeDefs = {
         state?: PickNode<"Object">
     }>
     Noop: Node<{}, "root">
-    Saved: Node<{index: number}> 
+    Saved: Node<{arg: string}> 
     String: Node<{value: string}>,
     Selection: Node<{root: ValueNode, level: (ValueNode)[]}>
     FieldExists: Node<{value: ValueNode, field: Key}>
-    Save: Node<{value: ValueNode}, "root">
+    Save: Node<{value: ValueNode, name: string}, "root">
     Update: Node<
     {
         root: PickNode<"Saved" | "GlobalObject">
@@ -76,7 +76,7 @@ export type BaseNodeDefs = {
         operation: PickNode<"DeleteField" | "Push"> | ValueNode,
     }, "root">
     GlobalObject: Node<{name: string}>
-    ArrayForEach: Node<{target: ValueNode, do: RootNode[]}, "root">
+    ArrayForEach: Node<{target: ValueNode, do: RootNode[], arg: string}, "root">
     Keys: Node<{from: ValueNode}>
     ArrayLiteral: Node<{values: ValueNode[]}>
     Push: Node<{values: ValueNode[]}>

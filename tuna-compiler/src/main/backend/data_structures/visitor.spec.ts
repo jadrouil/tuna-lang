@@ -39,7 +39,7 @@ describe("visitor traversal order", () => {
         obj: "global_object",
         value: {
           kind: "Selection",
-          root: { kind: "Saved", index: 0 },
+          root: { kind: "Saved", arg: "a"},
           level: [{ kind: "String", value: "get_key" }],
         },
         key: [{ kind: "String", value: "target_key" }],

@@ -3,12 +3,9 @@ import {
     Transform, 
     Manifest, 
     OPSIFY_MANIFEST, 
-    MONGO_GLOBAL_ABSTRACTION_REMOVAL, 
-    MONGO_UNPROVIDED_LOCK_CALCULATOR, 
     StrongServerEnv,
     ServerEnv,
 } from './backend/index'
-import { LockRequirements } from './backend/abstract/mongo_logic/lock_calculation'
 import * as ed from 'noble-ed25519'
 
 import {Parser} from './frontend/parser'
@@ -19,9 +16,6 @@ export const TUNA_TO_MANIFEST = new Transformer<string, Manifest & PrivateFuncs 
     return semantify(p, false)
 })
 
-export const TUNA_TO_LOCKS: Transform<string, Map<string, LockRequirements>> = TUNA_TO_MANIFEST.then(new Transformer(man => {
-    return MONGO_GLOBAL_ABSTRACTION_REMOVAL.run(man.funcs)
-})).then(MONGO_UNPROVIDED_LOCK_CALCULATOR)
 
 export const STRINGIFY_ENV: Transform<StrongServerEnv, Omit<ServerEnv, "MONGO_CONNECTION_URI">> = new Transformer(env => {
     

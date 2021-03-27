@@ -10,14 +10,14 @@ export type Manifest<F=FunctionDescription> = {
     globals: Map<string, GlobalObject>
     funcs: Map<string, F>
 }
-
+type Arg = {type: Schema, name: string}
 export type FunctionData<COMP=RootNode> = {
-    readonly input: Schema[]
+    readonly input: Arg[]
     readonly computation: COMP[]
 }
 
 export class FunctionDescription<COMP=RootNode> implements FunctionData<COMP>{
-    public readonly input: Schema[]
+    public readonly input: Arg[]
     public readonly computation: COMP[]
     
     constructor(state: FunctionData<COMP>) {
@@ -28,7 +28,7 @@ export class FunctionDescription<COMP=RootNode> implements FunctionData<COMP>{
     public apply<NEW>(f: (c: COMP) => NEW[]): FunctionDescription<NEW> {
         return new FunctionDescription({
             input: this.input,
-            computation: this.computation.flatMap(f)
+            computation: this.computation.flatMap(root => f(root))
         })
     }
 }
@@ -46,7 +46,7 @@ export function toOps(funcs: Map<string, FunctionDescription>, override:  Compil
         ]
         func.input.forEach((schema, index) => {
             ops.push(
-                ow.enforceSchemaInstanceOnHeap({heap_pos: index, schema}),
+                ow.enforceSchemaInstanceOnHeap({heap_pos: index, schema: schema.type}),
                 ow.conditonallySkipXops(1),
                 ow.raiseError("invalid input")
             )

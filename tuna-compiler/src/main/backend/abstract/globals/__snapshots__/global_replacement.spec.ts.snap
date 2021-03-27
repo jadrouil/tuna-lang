@@ -7,7 +7,7 @@ Map {
       Object {
         "key": Array [
           Object {
-            "index": 12,
+            "arg": "a",
             "kind": "Saved",
           },
         ],

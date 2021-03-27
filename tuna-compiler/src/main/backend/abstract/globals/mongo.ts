@@ -3,6 +3,7 @@ import { Op, ow } from '../../ops/index';
 import { AnyNode, make_replacer, Node, PickTargetNode, RequiredReplacer, TargetNodeSet, ValueNode, Key } from '../IR';
 import { base_compiler, Compiler, Transform, Transformer } from '../compilers';
 import { FunctionDescription } from '../function';
+import { IVariableResolver, VarResolver } from '../variable_resolution';
 
 type TargetKeys = PickTargetNode<MongoNodeSet, "Selection">["level"]
 type AnyValue = PickTargetNode<MongoNodeSet, Exclude<ValueNode["kind"], "GlobalObject">>
@@ -98,7 +99,7 @@ const MONGO_REPLACER: RequiredReplacer<MongoNodeSet> = {
     },
 
     ArrayForEach(n, r) {
-        return {kind: "ArrayForEach", do: n.do.map(r), target: r(n.target)}
+        return {kind: "ArrayForEach", do: n.do.map(r), target: r(n.target), arg: n.arg}
     },
     Conditional(n, r) {
         return {kind: "Conditional", cond: r(n.cond), do: n.do.map(r)}
@@ -149,6 +150,7 @@ const MONGO_REPLACER: RequiredReplacer<MongoNodeSet> = {
         
         return {
             kind: "Save",
+            name: n.name,
             value: r(n.value)
         }
     },
@@ -253,7 +255,7 @@ export const MONGO_GLOBAL_ABSTRACTION_REMOVAL: Transform<
 
 type MongoCompiler = Compiler<TargetNodeSet<MongoNodeSet>>
 
-function compile_function(n: TargetNodeSet<MongoNodeSet>): Op[] {
+function compile_function(n: TargetNodeSet<MongoNodeSet>, args: IVariableResolver): Op[] {
     switch (n.kind) {
         case "GetWholeObject": 
             return [
@@ -267,7 +269,7 @@ function compile_function(n: TargetNodeSet<MongoNodeSet>): Op[] {
             const manyKeyFail: Op[] = []
             if (n.key.length > 1) {
                 manyKeySuccess.push(
-                    ...n.key.slice(1).flatMap(compile_function),
+                    ...n.key.slice(1).flatMap(node => compile_function(node, args)),
                     ow.getField({field_depth: n.key.length - 1})
                 )
 
@@ -278,7 +280,7 @@ function compile_function(n: TargetNodeSet<MongoNodeSet>): Op[] {
                 ow.instantiate({_key: {}}),
                 // Search for key
                 ow.instantiate("_key"),
-                ...compile_function(n.key[0]),
+                ...compile_function(n.key[0], args),
                 ow.setField({field_depth: 1}),
                 ow.findOneInStore([n.obj, {}]),
                 ow.isLastNone,
@@ -298,13 +300,13 @@ function compile_function(n: TargetNodeSet<MongoNodeSet>): Op[] {
                     // Move the each doc into the query doc.
                     ow.instantiate("$push"),
                         ow.instantiate("_val"),
-                        ...n.key.slice(1).flatMap(compile_function),
+                        ...n.key.slice(1).flatMap(node => compile_function(node, args)),
                         ow.stringConcat({nStrings: n.key.length, joiner: "."}),
                             // Creates an {each: [value]} doc
                             ow.instantiate({}),
                             ow.instantiate("$each"),
                             ow.instantiate([]),
-                            ...n.values.flatMap(v => [...compile_function(v), ow.arrayPush]),
+                            ...n.values.flatMap(v => [...compile_function(v, args), ow.arrayPush]),
                             ow.setField({field_depth: 1}),
                     ow.setField({field_depth: 2})
                 )
@@ -316,7 +318,7 @@ function compile_function(n: TargetNodeSet<MongoNodeSet>): Op[] {
                     ow.instantiate("_val"),
                     ow.instantiate("$each"),
                     ow.instantiate([]),
-                    ...n.values.flatMap(v => [...compile_function(v), ow.arrayPush]),
+                    ...n.values.flatMap(v => [...compile_function(v, args), ow.arrayPush]),
                     ow.setField({field_depth: 3}),
                 )
             }
@@ -325,7 +327,7 @@ function compile_function(n: TargetNodeSet<MongoNodeSet>): Op[] {
                 // Create the query doc
                 ow.instantiate({_key: {}}),
                 ow.instantiate("_key"),
-                ...compile_function(n.key[0]),
+                ...compile_function(n.key[0], args),
                 ow.setField({field_depth: 1}),
                 // update or insert key
                 ow.updateOne({store: n.obj, upsert: n.key.length === 1}),
@@ -345,9 +347,9 @@ function compile_function(n: TargetNodeSet<MongoNodeSet>): Op[] {
                     ow.instantiate({"$set": {}}),
                     ow.instantiate("$set"),
                     ow.instantiate("_val"),
-                    ...n.key.slice(1).flatMap(compile_function),
+                    ...n.key.slice(1).flatMap(node => compile_function(node, args)),
                     ow.stringConcat({nStrings: n.key.length, joiner: "."}),
-                    ...compile_function(n.value),
+                    ...compile_function(n.value, args),
                     ow.setField({field_depth: 2})
                 )
             } else {
@@ -355,7 +357,7 @@ function compile_function(n: TargetNodeSet<MongoNodeSet>): Op[] {
                     ow.instantiate({"$set": {_val: {}}}),
                     ow.instantiate("$set"),
                     ow.instantiate("_val"),
-                    ...compile_function(n.value),
+                    ...compile_function(n.value, args),
                     ow.setField({field_depth: 2}),
                 )
             }
@@ -364,7 +366,7 @@ function compile_function(n: TargetNodeSet<MongoNodeSet>): Op[] {
                 // Create the query doc
                 ow.instantiate({_key: {}}),
                 ow.instantiate("_key"),
-                ...compile_function(n.key[0]),
+                ...compile_function(n.key[0], args),
                 ow.setField({field_depth: 1}),
                 // update or insert key
                 ow.updateOne({store: n.obj, upsert: n.key.length === 1}),
@@ -381,7 +383,7 @@ function compile_function(n: TargetNodeSet<MongoNodeSet>): Op[] {
                 ow.instantiate({_key: {}}),
                 // Search for key
                 ow.instantiate("_key"),
-                ...compile_function(n.key),
+                ...compile_function(n.key, args),
                 ow.setField({field_depth: 1}),
                 // We don't need the value, so just suppress it.
                 ow.findOneInStore([n.obj, {_val: false}]),
@@ -401,13 +403,13 @@ function compile_function(n: TargetNodeSet<MongoNodeSet>): Op[] {
                     ow.instantiate({"$unset": {}}),
                     ow.instantiate("$unset"),
                     ow.instantiate("_val"),
-                    ...n.key.slice(1).flatMap(compile_function),
+                    ...n.key.slice(1).flatMap(node => compile_function(node, args)),
                     ow.stringConcat({nStrings: n.key.length, joiner: "."}),
                     ow.instantiate(""),
                     ow.setField({field_depth: 2}),
                     ow.instantiate({_key: {}}),
                     ow.instantiate("_key"),
-                    ...compile_function(n.key[0]),
+                    ...compile_function(n.key[0], args),
                     ow.setField({field_depth: 1}),
                     ow.updateOne({store: n.obj, upsert: false}),
                     ow.popStack
@@ -417,7 +419,7 @@ function compile_function(n: TargetNodeSet<MongoNodeSet>): Op[] {
                 return  [
                     ow.instantiate({_key: {}}),
                     ow.instantiate("_key"),
-                    ...compile_function(n.key[0]),
+                    ...compile_function(n.key[0], args),
                     ow.setField({field_depth: 1}),
                     ow.deleteOneInStore(n.obj),
                     ow.popStack
@@ -453,8 +455,12 @@ function compile_function(n: TargetNodeSet<MongoNodeSet>): Op[] {
 
             
 
-        default: return base_compiler(n, compile_function)
+        default: return base_compiler(n, compile_function, args)
     }
 }
 
-export const MONGO_COMPILER: MongoCompiler = Transformer.Map(fun => fun.apply(compile_function))
+export const MONGO_COMPILER: MongoCompiler = Transformer.Map(fun => {
+    const varResolver = new VarResolver()
+    fun.input.forEach(i => varResolver.add(i.name))
+    return new FunctionDescription({input: fun.input, computation: fun.computation.flatMap(n => compile_function(n, varResolver))})
+})
