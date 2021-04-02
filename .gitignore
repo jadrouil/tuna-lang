@@ -10,4 +10,4 @@ bin/
 node_modules/
 dist/
 tuna-compiler/src/main/frontend/parser.ts
-rust/**/target/
+target/
