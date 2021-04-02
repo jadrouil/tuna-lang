@@ -36,12 +36,6 @@ const MONGO_REPLACER: RequiredReplacer<MongoNodeSet> = {
     Not(n, r) {
         return {kind: 'Not', value: r(n.value)}
     },
-    Lock(n, r) {        
-        return {kind: "Lock", name: r(n.name)}
-    },
-    Release(n, r) {
-        return {kind: "Release", name: r(n.name)}
-    },
     RoleInstance(n, r) {
         return {
             kind: "RoleInstance",

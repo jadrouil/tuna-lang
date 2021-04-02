@@ -147,38 +147,5 @@ export namespace Test {
         public kill() {
           child_process.execSync(`docker kill mongo${this.port}`);
         }
-      }
-      
-      
-
-      export class EtcD extends UniqueInstance {
-
-        public static async start(): Promise<Test.EtcD> {
-          const process = new EtcD()
-          const backoff: etcd.IOptions["faultHandling"]["watchBackoff"] = {
-            duration: () => 3000,
-            next: () => backoff
-          }
-
-          const client = new etcd.Etcd3({hosts: `localhost:${process.port}`, faultHandling: {
-              watchBackoff: backoff
-          }})
-          await client.put("a").value("b").exec()
-          await client.delete().key("a").exec()
-          return process
-        }
-        private constructor() {
-          super()
-          const second_port = this.get_next_port()
-          child_process.execSync(
-            `docker run -it --rm -d --name etcd${this.port} \
-            --env ALLOW_NONE_AUTHENTICATION=yes -p ${this.port}:2379 -p ${second_port}:2380 \
-            bitnami/etcd`
-          );
-        }
-
-        public kill() {
-          child_process.execSync(`docker kill etcd${this.port}`)
-        }
-      }
+      }      
 }

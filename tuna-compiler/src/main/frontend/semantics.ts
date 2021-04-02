@@ -122,8 +122,6 @@ function to_value_node(n: AnyNode): ValueNode {
         "Noop", 
         "Push",
         "Conditional",
-        "Lock",
-        "Release"
         )
 }
 
@@ -169,7 +167,7 @@ function literal_to_node(lit: literal, scope: ScopeMap): ValueNode {
 
 type IsMutation = "Push" | "DeleteField"
 type LockMethod = "Lock" | "Release"
-type BakedInMethods = PickNode<"Push" | "Keys" | "DeleteField" |"Lock" | "Release">
+type BakedInMethods = PickNode<"Push" | "Keys" | "DeleteField">
 type MethodCompiler<P extends BakedInMethods["kind"]> = 
     (current: ValueNode, args: ValueNode[], scope: ScopeMap) => 
         P extends IsMutation ? PickNode<"Update"> : 
@@ -241,24 +239,6 @@ const baked_in_methods: MethodLookup = {
             level: target.level,
             operation: {kind: "DeleteField"}
         }
-    },
-    Lock: (current, args, scope) => {
-        if (args.length > 0) {
-            throw Error(`Lock takes no arguments`)
-        }
-        return {
-            kind: "Lock",
-            name: current
-        }
-    },
-    Release: (current, args, scope) => {
-        if (args.length > 0) {
-            throw Error(`Release takes no args`)
-        }
-        return {
-            kind: "Release",
-            name: current
-        }
     }
 }
 
@@ -286,8 +266,6 @@ function method_to_node(target: ValueNode, methods: expression["methods"], scope
                 to_value_node(complete_expression_to_node(m.method.value, scope))
                 
                 switch (current.kind) {
-                    case "Release":
-                    case "Lock":
                     case "Update":
                         throw Error(`Cannot index into ${current.kind} results`)
 
@@ -308,8 +286,6 @@ function method_to_node(target: ValueNode, methods: expression["methods"], scope
                 if (capitalized in baked_in_methods) {
                     switch (current.kind) {
                         case "Update":
-                        case "Lock":
-                        case "Release":
                             throw Error(`Mutations do not return results`)
 
                     }
@@ -413,8 +389,6 @@ function complete_expression_to_node(root_exp: expression, scope: ScopeMap): Any
     const root = expression_to_node(root_exp, scope)
     switch (root.kind) {
         case "Update":
-        case "Lock":
-        case "Release":
             if (infixes.length > 0) {
                 throw Error(`${root.kind} does not return any results`)
             }
@@ -547,8 +521,6 @@ function to_computation(ex: executable, scope: ScopeMap): FunctionData["computat
                     "If", 
                     "Save", 
                     "Update",
-                    "Lock",
-                    "Release"
                 )
                 
                 break

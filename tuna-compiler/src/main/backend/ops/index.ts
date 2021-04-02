@@ -59,7 +59,6 @@ export const ow: OpWriter = {
     copyFieldFromHeap: creator("copyFieldFromHeap"),
     copyFromHeap: creator('copyFromHeap'),
     createUpdateDoc: creator("createUpdateDoc"),
-    release: {kind: "release", data: null},
     repackageCollection: stat("repackageCollection"),
     replaceOne: creator("replaceOne"),
     returnStackTop: stat("returnStackTop"),
@@ -90,7 +89,6 @@ export const ow: OpWriter = {
     updateOne: creator("updateOne"),
     less: stat("less"),
     lesseq: stat("lesseq"),
-    lock: stat("lock"),
     boolAnd: stat("boolAnd"),
     boolOr: stat("boolOr")
 

@@ -326,16 +326,6 @@ export function base_compiler(n: BaseNodesFromTargetSet<{}>, full_compiler: (a: 
                 )
             })
             return arr
-        case "Lock":
-            return [
-                ...full_compiler(n.name, context),
-                ow.lock
-            ]
-        case "Release":
-            return [
-                ...full_compiler(n.name, context),
-                ow.release
-            ]
 
         case "Keys":
             return [

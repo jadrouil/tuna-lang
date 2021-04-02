@@ -19,7 +19,6 @@ use mongodb::{Database};
 use std::convert::TryFrom;
 use std::convert::TryInto;
 use ts_rs::{export, TS};
-use etcd_rs;
 use crypto::ed25519;
 use std::hash::{Hash, Hasher};
 use std::collections::hash_map::DefaultHasher;
@@ -29,14 +28,20 @@ use crate::schemas::{Schema};
 use crate::ops::{Op};
 use crate::interpreter::{Globals, conduit_byte_code_interpreter};
 mod storage;
-mod locks;
 mod data;
 mod schemas;
 mod ops;
 mod interpreter;
 
 struct AppData {
-    noop: Vec<Op>,procs: HashMap<String, Vec<Op>>,privateFns: HashSet<String>,schemas: HashMap<String, Schema>,stores: HashMap<String, Schema>,lm_client: Option<etcd_rs::Client>,private_key: [u8; 64],public_key: [u8; 32],db: Option<mongodb::Database>
+    noop: Vec<Op>,
+    procs: HashMap<String, Vec<Op>>,
+    privateFns: HashSet<String>,
+    schemas: HashMap<String, Schema>,
+    stores: HashMap<String, Schema>,
+    private_key: [u8; 64],
+    public_key: [u8; 32],
+    db: Option<mongodb::Database>
 }
 
 #[derive(Deserialize)]
@@ -82,7 +87,6 @@ async fn process_req(req: KernelRequest, data: web::Data<AppData>) -> impl Respo
         db: data.db.as_ref(),
         stores: &data.stores,
         fns: &data.procs,
-        lm: data.lm_client.as_ref(),
         private_key: &data.private_key,
         public_key: &data.public_key
     };
@@ -146,31 +150,6 @@ return Ok(AppData {
     stores: match env::var("STORES") {
         Ok(r) => serde_json::from_str(&r).unwrap(),
         Err(e) => panic!("Did not receive a definition for any stores")
-    },
-    lm_client: match env::var("ETCD_URL") {
-        Ok(r) => {
-            println!("Attempting to connect to etcd: {}", r);
-            match etcd_rs::Client::connect(etcd_rs::ClientConfig {
-                endpoints: vec![r],
-                auth: None,
-                tls: None,
-            }).await {
-                Ok(c) => {
-                    let mut range_req = etcd_rs::RangeRequest::new(etcd_rs::KeyRange::all());
-                    range_req.set_limit(1);
-                    match c.kv().range(range_req).await {
-                        Ok(e) => {},
-                        Err(e) => panic!("Failure connecting to etcd: {}",e)
-                    };
-                    Some(c)
-                },
-                Err(e) => {
-                    eprintln!("Failure connecting to etcd: {}",e);
-                    None
-                }
-            }
-        },
-        Err(e) => None
     },
     private_key: match env::var("PRIVATE_KEY") {
         Ok(some_str) => {

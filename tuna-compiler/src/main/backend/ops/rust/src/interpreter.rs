@@ -4,7 +4,6 @@ use futures::future::{BoxFuture, FutureExt};
 use crate::data::{InterpreterType, Obj};
 use crate::ops::{Op};
 use crate::schemas::Schema;
-use crate::locks;
 use actix_web::{Responder, HttpResponse};
 
 
@@ -16,7 +15,6 @@ pub struct Execution<'a> {
 pub struct Context<'a> {
     pub heap: Vec<InterpreterType>,
     pub stack: Vec<InterpreterType>,
-    pub locks: HashMap<String, locks::Mutex>,
     pub exec: Execution<'a>,
 }
 
@@ -46,16 +44,6 @@ impl <'a> Context<'a>  {
         } else {
             self.exec.next_op_index -= offset;
         }
-    }
-    async fn release_all_locks(&self, globals: &Globals<'a>) {
-        for lock in self.locks.values() {
-            match lock.release(globals.lm.unwrap()).await {
-                Ok(_) => {},
-                Err(e) => {
-                    eprintln!("Failure cleaning up locks: {}", e);
-                }
-            };
-        }
     }    
 
     pub fn new(ops: &'a Vec<Op>, heap: Vec<InterpreterType>) -> Context<'a> {
@@ -66,7 +54,6 @@ impl <'a> Context<'a>  {
                 next_op_index: 0
             },
             heap: heap,
-            locks: HashMap::new()
         }
     }
 }
@@ -76,7 +63,6 @@ pub struct Globals<'a> {
     pub db: Option<&'a mongodb::Database>, 
     pub stores: &'a HashMap<String, Schema>,
     pub fns: &'a HashMap<String, Vec<Op>>,
-    pub lm: Option<&'a etcd_rs::Client>,
     pub private_key: &'a[u8; 64],
     pub public_key: &'a [u8; 32]
 }
@@ -98,14 +84,12 @@ pub fn conduit_byte_code_interpreter_internal<'a>(
             let state = match res {
                 Ok(body) => match body {
                     ContextState::Done(data) => {
-                        current.release_all_locks(&globals).await;
                         return Ok(data);
                     },
                     _ => {} // The ops are responsible for getting the next instruction.
                 },            
                 Err(msg) => {
                     // We know there are no error handlers at the moment.
-                    current.release_all_locks(&globals).await;
                     return Err(msg);
                 },
             };

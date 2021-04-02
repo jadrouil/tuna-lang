@@ -99,8 +99,6 @@ export type Op = {kind: "negatePrev", data: null} |
     name: string,
     args: number,
 }} |
-{kind: "lock", data: null} |
-{kind: "release", data: null} |
 {kind: "signRole", data: null} |
 {kind: "getType", data: null};export type Schema = {kind: "Object", data: Record<string, Schema>} |
 {kind: "Role", data: [string, Schema[]]} |

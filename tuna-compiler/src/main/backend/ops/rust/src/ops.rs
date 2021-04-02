@@ -12,7 +12,6 @@ use crate::data::{InterpreterType, Obj};
 use crate::schemas::{Schema};
 use crate::interpreter::{Context, Globals, ContextState, conduit_byte_code_interpreter_internal};
 use crate::storage;
-use crate::locks;
 
 #[derive(Deserialize, Clone, TS)]
 #[serde(tag = "kind", content= "data")]
@@ -80,8 +79,6 @@ pub enum Op {
     nMult,
     getKeys,
     invoke{name: String, args: u64},
-    lock,
-    release,
     signRole,
     getType
 }    
@@ -797,26 +794,6 @@ impl <'a> Context<'a>  {
                 ).await?;
                 self.stack.push(res);
                 self.advance()        
-            },
-            Op::lock => {                
-                let mutex = locks::Mutex {
-                    name: self.pop_stack()?.to_str()?
-                };
-                let lm = globals.lm.safe_unwrap()?;
-                match mutex.acquire(lm).await {
-                    Ok(_) => self.locks.insert(mutex.name.clone(), mutex),
-                    Err(e) => return Err(format!("Lock failure: {}", e))
-                };
-                self.advance()        
-            },
-            Op::release => {                
-                let name = self.pop_stack()?.to_str()?;
-                let mutex = self.locks.remove(&name).safe_unwrap()?;
-                let lm = globals.lm.safe_unwrap()?;
-                match mutex.release(lm).await {
-                    Ok(_) => self.advance(),
-                    Err(e) => Err(format!("Failure releasing lock: {}", e))
-                }
             },
             Op::signRole => {                
                 let mut obj = match self.pop_stack()? {
