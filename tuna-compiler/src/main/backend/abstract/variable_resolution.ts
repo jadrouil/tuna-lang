@@ -1,5 +1,7 @@
+import { PickNode } from "./IR"
+
 export interface IVariableResolver {
-    get(name: string): number
+    get(name: PickNode<"Saved" | "GlobalObject">): number
     push(): void
     pop(): number
     add(name: string): number
@@ -9,11 +11,16 @@ export class VarResolver implements IVariableResolver {
     private readonly varmap: Record<string, number> = {}
     private readonly scopes: Set<string>[] = [new Set()]
     
-    get(name: string): number {
-        if (name in this.varmap) {
-            return this.varmap[name]
-        }
-        throw Error(`Cannot find variable of name: ${name}`)
+    get(node: PickNode<"Saved" | "GlobalObject">): number {
+        switch (node.kind) {
+            case "Saved":
+                if (node.arg in this.varmap) {
+                    return this.varmap[node.arg]
+                }
+                throw Error(`Cannot find variable of name: ${node.arg}`)
+            case "GlobalObject":
+                return -1
+        }            
     }
 
     push() {

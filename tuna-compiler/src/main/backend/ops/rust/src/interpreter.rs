@@ -60,7 +60,6 @@ impl <'a> Context<'a>  {
 
 pub struct Globals<'a> {
     pub schemas: &'a HashMap<String, Schema>, 
-    pub db: Option<&'a mongodb::Database>, 
     pub stores: &'a HashMap<String, Schema>,
     pub fns: &'a HashMap<String, Vec<Op>>,
     pub private_key: &'a[u8; 64],

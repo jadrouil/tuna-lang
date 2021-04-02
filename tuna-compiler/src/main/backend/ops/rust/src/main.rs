@@ -15,7 +15,6 @@ use std::future::Future;
 use awc;
 use std::borrow::Borrow;
 use bytes::Bytes;
-use mongodb::{Database};
 use std::convert::TryFrom;
 use std::convert::TryInto;
 use ts_rs::{export, TS};
@@ -27,7 +26,6 @@ use crate::data::{InterpreterType, Obj};
 use crate::schemas::{Schema};
 use crate::ops::{Op};
 use crate::interpreter::{Globals, conduit_byte_code_interpreter};
-mod storage;
 mod data;
 mod schemas;
 mod ops;
@@ -41,7 +39,6 @@ struct AppData {
     stores: HashMap<String, Schema>,
     private_key: [u8; 64],
     public_key: [u8; 32],
-    db: Option<mongodb::Database>
 }
 
 #[derive(Deserialize)]
@@ -84,7 +81,6 @@ async fn main() -> std::io::Result<()> {
 async fn process_req(req: KernelRequest, data: web::Data<AppData>) -> impl Responder {
     let g = Globals {
         schemas: &data.schemas,
-        db: data.db.as_ref(),
         stores: &data.stores,
         fns: &data.procs,
         private_key: &data.private_key,
@@ -184,31 +180,6 @@ return Ok(AppData {
             conv
         },
         Err(e) => panic!("Public key could not be read")
-    },
-    db: match env::var("MONGO_CONNECTION_URI") {
-        Ok(uri) => {
-            let mut options = mongodb::options::ClientOptions::parse(&uri).await.unwrap();
-            options.write_concern = Some(mongodb::options::WriteConcern::builder().w(mongodb::options::Acknowledgment::Majority).build());
-            options.read_concern = Some(mongodb::options::ReadConcern::majority());
-            let client = match mongodb::Client::with_options(options) {
-                Ok(r) => r,
-                Err(e) => panic!("Failure connecting to mongo: {}", e)
-            };
-            let deploymentname = env::var("DEPLOYMENT_NAME").unwrap();
-
-            // List the names of the databases in that deployment.
-            let cols = match client.database(&deploymentname).list_collection_names(None).await {
-                Ok(r) => r,
-                Err(e) => panic!("Failure connecting to mongo: {}", e)
-            };
-            for col in  cols{
-                println!("{}", col);
-            }
-            Some(client.database(&deploymentname))
-        },
-        Err(e) => {
-            None
-        }
     }
     });
 }

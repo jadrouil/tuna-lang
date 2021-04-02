@@ -1,23 +1,22 @@
 import {
-    Transformer, 
-    Transform, 
     Manifest, 
-    OPSIFY_MANIFEST, 
     StrongServerEnv,
     ServerEnv,
+    functionsToOps,
 } from './backend/index'
 import * as ed from 'noble-ed25519'
 
 import {Parser} from './frontend/parser'
 import {semantify, PrivateFuncs, Schemas } from './frontend/semantics'
 
-export const TUNA_TO_MANIFEST = new Transformer<string, Manifest & PrivateFuncs & Schemas>(str => {
-    const p = new Parser(str).parse()
+export function TUNA_TO_MANIFEST(s: string): Manifest & PrivateFuncs & Schemas {
+    const p = new Parser(s).parse()
     return semantify(p, false)
-})
+}
+type Keys = "PRIVATE_KEY" | "PUBLIC_KEY"
+type Keyless = Omit<StrongServerEnv, Keys>
 
-
-export const STRINGIFY_ENV: Transform<StrongServerEnv, Omit<ServerEnv, "MONGO_CONNECTION_URI">> = new Transformer(env => {
+export function STRINGIFY_ENV(env: Keyless): Omit<ServerEnv, Keys> {
     
     const string_env: Partial<ServerEnv> = {};
     for (const key in env) {
@@ -25,37 +24,22 @@ export const STRINGIFY_ENV: Transform<StrongServerEnv, Omit<ServerEnv, "MONGO_CO
         string_env[key] = typeof env[key] === "string" ? env[key] : JSON.stringify(env[key]);
     }
     return string_env as ServerEnv
-})
+}
 
-export const TUNA_TO_ENV: Transform<string, Omit<StrongServerEnv, "PRIVATE_KEY" | "PUBLIC_KEY">> = TUNA_TO_MANIFEST
-.then(new Transformer(man => {
-    const manifest = OPSIFY_MANIFEST.run(man)
-    return {
-        ...manifest,
-        privateFuncs: man.privateFuncs,
-        schemas: man.schemas
-    }
-}))
-.then(new Transformer(man => {
+export function TUNA_TO_ENV(s: string): Keyless {
+    const man = TUNA_TO_MANIFEST(s)
+    const PROCEDURES = functionsToOps(man.funcs)
     const STORES: StrongServerEnv["STORES"] = {}
     man.globals.forEach((v, k) => STORES[k] = {kind: "Any", data: null})
-
-    const PROCEDURES: StrongServerEnv["PROCEDURES"] = {}
-    const PRIVATE_PROCEDURES: StrongServerEnv["PRIVATE_PROCEDURES"] = [...man.privateFuncs.values()]
-    man.funcs.forEach((v, k) => {
-        //@ts-ignore
-        PROCEDURES[k] = v
-        
-    })
-
-    
     return {
         DEPLOYMENT_NAME: "local-run",
         STORES,
         PROCEDURES,
-        PRIVATE_PROCEDURES,
+        PRIVATE_PROCEDURES: [...man.privateFuncs.values()],
         SCHEMAS: man.schemas
     }
-}))
+    
+}
 
-export const TUNA_LOCAL_COMPILER = TUNA_TO_ENV.then(STRINGIFY_ENV)
+
+export const TUNA_LOCAL_COMPILER = (s: string) => STRINGIFY_ENV(TUNA_TO_ENV(s))

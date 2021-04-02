@@ -1,19 +1,16 @@
-import { OPSIFY_MANIFEST, Transformer } from '../main/backend/index';
-import { TUNA_TO_MANIFEST } from '../main/assembled';
+
+import { functionsToOps } from '../main/backend';
+import { TUNA_TO_MANIFEST, } from '../main/assembled';
 
 function tunaTest(maybeSucceed: "succeed" | "fail", code: string): jest.ProvidesCallback {
     return (cb) => {
         if (maybeSucceed === "succeed") {
-            const ops = TUNA_TO_MANIFEST.then(new Transformer(i => {
-                expect(i).toMatchSnapshot("intermediate representation")
-                
-                return i
-            })).then(OPSIFY_MANIFEST).tap(data => {
-                expect(data).toMatchSnapshot("OPS")
-            }).run(code)
-
+            const man = TUNA_TO_MANIFEST(code) 
+            expect(man).toMatchSnapshot("intermediate representation")
+            const ops = functionsToOps(man.funcs)
+            expect(ops).toMatchSnapshot("OPS")
         } else {
-            expect(() => TUNA_TO_MANIFEST.run(code)).toThrowErrorMatchingSnapshot()
+            expect(() => TUNA_TO_MANIFEST(code)).toThrowErrorMatchingSnapshot()
         }
         cb()
     }

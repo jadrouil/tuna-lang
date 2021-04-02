@@ -46,16 +46,7 @@ export type Op = {kind: "negatePrev", data: null} |
     schema: string,
     heap_pos: number,
 }} |
-{kind: "insertFromHeap", data: {
-    heap_pos: number,
-    store: string,
-}} |
-{kind: "insertFromStack", data: string} |
-{kind: "getAllFromStore", data: string} |
 {kind: "moveStackTopToHeap", data: null} |
-{kind: "queryStore", data: [string, { [K in string]: InterpreterType}]} |
-{kind: "findOneInStore", data: [string, { [K in string]: InterpreterType}]} |
-{kind: "deleteOneInStore", data: string} |
 {kind: "popStack", data: null} |
 {kind: "instantiate", data: InterpreterType} |
 {kind: "popArray", data: null} |
@@ -69,13 +60,6 @@ export type Op = {kind: "negatePrev", data: null} |
 {kind: "assignPreviousToField", data: string} |
 {kind: "arrayLen", data: null} |
 {kind: "ndArrayLen", data: null} |
-{kind: "storeLen", data: string} |
-{kind: "createUpdateDoc", data: InterpreterType} |
-{kind: "updateOne", data: {
-    store: string,
-    upsert: boolean,
-}} |
-{kind: "replaceOne", data: [string, boolean]} |
 {kind: "setNestedField", data: string[]} |
 {kind: "copyFieldFromHeap", data: [number, string[]]} |
 {kind: "enforceSchemaInstanceOnHeap", data: {

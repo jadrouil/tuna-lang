@@ -7,7 +7,6 @@ export type StrongServerEnv = {
     ETCD_URL?: string,
     PRIVATE_KEY: Uint8Array,
     PUBLIC_KEY: Uint8Array,
-    MONGO_CONNECTION_URI?: string,
     DEPLOYMENT_NAME: string,
 }
 

@@ -11,7 +11,6 @@ use ts_rs::{TS, export};
 use crate::data::{InterpreterType, Obj};
 use crate::schemas::{Schema};
 use crate::interpreter::{Context, Globals, ContextState, conduit_byte_code_interpreter_internal};
-use crate::storage;
 
 #[derive(Deserialize, Clone, TS)]
 #[serde(tag = "kind", content= "data")]
@@ -40,13 +39,7 @@ pub enum Op {
     copyFromHeap(u64),
     fieldAccess(String),
     enforceSchemaOnHeap{schema: String, heap_pos: u64},
-    insertFromHeap{heap_pos: u64, store: String},
-    insertFromStack(String),
-    getAllFromStore(String),
     moveStackTopToHeap,
-    queryStore(String, Obj),
-    findOneInStore(String, Obj),
-    deleteOneInStore(String),
     popStack,
     instantiate(InterpreterType),
     popArray,
@@ -58,10 +51,6 @@ pub enum Op {
     assignPreviousToField(String),
     arrayLen,
     ndArrayLen,
-    storeLen(String),
-    createUpdateDoc(InterpreterType),
-    updateOne{store: String, upsert: bool},
-    replaceOne(String, bool),
     setNestedField(Vec<String>),
     copyFieldFromHeap(u64, Vec<String>),
     enforceSchemaInstanceOnHeap{schema: Schema, heap_pos: u64},
@@ -503,46 +492,10 @@ impl <'a> Context<'a>  {
                 self.stack.push(InterpreterType::bool(s.adheres(v, globals.schemas, globals.public_key)));
                 self.advance()
             },
-            Op::insertFromHeap{heap_pos, store} => {                
-                let v = self.heap.get(*heap_pos as usize).safe_unwrap()?;
-                let db = globals.db.safe_unwrap()?; 
-                storage::append(db, store, v).await?;
-                self.advance()        
-            },
-            Op::insertFromStack(op_param) => {
-                let insert_elt = self.pop_stack()?;
-                let db = globals.db.safe_unwrap()?;
-                storage::append(db, op_param, &insert_elt).await?;
-                self.advance()
-            },
-            Op::getAllFromStore(op_param) => {                
-                let db = globals.db.safe_unwrap()?;
-                let res = storage::query(db, op_param, &HashMap::new(), &HashMap::new()).await?;
-                self.stack.push(res);
-                self.advance()
-            },
             Op::moveStackTopToHeap => {                
                 let data = self.pop_stack()?;
                 self.heap.push(data);
                 self.advance()        
-            },
-            Op::queryStore(param0, param1) => {                
-                let db = globals.db.safe_unwrap()?;
-                let res = storage::query(db, &param0, &param1.0, &self.pop_stack()?.to_obj()?).await?;
-                self.stack.push(res);
-                self.advance()        
-            },
-            Op::findOneInStore(param0, param1) => {                
-                let db =globals.db.safe_unwrap()?;
-                let res = storage::find_one(db, &param0, &param1.0, &self.pop_stack()?.to_obj()?).await?;
-                self.stack.push(res);
-                self.advance()
-            },
-            Op::deleteOneInStore(op_param) => {
-                let db =globals.db.safe_unwrap()?;
-                let res = storage::delete_one(db, op_param, &self.pop_stack()?).await?;
-                self.stack.push(res);
-                self.advance()
             },
             Op::popStack => {
                 self.pop_stack()?;
@@ -619,33 +572,6 @@ impl <'a> Context<'a>  {
                 self.stack.push(InterpreterType::Array(arr));
                 self.stack.push(v);
                 self.advance()                
-            },
-            Op::storeLen(op_param) => {                
-                let filter = self.pop_stack()?.to_obj()?;
-                let db = globals.db.safe_unwrap()?;
-                let res = storage::measure(db, op_param, &filter).await?;
-                self.stack.push(res);
-                self.advance()        
-            },
-            Op::createUpdateDoc(op_param) => {                
-                self.stack.push(op_param.clone());
-                self.advance()        
-            },
-            Op::updateOne{store, upsert} => {
-                let query_doc = self.pop_stack()?;
-                let update_doc =  self.pop_stack()?;
-                let db = globals.db.safe_unwrap()?;
-                let res = storage::find_and_update_one(db, store, *upsert, &query_doc, &update_doc).await?;
-                self.stack.push(res);
-                self.advance()        
-            },
-            Op::replaceOne(param0, param1) => {                
-                let query_doc = self.pop_stack()?.to_obj()?;
-                let update_doc =  self.pop_stack()?.to_obj()?;
-                let db = globals.db.safe_unwrap()?;
-                let res = storage::replace_one(db, param0, &query_doc, &update_doc, *param1).await?;
-                self.stack.push(InterpreterType::bool(res));
-                self.advance()        
             },
             Op::setNestedField(op_param) => {                
                 let data = self.pop_stack()?;
