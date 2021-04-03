@@ -2,10 +2,9 @@
   "name": "tuna-compiler",
   "version": "0.4.1",
   "scripts": {
-    "bgen": "cd rust/interpreter && cargo build && cargo test && cat ops.ts > bindings.ts && cat schemas.ts >> bindings.ts && cat data.ts >> bindings.ts && mv bindings.ts ../../src/main/backend/ops",
-    "postbgen": "cd rust/interpreter && rm ops.ts schemas.ts data.ts",
-    "fgen": "tspeg parser.peg src/main/frontend/parser.ts",
-    "compile": "npm run bgen && npm run fgen && tsc -b",
+    "bgen": "cd rust && ./build.sh",
+    "parsergen": "tspeg parser.peg src/main/frontend/parser.ts",
+    "compile": "npm run bgen && npm run parsergen && tsc -b",
     "pretest": "npm run compile",
     "prepublish": "npm run compile",
     "test": "jest --runInBand"

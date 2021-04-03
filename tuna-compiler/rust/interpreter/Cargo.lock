@@ -20,21 +20,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "app"
-version = "0.1.0"
-dependencies = [
- "bytes",
- "futures",
- "json",
- "ring",
- "rust-crypto",
- "serde",
- "serde_json",
- "tokio",
- "ts-rs",
-]
-
-[[package]]
 name = "autocfg"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -471,6 +456,21 @@ dependencies = [
  "quote",
  "syn",
  "termcolor",
+]
+
+[[package]]
+name = "tuna-interpreter"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "futures",
+ "json",
+ "ring",
+ "rust-crypto",
+ "serde",
+ "serde_json",
+ "tokio",
+ "ts-rs",
 ]
 
 [[package]]

@@ -101,4 +101,11 @@ boolean |
 string |
 InterpreterType[] |
 { [K in string]: InterpreterType} |
-null;
+null;export interface Runnable {
+    main: Op[],
+    lookups: {
+            schemas: Record<string, Schema>,
+            functions: Record<string, Op[]>
+        }
+        ,
+}

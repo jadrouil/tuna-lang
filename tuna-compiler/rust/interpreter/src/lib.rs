@@ -9,7 +9,7 @@ use crate::ops::{Op};
 use crate::schemas::Schema;
 
 mod data;
-mod schemas;
+pub mod schemas;
 pub mod ops;
 
 pub struct Execution<'a> {
