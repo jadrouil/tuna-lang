@@ -10,7 +10,7 @@ use std::hash::{Hash, Hasher};
 use ts_rs::{TS, export};
 use crate::data::{InterpreterType, Obj};
 use crate::schemas::{Schema};
-use crate::{Context, Globals, ContextState, conduit_byte_code_interpreter_internal};
+use crate::{Context, Globals, ContextState, conduit_byte_code_interpreter};
 
 #[derive(Deserialize, Clone, TS)]
 #[serde(tag = "kind", content= "data")]
@@ -714,7 +714,7 @@ impl <'a> Context<'a>  {
                 let args = self.stack.split_off(self.stack.len() - *args as usize);
                 let next_ops = globals.fns.get(name).safe_unwrap()?;
                 let cntxt = Context::new(next_ops, args);
-                let res = conduit_byte_code_interpreter_internal(
+                let res = conduit_byte_code_interpreter(
                     cntxt,
                     globals
                 ).await?;

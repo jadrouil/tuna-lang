@@ -10,7 +10,7 @@ use crate::schemas::Schema;
 
 mod data;
 mod schemas;
-mod ops;
+pub mod ops;
 
 pub struct Execution<'a> {
     pub next_op_index: usize,
@@ -72,7 +72,7 @@ pub struct Globals<'a> {
 }
 
 
-pub fn conduit_byte_code_interpreter_internal<'a>(
+pub fn conduit_byte_code_interpreter<'a>(
     mut current: Context<'a>,
     globals: &'a Globals<'a>
 ) ->BoxFuture<'a, Result<InterpreterType, String>> {
