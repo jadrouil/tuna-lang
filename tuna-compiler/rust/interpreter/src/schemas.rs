@@ -1,7 +1,6 @@
 use ts_rs::{TS, export};
 use std::collections::HashMap;
-use std::fmt::Debug;
-use serde::{Deserialize, Serialize, Serializer, Deserializer};
+use serde::{Deserialize, Deserializer};
 use std::any::TypeId;
 use std::convert::TryInto;
 use std::hash::{Hash, Hasher};
@@ -26,7 +25,7 @@ impl TS for  ObjSchema {
         return false
     }
 
-    fn inline(indent: usize) -> String {
+    fn inline(_indent: usize) -> String {
         return "Record<string, Schema>".to_string();
     }
 }
@@ -117,7 +116,7 @@ impl Schema {
                 _ => false
             },
             
-            Schema::Role(role_name, state_schema) => {
+            Schema::Role(_role_name, state_schema) => {
                 let obj = match value {
                     InterpreterType::Object(o) => o,
                     _ => return false

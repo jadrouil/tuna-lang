@@ -10,7 +10,7 @@ use std::hash::{Hash, Hasher};
 use ts_rs::{TS, export};
 use crate::data::{InterpreterType, Obj};
 use crate::schemas::{Schema};
-use crate::interpreter::{Context, Globals, ContextState, conduit_byte_code_interpreter_internal};
+use crate::{Context, Globals, ContextState, conduit_byte_code_interpreter_internal};
 
 #[derive(Deserialize, Clone, TS)]
 #[serde(tag = "kind", content= "data")]
@@ -365,7 +365,7 @@ impl <'a> Context<'a>  {
             Op::stringConcat{nStrings, joiner} => {
                 
                 let mut strings = Vec::with_capacity(*nStrings as usize);
-                for n in 1..=*nStrings {
+                for _ in 1..=*nStrings {
                     let str = self.pop_stack()?.to_str()?;
                     strings.push(str);
                 }
@@ -706,7 +706,7 @@ impl <'a> Context<'a>  {
             },
             Op::getKeys => {                
                 let mut obj = self.pop_stack()?.to_obj()?;
-                let keys = obj.drain().map(|(k, v)| InterpreterType::string(k)).collect();
+                let keys = obj.drain().map(|(k, _v)| InterpreterType::string(k)).collect();
                 self.stack.push(InterpreterType::Array(keys));
                 self.advance()        
             },

@@ -7,7 +7,6 @@ import { release } from 'process';
 
 export type Procedures = Record<string, binds.Op[]>
 
-export * from './local_run/utilities'
 export * from './bindings'
 export * as Utils from './utils'
 export * from './env'

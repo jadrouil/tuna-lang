@@ -1,11 +1,16 @@
+#![allow(non_camel_case_types)]
+#![allow(non_snake_case)]
+
 use std::collections::HashMap;
 use futures::future::{BoxFuture, FutureExt};
 
-use crate::data::{InterpreterType, Obj};
+use crate::data::{InterpreterType};
 use crate::ops::{Op};
 use crate::schemas::Schema;
-use actix_web::{Responder, HttpResponse};
 
+mod data;
+mod schemas;
+mod ops;
 
 pub struct Execution<'a> {
     pub next_op_index: usize,
@@ -80,7 +85,7 @@ pub fn conduit_byte_code_interpreter_internal<'a>(
         loop {
             let res: Result<ContextState, String> = current.execute_next_op(globals).await;
 
-            let state = match res {
+            match res {
                 Ok(body) => match body {
                     ContextState::Done(data) => {
                         return Ok(data);
@@ -96,19 +101,4 @@ pub fn conduit_byte_code_interpreter_internal<'a>(
     }.boxed();
         
       
-}
-
-pub async fn conduit_byte_code_interpreter(
-    state: Vec<InterpreterType>, 
-    ops: &Vec<Op>,
-    globals: Globals<'_>) -> impl Responder {
-    let context = Context::new(ops, state);
-    let output = conduit_byte_code_interpreter_internal(context, &globals).await;
-    return match output {
-        Ok(data) => HttpResponse::Ok().json(data),
-        Err(s) => {
-            eprintln!("{}", s);
-            HttpResponse::BadRequest().finish()
-        }
-    }
 }

@@ -26,9 +26,7 @@ use crate::data::{InterpreterType, Obj};
 use crate::schemas::{Schema};
 use crate::ops::{Op};
 use crate::interpreter::{Globals, conduit_byte_code_interpreter};
-mod data;
-mod schemas;
-mod ops;
+
 mod interpreter;
 
 struct AppData {
@@ -182,4 +180,20 @@ return Ok(AppData {
         Err(e) => panic!("Public key could not be read")
     }
     });
+}
+
+
+pub async fn conduit_byte_code_interpreter(
+    state: Vec<InterpreterType>, 
+    ops: &Vec<Op>,
+    globals: Globals<'_>) -> impl Responder {
+    let context = Context::new(ops, state);
+    let output = conduit_byte_code_interpreter_internal(context, &globals).await;
+    return match output {
+        Ok(data) => HttpResponse::Ok().json(data),
+        Err(s) => {
+            eprintln!("{}", s);
+            HttpResponse::BadRequest().finish()
+        }
+    }
 }

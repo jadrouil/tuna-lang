@@ -21,7 +21,7 @@ impl TS for  Obj {
         return false
     }
 
-    fn inline(indent: usize) -> String {
+    fn inline(_indent: usize) -> String {
         return "{ [K in string]: InterpreterType}".to_string();
     }
 }
