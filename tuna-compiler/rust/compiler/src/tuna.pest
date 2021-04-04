@@ -1,7 +1,7 @@
 WHITESPACE = _{ " " | "\n" | "\t" | ","} 
 
 globject = {constant ~ name ~ equals ~ "{}"}
-globals = {(globject | func | typeDef | roleDef )*}
+globals = {(globject | func | typeDef | roleDef | WHITESPACE )*}
 
 roleDef = {"role" ~ name ~ schema}
 

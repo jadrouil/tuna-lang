@@ -24,6 +24,9 @@ async fn can_run_an_empty_function() {
 #[test]
 fn should_allow_global_objects() {
     // it("should allow a global object", tunaTest("succeed", `const obj = {}`))
-    let ex = tuna_compiler::compile(r#"const obj = {}"#).unwrap();
-    assert_eq!(1, ex.stores.len());
+    let ex = tuna_compiler::compile(r#"
+    const obj1 = {}
+    const obj2 = {}
+    "#).unwrap();
+    assert_eq!(2, ex.stores.len());
 }
