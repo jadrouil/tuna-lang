@@ -18,15 +18,6 @@ function tunaTest(maybeSucceed: "succeed" | "fail", code: string): jest.Provides
 
 describe("language", () => {
 
-    it("should allow array literals", tunaTest("succeed",
-    `
-    pub func a() {
-        return []
-    }
-    `
-    ))
-
-
     it("should allow getting of nested keys",
     
         tunaTest("succeed",

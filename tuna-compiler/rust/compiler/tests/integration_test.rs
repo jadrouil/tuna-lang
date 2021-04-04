@@ -107,3 +107,10 @@ async fn should_return_input() {
         return a
     }"#, "f", vec![Data::int(1)], Data::int(1)).await;
 }
+
+#[tokio::test]
+async fn should_return_literal() {
+    data_test(r#"pub func a() {
+        return []
+    }"#, "a", vec![], Data::Array(vec![])).await;
+}
