@@ -20,3 +20,10 @@ async fn can_run_an_empty_function() {
     );
     g.execute(&"noop".to_string(), vec![]).await.unwrap();
 }
+
+#[test]
+fn should_allow_global_objects() {
+    // it("should allow a global object", tunaTest("succeed", `const obj = {}`))
+    let ex = tuna_compiler::compile(r#"const obj = {}"#).unwrap();
+    assert_eq!(1, ex.stores.len());
+}

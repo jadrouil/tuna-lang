@@ -80,6 +80,7 @@ fn print_everything(p: Pair<Rule>) {
 pub fn compile(input: &str) -> Result<Executable, Error<Rule>> {
     let globals: Pairs<Rule> = TunaParser::parse(Rule::globals, input)?;
     let mut funcs = HashMap::new();
+    let mut stores = HashMap::new();
     for global in globals {
         
         for thing in global.into_inner() {
@@ -88,6 +89,16 @@ pub fn compile(input: &str) -> Result<Executable, Error<Rule>> {
                     let f: ir::Function = thing.tunify();
                     funcs.insert(f.name.to_string(), f);
                 },
+                Rule::globject => {
+                    let mut name = None;
+                    for p in thing.into_inner() {                        
+                        match p.as_rule() {
+                            Rule::name => name = Some(p.as_str()),
+                            _ => {}
+                        };
+                    }
+                    stores.insert(name.unwrap().to_string(), Schema::Any);
+                }
                 _ => panic!("Unexpected rule {}", thing)
             };
         }
@@ -114,7 +125,7 @@ pub fn compile(input: &str) -> Result<Executable, Error<Rule>> {
 
     Ok(Executable {
         schemas: HashMap::new(),
-        stores: HashMap::new(),
+        stores,
         fns
     })
 }

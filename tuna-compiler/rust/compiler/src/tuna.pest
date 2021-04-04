@@ -1,7 +1,7 @@
 WHITESPACE = _{ " " | "\n" | "\t" | ","} 
 
-
-globals = {(var | func | typeDef | roleDef )*}
+globject = {constant ~ name ~ equals ~ "{}"}
+globals = {(globject | func | typeDef | roleDef )*}
 
 roleDef = {"role" ~ name ~ schema}
 
@@ -15,7 +15,7 @@ var = {init ~ name ~ equals ~ expression}
 
 name = {!keyword ~ alpha ~ nameChar*}
 
-equals = {"="}
+equals = _{"="}
 
 object = {"{" ~  field* ~ "}"}
 field = {name ~ ":" ~ expression }
