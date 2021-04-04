@@ -67,7 +67,6 @@ export type BaseNodeDefs = {
     Saved: Node<{arg: string}> 
     String: Node<{value: string}>,
     Selection: Node<{root: ValueNode, level: (ValueNode)[]}>
-    FieldExists: Node<{value: ValueNode, field: Key}>
     Save: Node<{value: ValueNode, name: string}, "root">
     Update: Node<
     {

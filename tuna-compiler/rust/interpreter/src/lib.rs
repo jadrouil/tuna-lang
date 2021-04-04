@@ -8,7 +8,7 @@ use crate::data::{InterpreterType};
 use crate::ops::{Op};
 use crate::schemas::Schema;
 
-mod data;
+pub mod data;
 pub mod schemas;
 pub mod ops;
 
@@ -72,7 +72,29 @@ pub struct Globals<'a> {
 }
 
 
-pub fn conduit_byte_code_interpreter<'a>(
+impl<'a>  Globals<'a> {
+    pub fn new(
+        schemas: &'a HashMap<String, Schema>, 
+        stores: &'a HashMap<String, Schema>,
+        fns: &'a HashMap<String, Vec<Op>>,
+        private_key: &'a[u8; 64],
+        public_key: &'a[u8; 32]) -> Self {
+            Globals {
+                schemas,
+                stores,
+                fns,
+                private_key,
+                public_key
+            }
+    }
+
+    pub fn execute(&'a self, fname: &String, inputs: Vec<InterpreterType>) -> BoxFuture<'a, Result<InterpreterType, String>> {
+        let context = Context::new(self.fns.get(fname).unwrap(), inputs);
+        conduit_byte_code_interpreter(context, self)
+    }
+}
+
+fn conduit_byte_code_interpreter<'a>(
     mut current: Context<'a>,
     globals: &'a Globals<'a>
 ) ->BoxFuture<'a, Result<InterpreterType, String>> {
@@ -99,6 +121,4 @@ pub fn conduit_byte_code_interpreter<'a>(
             };
         }
     }.boxed();
-        
-      
 }
