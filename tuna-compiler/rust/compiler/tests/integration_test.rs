@@ -45,3 +45,12 @@ async fn should_allow_arg_in_function() {
     }
     "#, "argy", vec![Data::None]).await;    
 }
+
+#[tokio::test]
+async fn should_allow_multiple_args_in_function() {
+    exec_test(r#"
+    func argy(a, b) {
+
+    }
+    "#, "argy", vec![Data::None, Data::None]).await;    
+}

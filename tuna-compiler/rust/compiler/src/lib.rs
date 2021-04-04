@@ -36,7 +36,8 @@ impl<'a> Tuna<Vec<(Schema, String)>> for Pair<'a, Rule> {
         match self.as_rule() {
             Rule::params => {
                 let mut v = vec![];
-                for param in self.into_inner() {            
+                for param in self.into_inner() {        
+                    println!("PARAM {}", param.as_str());
                     match param.as_rule() {
                         Rule::name => v.push((Schema::Any, param.as_str().to_string())),
                         _ => panic!("Unexpected: {}", param)

@@ -13,7 +13,7 @@ keyword = {mutable | constant | function}
 
 var = {init ~ name ~ equals ~ expression}
 
-name = {!keyword ~ alpha ~ nameChar*}
+name = @{!keyword ~ alpha ~ nameChar*}
 
 equals = _{"="}
 
