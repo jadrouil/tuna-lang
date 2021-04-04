@@ -17,19 +17,6 @@ function tunaTest(maybeSucceed: "succeed" | "fail", code: string): jest.Provides
 }
 
 describe("language", () => {
-
-    it('should allow bools, numbers, and strings', tunaTest("succeed", `
-    
-    pub func fff(a) {
-        true
-        false
-        12
-        -12.12
-        'hello world'
-        {}
-    }
-    
-    `))
     
     it('can declare temp variables', tunaTest("succeed", `
     
@@ -710,29 +697,6 @@ describe("types", () => {
     }
     `))
     
-})
-
-describe("demo apps", () => {
-    it("can be used to create a messenger", tunaTest("succeed",
-    `
-
-const users = {}
-
-const chats = {}
-
-pub func get_my_messages() {
-    
-    if users.a != none {
-        const my_chats = users.a
-
-        const msgs = {}
-        for chat in my_chats {
-            msgs[chat] = chats[chat]
-        }
-    }
-}
-    `
-    ))
 })
 
 describe("roles", () => {
