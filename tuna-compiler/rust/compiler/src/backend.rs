@@ -23,13 +23,25 @@ pub fn to_ops(function: Function) -> Vec<Op> {
         heap_pos += 1;
     }
     for b in function.body {
-        instrs.append(&mut b.to_ops(&mut scope));
+        instrs.append(&mut match b {
+            Either::Left(l) => l.to_ops(&mut scope),
+            Either::Right(r) => (*r).to_ops(&mut scope)
+        });
     }
     instrs
 }
 
 trait Compilable {
     fn to_ops(&self, scope: &mut ScopeSizer) -> Vec<Op>;
+}
+
+impl Compilable for Either<Root, AnyValue> {
+    fn to_ops(&self, scope: &mut ScopeSizer) -> Vec<Op> {
+        match self {
+            Either::Left(l) => l.to_ops(scope),
+            Either::Right(r) => r.to_ops(scope)
+        }
+    }
 }
 
 type Data = InterpreterType;

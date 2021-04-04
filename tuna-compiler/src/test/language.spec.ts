@@ -18,17 +18,6 @@ function tunaTest(maybeSucceed: "succeed" | "fail", code: string): jest.Provides
 
 describe("language", () => {
 
-    it("should allow getting of nested keys",
-    
-        tunaTest("succeed",
-        `
-        const gg = {}
-        pub func fff(a) {
-            return gg[a].field
-        }
-        `)
-    )
-
     it('should allow bools, numbers, and strings', tunaTest("succeed", `
     
     pub func fff(a) {

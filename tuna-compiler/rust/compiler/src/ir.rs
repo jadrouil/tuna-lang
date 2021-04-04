@@ -29,6 +29,12 @@ pub enum Root {
     Return(Option<Value>)
 }
 
+pub enum Either<L, R> {
+    Left(L),
+    Right(R)
+}
+pub type ValueOrRoot = Either<Root, Box<AnyValue>>;
+
 pub struct Field {
     pub key: String, 
     pub value: Value
@@ -73,5 +79,5 @@ pub enum Sign {
 pub struct Function<'a> {
     pub name: &'a str,
     pub args: Vec<(Schema, String)>,
-    pub body: Vec<Root>
+    pub body: Vec<ValueOrRoot>
 }

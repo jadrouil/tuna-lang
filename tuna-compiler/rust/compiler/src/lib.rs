@@ -149,8 +149,8 @@ impl<'a> Tuna<Box<AnyValue>> for Token<'a> {
     }
 }
 
-impl<'a> Tuna<Root> for Token<'a> {
-    fn tunify(self) -> Root {
+impl<'a> Tuna<ValueOrRoot> for Token<'a> {
+    fn tunify(self) -> ValueOrRoot {
         match self.as_rule() {
             Rule::ret => {
                 let mut exp = None;
@@ -160,7 +160,7 @@ impl<'a> Tuna<Root> for Token<'a> {
                         _ => unreachable!()
                     };
                 }
-                Root::Return(exp)
+                Either::Left(Root::Return(exp))
             },
             Rule::var => {
                 let mut exp = None;
@@ -172,7 +172,9 @@ impl<'a> Tuna<Root> for Token<'a> {
                         _ => unreachable!()
                     };
                 }
-                Root::Save{val: exp.unwrap(), name: name.unwrap().to_string()}
+                Either::Left(
+                    Root::Save{val: exp.unwrap(), name: name.unwrap().to_string()}
+                )
             },
             // Rule::forLoop => {
 
@@ -181,13 +183,14 @@ impl<'a> Tuna<Root> for Token<'a> {
 
             // },
             // Rule::assignment => roots.push(part.tunify()),
+            Rule::expression => Either::Right(self.tunify()),
             _ => unreachable!()
         }
     }
 }
 
-impl<'a> Tuna<Vec<Root>> for Token<'a> {
-    fn tunify(self) -> Vec<Root> {
+impl<'a> Tuna<Vec<ValueOrRoot>> for Token<'a> {
+    fn tunify(self) -> Vec<ValueOrRoot> {
         let mut roots = vec![];
         match self.as_rule() {
             Rule::scope => {
@@ -198,10 +201,7 @@ impl<'a> Tuna<Vec<Root>> for Token<'a> {
                         Rule::forLoop |
                         Rule::ifs |
                         Rule::assignment => roots.push(part.tunify()),
-                        // Rule::expression => match part.tunify() {
-                        //     Some(root) => roots.push(root),
-                        //     _ => {}
-                        // },
+                        Rule::expression => roots.push(part.tunify()),
                         _ => unreachable!()
                     }
                 }

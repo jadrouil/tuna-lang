@@ -114,3 +114,21 @@ async fn should_return_literal() {
         return []
     }"#, "a", vec![], Data::Array(vec![])).await;
 }
+
+#[tokio::test]
+#[ignore = "Need to implement write side"]
+async fn can_get_nested_keys() {
+    data_test(r#"const gg = {}
+    pub func fff(a) {
+        return gg[a].field
+    }"#, "fff", vec![], Data::None).await;
+}
+
+#[tokio::test]
+async fn can_do_things_with_no_consequence() {
+    exec_test(r#"
+    pub func nope() {
+        true
+        false
+    }"#, "nope", vec![]).await;
+}
