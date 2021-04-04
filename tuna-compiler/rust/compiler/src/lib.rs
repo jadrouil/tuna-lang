@@ -31,6 +31,23 @@ trait Tuna<T> {
 }
 
 
+impl<'a> Tuna<Vec<(Schema, String)>> for Pair<'a, Rule> {
+    fn tunify(self) -> Vec<(Schema, String)> {
+        match self.as_rule() {
+            Rule::params => {
+                let mut v = vec![];
+                for param in self.into_inner() {            
+                    match param.as_rule() {
+                        Rule::name => v.push((Schema::Any, param.as_str().to_string())),
+                        _ => panic!("Unexpected: {}", param)
+                    };            
+                }
+                v
+            },
+            _ => unreachable!()
+        }
+    }
+}
 
 impl<'a> Tuna<ir::Function<'a>> for Pair<'a, Rule> {
     fn tunify(self) -> ir::Function<'a> {
@@ -38,6 +55,7 @@ impl<'a> Tuna<ir::Function<'a>> for Pair<'a, Rule> {
             Rule::func => {
                 let pairs = self.into_inner();
                 let mut name = None;
+                let mut args = vec![];
                 for pair in pairs {
                     match pair.as_rule() {
                         Rule::name => {
@@ -46,6 +64,7 @@ impl<'a> Tuna<ir::Function<'a>> for Pair<'a, Rule> {
                         },
                         Rule::params => {
                             println!("PARAMS {}", pair.as_str());
+                            args.append(&mut pair.tunify());
                         },
                         Rule::scope => {
                             println!("SCOPE {}", pair.as_str());
@@ -55,7 +74,7 @@ impl<'a> Tuna<ir::Function<'a>> for Pair<'a, Rule> {
                 }                
                 Function {
                     name: name.unwrap(),
-                    args: vec![],
+                    args,
                     body: vec![]
                 }
             },
@@ -101,21 +120,7 @@ pub fn compile(input: &str) -> Result<Executable, Error<Rule>> {
                 }
                 _ => panic!("Unexpected rule {}", thing)
             };
-        }
-        
-        // // A pair is a combination of the rule which matched and a span of input
-        // println!("Rule:    {:?}", pair.as_rule());
-        // println!("Span:    {:?}", pair.as_span());
-        // println!("Text:    {}", pair.as_str());
-
-        // // A pair can be converted to an iterator of the tokens which make it up:
-        // for inner_pair in pair.into_inner() {
-        //     match inner_pair.as_rule() {
-        //         Rule::alpha => println!("Letter:  {}", inner_pair.as_str()),
-        //         Rule::digit => println!("Digit:   {}", inner_pair.as_str()),
-        //         _ => unreachable!()
-        //     };
-        // }
+        }        
     }
 
     let mut fns = HashMap::with_capacity(funcs.len());

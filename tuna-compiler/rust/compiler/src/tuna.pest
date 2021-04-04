@@ -63,7 +63,7 @@ roleInstance = {name ~ object}
 
 ret = {"return" ~ expression?}
 func = {name? ~ "func" ~ name ~ params ~ scope }
-params = {"(" ~ (name ~ schema?)* ~")"}
+params = {"(" ~ (name ~ schema?)* ~ ")"}
 args = {"(" ~ expression* ~ ")"}
 assignment = {expression ~ equals ~ expression}
 

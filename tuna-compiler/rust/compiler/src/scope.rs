@@ -53,7 +53,7 @@ impl ScopeSizer {
     pub fn new() -> ScopeSizer {
         ScopeSizer {
             lookup: HashMap::new(),
-            stack: vec![]
+            stack: vec![vec![]]
         }
     }
 
