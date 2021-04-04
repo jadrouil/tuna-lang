@@ -7,12 +7,11 @@ use std::collections::hash_map::DefaultHasher;
 use crypto::ed25519;
 use std::hash::{Hash, Hasher};
 
-use ts_rs::{TS, export};
 use crate::data::{InterpreterType, Obj};
 use crate::schemas::{Schema};
 use crate::{Context, Globals, ContextState, conduit_byte_code_interpreter};
 
-#[derive(Deserialize, Clone, TS)]
+#[derive(Deserialize, Clone)]
 #[serde(tag = "kind", content= "data")]
 pub enum Op {
     negatePrev,
@@ -762,8 +761,4 @@ impl <'a> Context<'a>  {
             }
         }
     }
-}
-
-export! {
-    Op => "ops.ts"
 }

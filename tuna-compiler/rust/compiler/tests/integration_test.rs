@@ -7,6 +7,10 @@ use tuna_interpreter::data::*;
 type Data =InterpreterType;
 
 async fn exec_test(code: &str, func: &str, args: Vec<Data>) {
+    data_test(code, func, args, Data::None).await;
+}
+
+async fn data_test(code: &str, func: &str, args: Vec<Data>, expect: Data) {
     let mut key = [0u8; 32];
     rand::thread_rng().fill_bytes(&mut key);
     let (priv_key, pub_key) = ed25519::keypair(&key);
@@ -19,7 +23,8 @@ async fn exec_test(code: &str, func: &str, args: Vec<Data>) {
         &priv_key,
         &pub_key
     );
-    g.execute(&func.to_string(), args).await.unwrap();
+    let res = g.execute(&func.to_string(), args).await.unwrap();
+    assert_eq!(expect, res);
 }
 
 #[tokio::test]
@@ -53,4 +58,52 @@ async fn should_allow_multiple_args_in_function() {
 
     }
     "#, "argy", vec![Data::None, Data::None]).await;    
+}
+
+#[tokio::test]
+async fn should_allow_public_functions() {
+    exec_test(r#"
+    pub func argy(a, b) {
+
+    }
+    "#, "argy", vec![Data::None, Data::None]).await;    
+}
+
+#[tokio::test]
+async fn should_allow_empty_return() {
+    exec_test(r#"
+    pub func argy(a, b) {
+        return
+    }
+    "#, "argy", vec![Data::None, Data::None]).await;    
+}
+
+#[ignore = "Global state implementation is being revisited"]
+#[tokio::test]
+async fn should_allow_mutation_of_global() {
+    exec_test(r#"
+    const gg = {}
+    pub func fff(a) {
+        gg.abc = a
+        gg[a] = a
+        gg['abc'] = a
+    }
+    "#, "fff", vec![Data::string("b".to_string())]).await;
+}
+
+#[tokio::test]
+async fn should_return_none() {
+    exec_test(r#"
+    pub func a() {
+        return none
+    }
+    "#, "a", vec![]).await
+}
+
+#[tokio::test]
+async fn should_return_input() {
+    data_test(r#"
+    func f(a) {
+        return a
+    }"#, "f", vec![Data::int(1)], Data::int(1)).await;
 }

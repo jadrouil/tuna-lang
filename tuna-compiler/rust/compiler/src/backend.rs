@@ -38,6 +38,8 @@ impl Compilable for AnyValue {
         let mut instrs: Vec<Op> = vec![];
 
         match self {
+            AnyValue::String(s) => instrs.push(Op::instantiate(Data::string(s.to_string()))),
+            AnyValue::Double(d) => instrs.push(Op::instantiate(Data::double(*d))),
             AnyValue::Bool(b) => instrs.push(Op::instantiate(Data::bool(*b))),
             AnyValue::Object(fields) => {
                 instrs.push(Op::instantiate(Data::Object(Obj(HashMap::with_capacity(0)))));

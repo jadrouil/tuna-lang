@@ -7,18 +7,16 @@ roleDef = {"role" ~ name ~ schema}
 
 mutable = {"let"}
 constant = {"const"}
-init = {mutable | constant}
 function = {"func"}
 keyword = {mutable | constant | function}
 
-var = {init ~ name ~ equals ~ expression}
+var = {"let" ~ name ~ equals ~ expression}
 
 name = @{!keyword ~ alpha ~ nameChar*}
 
 equals = _{"="}
 
-object = {"{" ~  field* ~ "}"}
-field = {name ~ ":" ~ expression }
+object = {"{" ~  (name ~ ":" ~ expression)* ~ "}"}
 string = {"'" ~ ANY* ~ "'"}
 boolean = {"true" | "false"}
 decimal = {digit+ ~ "." ~ digit+}
@@ -29,10 +27,8 @@ none = {"none"}
 array = {"[" ~ expression* ~ "]"}
 literal = {object | string | boolean | num | none | array }
 
-scope = {"{" ~ executable* ~"}"}
-executable = {ret | var | forLoop | ifs | assignment | expression}
-expBody = {functionCall | literal | name}
-expression = {prefix? ~ expBody ~ method*  ~ infix? }
+scope = {"{" ~ (ret | var | forLoop | ifs | assignment | expression)* ~"}"}
+expression = {prefix? ~ (functionCall | literal | name) ~ method*  ~ infix? }
 method = {parameterIndex | methodInvoke | literalIndex}
 
 not = {"not"}

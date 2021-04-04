@@ -18,7 +18,7 @@ impl ScopeMap {
     pub fn new() -> ScopeMap {
         ScopeMap {
             lookup: HashMap::new(),
-            stack: vec![]
+            stack: vec![vec![]]
         }
     }
 

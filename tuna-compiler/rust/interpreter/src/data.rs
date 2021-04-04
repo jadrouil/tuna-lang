@@ -1,30 +1,10 @@
-use ts_rs::{TS, export};
 use std::collections::HashMap;
 use std::fmt::Debug;
 use serde::{Deserialize, Serialize, Serializer, Deserializer};
-use std::any::TypeId;
 use std::hash::{Hash, Hasher};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Obj(pub HashMap<String, InterpreterType>);
-
-impl TS for  Obj {
-    fn name() -> String {
-        return "{ [K in string]: InterpreterType}".to_string();
-    }
-
-    fn dependencies() -> Vec<(TypeId, String)>{
-        return vec![]
-    }
-
-    fn transparent() -> bool {
-        return false
-    }
-
-    fn inline(_indent: usize) -> String {
-        return "{ [K in string]: InterpreterType}".to_string();
-    }
-}
 
 impl Serialize for Obj {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
@@ -39,7 +19,7 @@ impl<'de> Deserialize<'de> for Obj {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, TS)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
 pub enum InterpreterType {
     int(i64),
@@ -50,6 +30,7 @@ pub enum InterpreterType {
     Object(Obj),
     None
 } 
+
 
 impl Hash for InterpreterType {
     fn hash<H: Hasher>(&self, state: &mut H) {
@@ -86,7 +67,3 @@ impl Hash for InterpreterType {
 
     }
 } 
-
-export! {
-    InterpreterType => "data.ts",
-}

@@ -39,6 +39,8 @@ pub enum AnyValue {
     Bool(bool),
     Object(Vec<Field>),
     Int(i64),
+    Double(f64),
+    String(String),
     None,
     GetType(Value),
     Not(Value),

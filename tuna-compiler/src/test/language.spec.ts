@@ -18,51 +18,6 @@ function tunaTest(maybeSucceed: "succeed" | "fail", code: string): jest.Provides
 
 describe("language", () => {
 
-    it("should allow a global object", tunaTest("succeed", `const obj = {}`))
-        
-
-    it("should allow many global objects",
-        tunaTest("succeed", `
-        const obj1 = {}
-        const obj2 = {}
-        `)
-    )
-
-    it("should allow empty pub funcs", 
-    tunaTest("succeed", `pub func doSomething() {}`))
-
-    it("should allow a fixed number of args in functions",
-    tunaTest("succeed", `pub func argy(a, b, c) {
-
-    }`)
-    )
-
-    it("should allow return statements within functions",
-    tunaTest("succeed", `pub func returny() {
-        return
-    }`))
-
-    it("should allow setting of keys on a global object", 
-    
-        tunaTest("succeed",
-        `
-        const gg = {}
-        pub func fff(a) {
-            gg.abc = a
-            gg[a] = a
-            gg['abc'] = a
-        }
-        `)
-    )
-
-    it("should allow none", tunaTest("succeed", 
-    `
-    pub func a() {
-        return none
-    }
-    `
-    ))
-
     it("should allow array literals", tunaTest("succeed",
     `
     pub func a() {
