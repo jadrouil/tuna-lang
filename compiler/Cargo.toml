@@ -11,7 +11,7 @@ license = "BSD-3-Clause"
 bytes ="0.5"
 rust-crypto = "0.2"
 ring = "0.16.20"
-tuna-interpreter={path="../interpreter"}
+tuna-interpreter={path="./interpreter"}
 pest = "2.1.0"
 pest_derive = "2.1.0"
 tokio = { version = "1", features = ["full"] }
