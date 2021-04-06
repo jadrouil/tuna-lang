@@ -148,3 +148,16 @@ async fn can_call_functions() {
         return stringy()
     }"#, "entry", vec![], Data::string("hello world".to_string())).await;
 }
+
+#[tokio::test]
+async fn variables_across_functions_can_have_the_same_name() {
+    data_test(r#"
+
+    pub func vary(a) {
+        return a
+    }
+
+    func entry(a) {
+        return vary(a)
+    }"#, "entry", vec![Data::int(-1)], Data::int(-1)).await;
+}

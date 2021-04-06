@@ -54,14 +54,17 @@ impl<'a> Tuna<Vec<(Schema, String)>> for Token<'a> {
 
 impl<'a> Tuna<Vec<Box<AnyValue>>> for Token<'a> {
     fn tunify(self) -> Vec<Box<AnyValue>> {
+        let mut args = vec![];
         match self.as_rule() {
             Rule::args => {
-
+                for p in self.into_inner() {
+                    args.push(p.tunify());
+                }
             },
             _ => unreachable!()
         };
 
-        vec![]
+        args
     }
 }
 
@@ -74,7 +77,10 @@ impl<'a> Tuna<Call> for Token<'a> {
                 for p in self.into_inner() {
                     match p.as_rule() {
                         Rule::name => name = Some(p.as_str()),
-                        Rule::args => args = p.tunify(),
+                        Rule::args => {
+                            println!("arg {}", p.as_str());
+                            args = p.tunify();                            
+                        },
                         _ => unreachable!()
                     };
                 }
