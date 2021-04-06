@@ -1,23 +1,4 @@
 
-import { functionsToOps } from '../main/backend';
-import { TUNA_TO_MANIFEST, } from '../main/assembled';
-
-function tunaTest(maybeSucceed: "succeed" | "fail", code: string): jest.ProvidesCallback {
-    return (cb) => {
-        if (maybeSucceed === "succeed") {
-            const man = TUNA_TO_MANIFEST(code) 
-            expect(man).toMatchSnapshot("intermediate representation")
-            const ops = functionsToOps(man.funcs)
-            expect(ops).toMatchSnapshot("OPS")
-        } else {
-            expect(() => TUNA_TO_MANIFEST(code)).toThrowErrorMatchingSnapshot()
-        }
-        cb()
-    }
-}
-
-describe("language", () => {
-    
     it('can declare temp variables', tunaTest("succeed", `
     
     pub func fff(a) {
@@ -246,7 +227,6 @@ describe("language", () => {
         `
     ))
 
-    describe('ifs', () => {
         it("single simple if", tunaTest(
             "succeed",
             `
@@ -335,7 +315,6 @@ describe("language", () => {
         ))
     })
 
-    describe("prefix operators", () => {
         it("can 'not' values", tunaTest(
             "succeed",
             `
@@ -355,7 +334,6 @@ describe("language", () => {
         ))
     })
 
-    describe("infix operators", () => {
         it("+", tunaTest(
             "succeed",
             `
@@ -576,7 +554,6 @@ describe("language", () => {
         ))
     })
 
-    describe("mutations", () => {
         it("should allow overwrites at a parameterized level", tunaTest("succeed",
         `
         const g = {}
@@ -607,9 +584,7 @@ describe("language", () => {
         ))
 
     })
-})
 
-describe("types", () => {
 
     it("allows requiring inputs as primitives", tunaTest("succeed",
     `
@@ -697,9 +672,7 @@ describe("types", () => {
     }
     `))
     
-})
 
-describe("roles", () => {
 
     it("allows declaring stateless roles", 
         tunaTest("succeed",        
@@ -773,4 +746,3 @@ describe("roles", () => {
         `)
     
     )
-})
