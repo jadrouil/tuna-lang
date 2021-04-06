@@ -29,7 +29,7 @@ literal = {object | string | boolean | num | none | array }
 
 scope = {"{" ~ (ret | var | forLoop | ifs | assignment | expression)* ~"}"}
 expression = {prefix? ~ (functionCall | literal | name) ~ method*  ~ infix? }
-method = {parameterIndex | methodInvoke | literalIndex}
+method = {parameterIndex | methodInvoke}
 
 not = {"not"}
 minus = {"-"}
@@ -50,7 +50,6 @@ infix = {plus | minus | mult | divide | eq | neq | leq | geq | gt | lt | leq | a
 
 functionCall = {name ~ args}
 parameterIndex = {"[" ~ expression ~"]"}
-literalIndex = {"." ~ name}
 methodInvoke = {"." ~ name ~ args}
 
 forLoop = {"for" ~ WHITESPACE+ ~ "in"  ~ expression ~ scope}
