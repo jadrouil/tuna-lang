@@ -20,7 +20,7 @@ mod scope;
 #[grammar = "tuna.pest"]
 pub struct TunaParser;
 
-pub struct Executable {
+pub struct Compiled {
     pub schemas: HashMap<String, Schema>, 
     pub stores: HashMap<String, Schema>,
     pub fns: HashMap<String, Vec<Op>>,
@@ -278,7 +278,7 @@ fn print_everything(p: Pair<Rule>) {
     }
 }
 
-pub fn compile(input: &str) -> Result<Executable, Error<Rule>> {
+pub fn compile(input: &str) -> Result<Compiled, Error<Rule>> {
     let globals: Pairs<Rule> = TunaParser::parse(Rule::globals, input)?;
     let mut funcs = HashMap::new();
     let mut stores = HashMap::new();
@@ -310,7 +310,7 @@ pub fn compile(input: &str) -> Result<Executable, Error<Rule>> {
         fns.insert(k, backend::to_ops(v));
     }
 
-    Ok(Executable {
+    Ok(Compiled {
         schemas: HashMap::new(),
         stores,
         fns

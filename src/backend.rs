@@ -158,7 +158,7 @@ impl Compilable for Root {
                     Mut::Overwrite(val) => {
                         if field_depth == 0 {
                             instrs.append(&mut val.to_ops(scope));
-                            instrs.push(Op::overwriteHeap(index));
+                            instrs.push(Op::overwriteArg(index));
                         } else {
                             for l in level {
                                 instrs.append(&mut l.to_ops(scope));
@@ -203,7 +203,7 @@ impl Compilable for Root {
                 for b in body {
                     loopbody.append(&mut b.to_ops(scope));
                 }
-                loopbody.push(Op::truncateHeap(scope.pop()));
+                loopbody.push(Op::truncateHeap(scope.pop() as usize));
                 let loop_len = loopbody.len() as u64;
                 loopbody.push(Op::offsetOpCursor{offset: loop_len + 4, fwd: false});
                 
@@ -271,7 +271,7 @@ impl Compilable for Conditional {
         }
         let scope_size = scope.pop();
         if scope_size > 0 {
-            body.push(Op::truncateHeap(scope_size));
+            body.push(Op::truncateHeap(scope_size as usize));
         }
         instrs.append(&mut self.condition.to_ops(scope));
         instrs.append(&mut vec![

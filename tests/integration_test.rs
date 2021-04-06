@@ -2,7 +2,7 @@ use rand;
 use rand_core::RngCore;
 use crypto::ed25519;
 use tuna_compiler;
-use tuna_interpreter;
+use tuna_interpreter::{self, State};
 use tuna_interpreter::data::*;
 type Data =InterpreterType;
 
@@ -10,20 +10,20 @@ async fn exec_test(code: &str, func: &str, args: Vec<Data>) {
     data_test(code, func, args, Data::None).await;
 }
 
-async fn data_test(code: &str, func: &str, args: Vec<Data>, expect: Data) {
+async fn data_test(code: &str, func: &str, mut args: Vec<Data>, expect: Data) {
     let mut key = [0u8; 32];
     rand::thread_rng().fill_bytes(&mut key);
     let (priv_key, pub_key) = ed25519::keypair(&key);
-
     let ex = tuna_compiler::compile(code).unwrap();
     let g = tuna_interpreter::Globals::new(
         &ex.schemas,
-        &ex.stores,
+
         &ex.fns,
         &priv_key,
         &pub_key
     );
-    let res = g.execute(&func.to_string(), args).await.unwrap();
+    
+    let res = g.run(&func.to_string(), &mut State::new(&mut args)).unwrap();
     assert_eq!(expect, res);
 }
 

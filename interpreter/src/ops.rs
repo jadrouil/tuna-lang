@@ -7,9 +7,10 @@ use std::collections::hash_map::DefaultHasher;
 use crypto::ed25519;
 use std::hash::{Hash, Hasher};
 
-use crate::data::{InterpreterType, Obj};
+use crate::data::*;
+
 use crate::schemas::{Schema};
-use crate::{Context, Globals, ContextState, conduit_byte_code_interpreter};
+use crate::{Context, Globals, ContextState, conduit_byte_code_interpreter, State};
 
 #[derive(Deserialize, Clone)]
 #[serde(tag = "kind", content= "data")]
@@ -18,7 +19,7 @@ pub enum Op {
     stackTopMatches{schema: String},
     isLastNone,
     tryGetField(String),
-    overwriteHeap(u64),
+    overwriteArg(u64),
     raiseError(String),
     noop,
     setField{field_depth: u64},
@@ -29,10 +30,9 @@ pub enum Op {
     deleteSavedField{field_depth: u64, index: u64},
     pushSavedField{field_depth: u64, index: u64},
     fieldExists,
-    truncateHeap(u64),
+    truncateHeap(usize),
     offsetOpCursor{offset: u64, fwd: bool},
     conditonallySkipXops(u64),
-    returnVariable(u64),
     returnStackTop,
     returnVoid,
     copyFromHeap(u64),
@@ -51,7 +51,6 @@ pub enum Op {
     arrayLen,
     ndArrayLen,
     setNestedField(Vec<String>),
-    copyFieldFromHeap(u64, Vec<String>),
     enforceSchemaInstanceOnHeap{schema: Schema, heap_pos: u64},
     extractFields(Vec<Vec<String>>),
     equal,
@@ -89,213 +88,9 @@ impl<'a> Context<'a> {
     }
 }
 
-trait Safe<T> {
-    fn safe_ref_unwrap(&self) -> Result<&T, String>;
-    fn safe_unwrap(self) -> Result<T, String>;
-    fn safe_mut_ref_unwrap(&mut self) -> Result<&mut T, String>;
-}
-
-impl<T> Safe<T> for Option<T> {
-    fn safe_ref_unwrap(&self) -> Result<&T, String> {
-        match self {
-            Some(v) => Ok(v),
-            None => Err("Value does not exist".to_string())
-        }
-    }
-    fn safe_mut_ref_unwrap(&mut self) -> Result<&mut T, String> {
-        match self {
-            Some(v) => Ok(v),
-            None => Err("Value does not exist".to_string())
-        }
-    }
-    fn safe_unwrap(self) -> Result<T, String> {
-        match self {
-            Some(v) => Ok(v),
-            None => Err("Value does not exist".to_string())
-        }
-    }
-}
-
-impl InterpreterType {
-    fn to_str(self) -> Result<String, String> {
-        match self {
-            InterpreterType::string(s) => Ok(s),
-            InterpreterType::int(i) => Ok(i.to_string()),
-            InterpreterType::double(d) => Ok(d.to_string()),
-            _ => Err("Cannot convert to string".to_string())
-        }
-    }
-    fn to_obj(self) -> Result<HashMap<String, InterpreterType>, String> {
-        match self {
-            InterpreterType::Object(o) => Ok(o.0),
-            _ => Err("Expected an object".to_string())
-        }
-    }
-
-    fn to_bool(self) -> Result<bool, String> {
-        match self {
-            InterpreterType::bool(b) => Ok(b),
-            _ => Err("Expected a boolean value".to_string())
-        }
-    }
-
-    fn to_array(self) -> Result<Vec<InterpreterType>, String> {
-        match self {
-            InterpreterType::Array(r) => Ok(r),
-            _ => Err("Expected an array".to_string())
-        }
-    }
-
-    fn try_push(&mut self, data: InterpreterType) -> Result<(), String> {
-        match self {
-            InterpreterType::Array(r) => {r.push(data); Ok(())},
-            _ => Err("Expected an array".to_string())
-        }
-    }
-    
-    fn get<'a>(&'a mut self, field: InterpreterType) -> Result<Option<&'a mut InterpreterType>, String> {
-        Ok(match self {
-            InterpreterType::Object(o) => match field {
-                InterpreterType::string(s) => o.0.get_mut(&s),
-                _ => return Err(format!("Cannot index into object with this type"))
-            },
-            InterpreterType::Array(a) => match field {
-                InterpreterType::int(i) =>a.get_mut(i as usize),
-                InterpreterType::double(d) => a.get_mut(d as usize),
-                _ => return Err(format!("Cannot index array with type"))
-            },
-            _ => return Err(format!("cannot index into type"))
-        })
-    }
-
-
-    fn set<'a>(&mut self, mut fields: Vec<InterpreterType>, set_to: InterpreterType) -> Result<(), String> {
-        let last_field = fields.pop().safe_unwrap()?;
-
-        let mut o_or_a = self;
-        for f in fields {
-            o_or_a = o_or_a.get(f)?.safe_unwrap()?;
-        }
-
-        match o_or_a {
-            InterpreterType::Object(o) => match last_field {
-                InterpreterType::string(s) => o.0.insert(s, set_to),
-                _ => return Err(format!("Cannot index object with this type"))
-            },
-            _ => return Err(format!("cannot overwrite type"))
-        };
-        Ok(())
-    }
-
-    fn equals(&self, other: &InterpreterType) -> bool {
-        match (self, other) {
-            (InterpreterType::string(s1), InterpreterType::string(s2)) => s1 == s2,
-            (InterpreterType::int(i1), InterpreterType::int(i2)) => i1 == i2,
-            (InterpreterType::double(d1), InterpreterType::double(d2)) => d1 == d2,
-            (InterpreterType::None, InterpreterType::None) => true,
-            (_, _) => false
-        }
-    }
-
-    fn compare(&self, other: &InterpreterType) -> Result<Compare, String> {
-        let d1 = match self {
-            InterpreterType::int(i1) => *i1 as f64,
-            InterpreterType::double(d1) => *d1,
-            _ => return Err("Can only compare numbers".to_string())
-        };
-        let d2 = match other {
-            InterpreterType::int(i1) => *i1 as f64,
-            InterpreterType::double(d2) => *d2,
-            _ => return Err("Can only compare numbers".to_string())
-        };
-        Ok(match (d1, d2) {
-            (_, _) if d1 < d2 => Compare::Less,
-            (_, _) if d1 > d2 => Compare::Greater,
-            (_, _) => Compare::Equal
-        })        
-    }
-
-    fn plus(&self, other: &InterpreterType) -> Result<InterpreterType, String> {
-        Ok(match self {
-            InterpreterType::int(i1) => match other {
-                InterpreterType::int(i2) => InterpreterType::int(i1 + i2),
-                InterpreterType::double(d2) => InterpreterType::double(*i1 as f64 + d2),
-                InterpreterType::string(s) => InterpreterType::string(format!("{}{}", i1, s)),
-                _ => return Err(format!("not addable"))
-            },
-            InterpreterType::double(d1) => match other {
-                InterpreterType::int(i2) => InterpreterType::double(d1 + (*i2 as f64)),
-                InterpreterType::double(d2) => InterpreterType::double(d1 + d2),
-                InterpreterType::string(s) => InterpreterType::string(format!("{}{}", d1, s)),
-                _ => return Err(format!("not addable"))
-            }, 
-            InterpreterType::string(s) => match other {
-                InterpreterType::int(d) => InterpreterType::string(format!("{}{}", s, d)),
-                InterpreterType::double(d) => InterpreterType::string(format!("{}{}", s, d)),
-                InterpreterType::string(d) => InterpreterType::string(format!("{}{}", s, d)),
-                _ =>return Err(format!("not addable"))
-            }
-            _ => return Err(format!("not addable"))
-        })
-    }
-
-    fn minus(&self, other: &InterpreterType) -> Result<InterpreterType, String> {
-        Ok(match self {
-            InterpreterType::int(i1) => match other {
-                InterpreterType::int(i2) => InterpreterType::int(i1 - i2),
-                InterpreterType::double(d2) => InterpreterType::double(*i1 as f64 - d2),
-                _ => return Err(format!("not subtractable"))
-            },
-            InterpreterType::double(d1) => match other {
-                InterpreterType::int(i2) => InterpreterType::double(d1 - (*i2 as f64)),
-                InterpreterType::double(d2) => InterpreterType::double(d1 - d2),
-                _ => return Err(format!("not subtractable"))
-            }, 
-            _ => return Err(format!("not subtractable"))
-        })
-    }
-
-    fn divide(&self, other: &InterpreterType) -> Result<InterpreterType, String> {
-        Ok(match self {
-            InterpreterType::int(i1) => match other {
-                InterpreterType::int(i2) => InterpreterType::int(i1 / i2),
-                InterpreterType::double(d2) => InterpreterType::double(*i1 as f64 / d2),
-                _ => return Err(format!("not divisible"))
-            },
-            InterpreterType::double(d1) => match other {
-                InterpreterType::int(i2) => InterpreterType::double(d1 / (*i2 as f64)),
-                InterpreterType::double(d2) => InterpreterType::double(d1 / d2),
-                _ => return Err(format!("not divisible"))
-            }, 
-            _ => return Err(format!("not divisible"))
-        })
-    }
-
-    fn multiply(&self, other: &InterpreterType) -> Result<InterpreterType, String> {
-        Ok(match self {
-            InterpreterType::int(i1) => match other {
-                InterpreterType::int(i2) => InterpreterType::int(i1 * i2),
-                InterpreterType::double(d2) => InterpreterType::double(*i1 as f64 * d2),
-                _ => return Err(format!("cannot multiply"))
-            },
-            InterpreterType::double(d1) => match other {
-                InterpreterType::int(i2) => InterpreterType::double(d1 * (*i2 as f64)),
-                InterpreterType::double(d2) => InterpreterType::double(d1 * d2),
-                _ => return Err(format!("cannot multiply"))
-            }, 
-            _ => return Err(format!("cannot multiply"))
-        })
-    }
-}
-
-enum Compare {
-    Less,
-    Greater,
-    Equal
-}
 
 impl <'a> Context<'a>  {
-    pub async fn execute_next_op(&mut self, globals: &'a Globals<'a>) -> Result<ContextState, String> {
+    pub fn execute_next_op(&mut self, globals: &'a Globals<'a>, state: *mut State<'a>) -> Result<ContextState, String> {
         match &self.exec.ops[self.exec.next_op_index] {
             Op::negatePrev => match self.pop_stack()? {
                 InterpreterType::bool(b) =>  {self.stack.push(InterpreterType::bool(!b)); self.advance()},
@@ -337,12 +132,8 @@ impl <'a> Context<'a>  {
                     _ =>return Err(format!("Not an object"))
                 }
             },
-            Op::overwriteHeap(op_param) => {     
-                let index = *op_param as usize;
-                if self.heap.len() <=  index{
-                    return Err(format!("overwriting non existent heap variable"));
-                } 
-                self.heap[index] = self.pop_stack()?;                
+            Op::overwriteArg(op_param) => {     
+                unsafe {state.as_mut().unwrap().overwrite_var(*op_param as usize, self.pop_stack()?);}
                 self.advance()        
             },
             Op::raiseError(op_param) => Err(op_param.to_string()),
@@ -357,8 +148,7 @@ impl <'a> Context<'a>  {
             Op::setSavedField{index, field_depth} => {                
                 let set_to = self.pop_stack()?;
                 let fields = self.stack.split_off(self.stack.len() - *field_depth as usize);
-                let target = self.heap.get_mut(*index as usize).safe_unwrap()?;
-                target.set(fields, set_to)?;
+                unsafe {state.as_mut().unwrap().set_field(*index as usize, fields, set_to);}
                 self.advance()
             },
             Op::stringConcat{nStrings, joiner} => {
@@ -387,46 +177,24 @@ impl <'a> Context<'a>  {
             },
             Op::getSavedField(param0, param1) => {                                
                 let fields = self.stack.split_off(self.stack.len() - *param0 as usize);
-                
-                let mut target = self.heap.get_mut(*param1 as usize).safe_unwrap()?;
-                for f in fields {
-                    target = target.get(f)?.safe_unwrap()?;
+                unsafe {
+                    self.stack.push(state.as_mut().unwrap().get_var(*param1 as usize, fields)?);
                 }
-
-                self.stack.push(target.clone());                
                 self.advance()
             },
-            Op::deleteSavedField{field_depth, index} => {        
-                let mut fields = self.stack.split_off(self.stack.len() - *field_depth as usize);
-                let last_field = fields.pop().safe_unwrap()?;
-
-                let mut o_or_a = self.heap.get_mut(*index as usize).safe_unwrap()?;
-                for f in fields {
-                    o_or_a =  o_or_a.get(f)?.safe_unwrap()?;
-                }
-                match o_or_a {
-                    InterpreterType::Object(o) => match last_field {
-                        InterpreterType::string(s) => o.0.remove(&s),
-                        _ => return Err(format!("Cannot index object with this type"))
-                    },
-                    _ => return Err(format!("cannot delete type"))   
-                };
-                self.advance()
-            },
-            Op::pushSavedField{field_depth, index} => {
-                
-                let mut push = self.pop_stack()?.to_array()?;
+            Op::deleteSavedField{field_depth, index} => {       
                 let fields = self.stack.split_off(self.stack.len() - *field_depth as usize);
-
-                let mut o_or_a = self.heap.get_mut(*index as usize).safe_unwrap()?;
-                for f in fields {
-                    o_or_a = o_or_a.get(f)?.safe_unwrap()?;
+                unsafe {
+                    state.as_mut().unwrap().delete(*index as usize, fields);
                 }
-                let ar = match o_or_a {
-                    InterpreterType::Array(a) => a,
-                    _ => return Err("Can only push to arrays".to_string())
-                };
-                ar.append(&mut push);
+                self.advance()
+            },
+            Op::pushSavedField{field_depth, index} => {                
+                let push = self.pop_stack()?;
+                let fields = self.stack.split_off(self.stack.len() - *field_depth as usize);
+                unsafe {    
+                    state.as_mut().unwrap().pushToArray(*index as usize, push, fields);                
+                }
                 self.advance()
         
             },
@@ -445,11 +213,9 @@ impl <'a> Context<'a>  {
         
             },
             Op::truncateHeap(op_param) => {
-                
-                if *op_param as usize > self.heap.len() {
-                    return Err("removing more variables than in existince".to_string())
-                } 
-                self.heap.truncate(self.heap.len() - *op_param as usize);  
+                unsafe {
+                    state.as_mut().unwrap().drop(*op_param);
+                }
                 self.advance()
         
             },
@@ -468,15 +234,12 @@ impl <'a> Context<'a>  {
                 }
                 self.advance()
             },
-            Op::returnVariable(op_param) => {
-                
-                let value = self.heap.swap_remove(*op_param as usize);
-                Ok(ContextState::Done(value))
-            },
             Op::returnStackTop => Ok(ContextState::Done(self.pop_stack()?)),
             Op::returnVoid => Ok(ContextState::Done(InterpreterType::None)),
             Op::copyFromHeap(op_param) => {
-                self.stack.push(self.heap.get(*op_param as usize).safe_unwrap()?.clone());
+                unsafe {
+                    self.stack.push(state.as_mut().unwrap().get_var(*op_param as usize, vec![])?);
+                }
                 self.advance()
             },
             Op::fieldAccess(op_param) => {
@@ -486,14 +249,18 @@ impl <'a> Context<'a>  {
                 self.advance()
             },
             Op::enforceSchemaOnHeap{schema, heap_pos} => {                
-                let v = self.heap.get(*heap_pos as usize).safe_unwrap()?;
+                let v = unsafe {
+                    state.as_mut().unwrap().get_var(*heap_pos as usize, vec![])?
+                };
                 let s = globals.schemas.get(schema).safe_unwrap()?;
-                self.stack.push(InterpreterType::bool(s.adheres(v, globals.schemas, globals.public_key)));
+                self.stack.push(InterpreterType::bool(s.adheres(&v, globals.schemas, globals.public_key)));
                 self.advance()
             },
             Op::moveStackTopToHeap => {                
                 let data = self.pop_stack()?;
-                self.heap.push(data);
+                unsafe {
+                    state.as_mut().unwrap().save(data);
+                }
                 self.advance()        
             },
             Op::popStack => {
@@ -531,7 +298,9 @@ impl <'a> Context<'a>  {
             },
             Op::moveStackToHeapArray(op_param) => {                
                 let p = self.pop_stack()?;                
-                self.heap.get_mut(*op_param as usize).safe_unwrap()?.try_push(p)?;
+                unsafe {
+                    state.as_mut().unwrap().pushToArray(*op_param as usize, p, vec![]);
+                }
                 self.advance()
             },
             Op::arrayPush => {
@@ -582,17 +351,12 @@ impl <'a> Context<'a>  {
                 target.set(vec![InterpreterType::string(last_field.to_string())], data)?;
                 self.advance()                        
             },
-            Op::copyFieldFromHeap(param0, param1) => {                
-                let mut target = self.heap.get_mut(*param0 as usize).safe_unwrap()?;
-                for f in param1 {
-                    target = target.get(InterpreterType::string(f.to_string()))?.safe_unwrap()?;
-                }
-                self.stack.push(target.clone());
-                self.advance()
-            },
             Op::enforceSchemaInstanceOnHeap{heap_pos, schema} => {                
-                let v = self.heap.get(*heap_pos as usize).safe_unwrap()?;
-                self.stack.push(InterpreterType::bool(schema.adheres(v, globals.schemas, globals.public_key)));
+                let v =
+                unsafe {
+                    state.as_mut().unwrap().get_var(*heap_pos as usize, vec![])?
+                };
+                self.stack.push(InterpreterType::bool(schema.adheres(&v, globals.schemas, globals.public_key)));
                 self.advance()        
             },
             Op::extractFields(op_param) => {                
@@ -648,9 +412,10 @@ impl <'a> Context<'a>  {
                 self.advance()
             },
             Op::assertHeapLen(op_param) => {
-                
-                if self.heap.len() != *op_param as usize{
-                    Err(format!("unexpected heap len {}, found {}", *op_param, self.heap.len()))
+                let size= unsafe { state.as_ref().unwrap().sizeOfScope()
+                };
+                if  size != *op_param as usize{
+                    Err(format!("unexpected heap len {}, found {}", *op_param, size))
                 } else {
                     self.advance()
                 }        
@@ -712,13 +477,22 @@ impl <'a> Context<'a>  {
             Op::invoke{name, args} => {                
                 let args = self.stack.split_off(self.stack.len() - *args as usize);
                 let next_ops = globals.fns.get(name).safe_unwrap()?;
-                let cntxt = Context::new(next_ops, args);
+                let cntxt = Context::new(next_ops);
+                unsafe {
+                    state.as_mut().unwrap().push(args);
+                }
+        
                 let res = conduit_byte_code_interpreter(
                     cntxt,
-                    globals
-                ).await?;
-                self.stack.push(res);
-                self.advance()        
+                    globals,
+                    state
+                )?;
+                unsafe {
+                    state.as_mut().unwrap().pop();
+                }
+                self.stack.push(res);                
+                self.advance()
+                     
             },
             Op::signRole => {                
                 let mut obj = match self.pop_stack()? {
