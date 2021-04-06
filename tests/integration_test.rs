@@ -135,3 +135,16 @@ async fn can_do_things_with_no_consequence() {
         {}
     }"#, "nope", vec![]).await;
 }
+
+#[tokio::test]
+async fn can_call_functions() {
+    data_test(r#"
+
+    pub func stringy() {
+        return 'hello world'
+    }
+
+    func entry() {
+        return stringy()
+    }"#, "entry", vec![], Data::string("hello world".to_string())).await;
+}

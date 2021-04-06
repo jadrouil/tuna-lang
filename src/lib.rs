@@ -121,7 +121,17 @@ impl<'a> Tuna<Box<AnyValue>> for Token<'a> {
                                     }
                                     AnyValue::Object(fields)
                                 },
-                                Rule::string => AnyValue::String(lit.as_str().to_string()),
+                                Rule::string => {
+                                    let full = lit.as_str();
+                                    let string = if full.len() > 2 {
+                                        unsafe {
+                                            full.get_unchecked(1..full.len() - 1)
+                                        }
+                                    } else {
+                                        ""
+                                    };
+                                    AnyValue::String(string.to_string())
+                                },
                                 Rule::boolean => AnyValue::Bool(lit.as_str() == "true"),
                                 Rule::num => AnyValue::Double(f64::from_str(lit.as_str()).unwrap()),
                                 Rule::none => AnyValue::None,
