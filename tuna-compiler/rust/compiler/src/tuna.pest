@@ -17,7 +17,7 @@ name = @{!keyword ~ alpha ~ nameChar*}
 equals = _{"="}
 
 object = {"{" ~  (name ~ ":" ~ expression)* ~ "}"}
-string = {"'" ~ ANY* ~ "'"}
+string = {"'" ~ (!"'" ~ ANY)* ~ "'"}
 boolean = {"true" | "false"}
 decimal = {digit+ ~ "." ~ digit+}
 integer = {digit+}

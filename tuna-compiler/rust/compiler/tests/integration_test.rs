@@ -130,5 +130,8 @@ async fn can_do_things_with_no_consequence() {
     pub func nope() {
         true
         false
+        12
+        'hello world'
+        {}
     }"#, "nope", vec![]).await;
 }
