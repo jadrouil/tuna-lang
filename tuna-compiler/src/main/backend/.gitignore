@@ -1,9 +1,0 @@
-__pycache__/
-gen/
-.python/
-target/
-node_modules/
-dist/
-index.js
-dist/
-bin/

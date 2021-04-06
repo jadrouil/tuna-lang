@@ -1,0 +1,90 @@
+WHITESPACE = _{ " " | "\n" | "\t" | ","} 
+
+globject = {constant ~ name ~ equals ~ "{}"}
+globals = {(globject | func | typeDef | roleDef | WHITESPACE )*}
+
+roleDef = {"role" ~ name ~ schema}
+
+mutable = {"let"}
+constant = {"const"}
+function = {"func"}
+keyword = {mutable | constant | function}
+
+var = {"let" ~ name ~ equals ~ expression}
+
+name = @{!keyword ~ alpha ~ nameChar*}
+
+equals = _{"="}
+
+object = {"{" ~  (name ~ ":" ~ expression)* ~ "}"}
+string = {"'" ~ (!"'" ~ ANY)* ~ "'"}
+boolean = {"true" | "false"}
+decimal = {digit+ ~ "." ~ digit+}
+integer = {digit+}
+posNum = {decimal | integer}
+num = {"-"? ~ posNum}
+none = {"none"}
+array = {"[" ~ expression* ~ "]"}
+literal = {object | string | boolean | num | none | array }
+
+scope = {"{" ~ (ret | var | forLoop | ifs | assignment | expression)* ~"}"}
+expression = {prefix? ~ (functionCall | literal | name) ~ method*  ~ infix? }
+method = {parameterIndex | methodInvoke | literalIndex}
+
+not = {"not"}
+minus = {"-"}
+prefix = {not | minus}
+mult = {"*"}
+plus = {"+"}
+divide = {"/"}
+eq = {"=="}
+neq = {"!="}
+geq = {">="}
+gt = {">"}
+lt = {"<"}
+leq = {"<="}
+and = {"and"}
+or = {"or"}
+
+infix = {plus | minus | mult | divide | eq | neq | leq | geq | gt | lt | leq | and | or}
+
+functionCall = {name ~ args}
+parameterIndex = {"[" ~ expression ~"]"}
+literalIndex = {"." ~ name}
+methodInvoke = {"." ~ name ~ args}
+
+forLoop = {"for" ~ WHITESPACE+ ~ "in"  ~ expression ~ scope}
+
+roleInstance = {name ~ object}
+
+ret = {"return" ~ expression?}
+func = {name? ~ "func" ~ name ~ params ~ scope }
+params = {"(" ~ (name ~ schema?)* ~ ")"}
+args = {"(" ~ expression* ~ ")"}
+assignment = {expression ~ equals ~ expression}
+
+conditional = {expression ~ scope}
+ifs = {"if" ~ WHITESPACE+ ~ conditional ~ elif* ~ otherwise?}
+elif = {"else" ~ WHITESPACE+ ~ "if" ~ WHITESPACE+ ~ conditional}
+otherwise = {"else" ~ scope}
+
+str_t = {"string"}
+int_t = {"int"}
+double_t = {"double"}
+bool_t = {"bool"}
+any_t = {"any"}
+object_t = {"{" ~ field_t* ~"}"}
+field_t = {name ~ ":" ~ someType}
+array_t = {"[" ~ "]"}
+optional_t = {"?"}
+typePostfix = {array_t | optional_t}
+union_t = {"or" ~ WHITESPACE+ ~ someType }
+typeBody = {str_t | int_t | double_t | bool_t | any_t | object_t | name}
+someType = {typeBody ~ typePostfix? ~ union_t?}
+schema = {":" ~ someType}
+
+typeDef = {"type" ~ WHITESPACE+ ~ name ~ "=" ~ someType}
+
+alpha = { 'a'..'z' | 'A'..'Z' }
+digit = { '0'..'9' }
+nameChar = {alpha | digit | "_"}
