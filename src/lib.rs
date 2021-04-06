@@ -6,7 +6,7 @@ extern crate pest;
 use ir::*;
 use pest::{Parser, error::Error};
 use pest::iterators::{Pairs, Pair};
-use std::{collections::HashMap, convert::TryInto};
+use std::{collections::HashMap};
 use tuna_interpreter::schemas::Schema;
 use tuna_interpreter::ops::Op;
 use std::str::FromStr;

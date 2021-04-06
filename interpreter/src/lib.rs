@@ -2,10 +2,8 @@
 #![allow(non_snake_case)]
 
 use std::{collections::HashMap};
-use std::marker::Send;
 use data::Safe;
-use futures::future::{BoxFuture, FutureExt};
-
+use ops::Runner;
 use crate::data::{InterpreterType};
 use crate::ops::{Op};
 use crate::schemas::Schema;
@@ -22,11 +20,12 @@ pub struct Execution<'a> {
 pub struct Context<'a> {
     pub stack: Vec<InterpreterType>,
     pub exec: Execution<'a>,
+    pub after: Option<&'a mut Context<'a>>
 }
 
 
-pub enum ContextState {
-    Continue,
+pub enum ContextState<'a> {
+    Continue(Context<'a>),
     Done(InterpreterType)
 }
 
@@ -36,12 +35,12 @@ impl <'a> Context<'a>  {
         self.exec.next_op_index < self.exec.ops.len()
     }
 
-    pub fn advance(&mut self) -> Result<ContextState, String> {
+    pub fn advance(mut self) -> Result<ContextState<'a>, String> {
         self.exec.next_op_index += 1;
         if !self.has_remaining_exec() {
             return Ok(ContextState::Done(InterpreterType::None))
         }
-        return Ok(ContextState::Continue);
+        return Ok(ContextState::Continue(self));
     }
 
     pub fn offset_cursor(&mut self, forward: bool, offset: usize) {
@@ -59,6 +58,7 @@ impl <'a> Context<'a>  {
                 ops: ops,
                 next_op_index: 0
             },
+            after: None
         }
     }
 }
@@ -113,7 +113,7 @@ impl<'a> State<'a> {
     
     pub fn set_field(&mut self, arg_id: usize, fields: Vec<InterpreterType>, value: InterpreterType) {
         let abs = self.abs_addr(arg_id);
-        self.state[abs].set(fields, value);
+        self.state[abs].set(fields, value).unwrap();
     }
 
     pub fn delete(&mut self, arg_id: usize, mut fields: Vec<InterpreterType>) {        
@@ -132,13 +132,12 @@ impl<'a> State<'a> {
         };
     }
 
-    pub fn drop(&mut self, to_drop: usize) -> Result<(), String> {
-        let lookup = self.lookups.last_mut().safe_unwrap()?;
+    pub fn drop(&mut self, to_drop: usize) {
+        let lookup = self.lookups.last_mut().unwrap();
         for _  in 0..to_drop {
             let _ = lookup.pop().unwrap();
         }
         self.state.truncate(self.state.len() - to_drop);
-        Ok(())
     }
 
     pub fn save(&mut self, data: InterpreterType) {
@@ -191,38 +190,11 @@ impl<'a>  Globals<'a> {
                 public_key
             }
     }
-    pub fn run(&'a self, fname: &String, state: *mut State<'a>) -> Result<InterpreterType, String> {
+    pub fn run(&'a self, fname: &String, state: &'a mut State<'a>) -> Result<InterpreterType, String> {
     
-        let context = Context::new(self.fns.get(fname).unwrap(), );
-        conduit_byte_code_interpreter(context, &self, state)
+        let context = Context::new(self.fns.get(fname).unwrap());
+        Runner::new(self, state).run(context)
     }
 }
 
-fn conduit_byte_code_interpreter<'a>(
-    mut current: Context<'a>,
-    globals: &'a Globals<'a>,
-    state: *mut State<'a>
-) -> Result<InterpreterType, String> {
-    
-    if current.exec.ops.len() == 0 {
-        return Ok(InterpreterType::None)
-    }
-    
-    loop {
-        let res: Result<ContextState, String> = current.execute_next_op(globals, state);
 
-        match res {
-            Ok(body) => match body {
-                ContextState::Done(data) => {
-                    return Ok(data);
-                },
-                _ => {} // The ops are responsible for getting the next instruction.
-            },            
-            Err(msg) => {
-                // We know there are no error handlers at the moment.
-                return Err(msg);
-            },
-        };
-    }
-    
-}
